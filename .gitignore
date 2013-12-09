@@ -14,3 +14,4 @@
 
 # temporary files
 *~
+*.pro.user
