@@ -14,12 +14,15 @@ private slots:
 
     void testVoid();
     void testConnectDisconnect();
+    
+#ifdef ENABLE_SIGNAL_BENCHMARK
     void testConnectLambdaBenchmark();
     void testConnectStaticBenchmark();
     void testConnectSlotBenchmark();
     void testConnectQObjectBenchmark();
     void testEmitBenchmark();
     void testEmitQObjectBenchmark();
+#endif
 };
 
 class MyObj

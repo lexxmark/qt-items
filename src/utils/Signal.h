@@ -6,18 +6,21 @@
 #include <vector>
 #include <functional>
 
+namespace Qi
+{
+
 namespace QiPrivate
 {
 
 template <typename Signature>
-class QiSignalBase
+class SignalBase
 {
 public:
     typedef std::function<Signature> Function_t;
 
     quint32 connect(const Function_t& slot, quintptr id = 0) const
     {
-        if (m_firstUnusedSlotId != QiInvalid)
+        if (m_firstUnusedSlotId != Invalid)
         {
             // look for free slot item
             for (quintptr i = m_firstUnusedSlotId, n = (quintptr)m_slots.size(); i < n; ++i)
@@ -33,7 +36,7 @@ public:
             }
 
             // all slot items is in use
-            m_firstUnusedSlotId = QiInvalid;
+            m_firstUnusedSlotId = Invalid;
         }
 
         m_slots.push_back(SlotInfo());
@@ -45,7 +48,7 @@ public:
 
     quint32 connect(Function_t&& slot, quintptr id = 0) const
     {
-        if (m_firstUnusedSlotId != QiInvalid)
+        if (m_firstUnusedSlotId != Invalid)
         {
             // look for free slot item
             for (quintptr i = m_firstUnusedSlotId, n = (quintptr)m_slots.size(); i < n; ++i)
@@ -61,7 +64,7 @@ public:
             }
 
             // all slot items is in use
-            m_firstUnusedSlotId = QiInvalid;
+            m_firstUnusedSlotId = Invalid;
         }
 
         m_slots.push_back(SlotInfo());
@@ -138,25 +141,25 @@ public:
     void disconnectAll() const
     {
         m_slots.clear();
-        m_firstUnusedSlotId = QiInvalid;
+        m_firstUnusedSlotId = Invalid;
     }
 
 protected:
 
-    QiSignalBase()
-        : m_firstUnusedSlotId(QiInvalid)
+    SignalBase()
+        : m_firstUnusedSlotId(Invalid)
     {}
 
-    ~QiSignalBase()
+    ~SignalBase()
     {
         Q_ASSERT(isEmpty());
     }
 
-    QiSignalBase(const QiSignalBase& other)
-        : m_firstUnusedSlotId(QiInvalid)
+    SignalBase(const SignalBase& other)
+        : m_firstUnusedSlotId(Invalid)
     {}
 
-    QiSignalBase& operator=(const QiSignalBase& other)
+    SignalBase& operator=(const SignalBase& other)
     {}
 
     bool isEmpty() const
@@ -189,14 +192,14 @@ protected:
 } // end namespace QiPrivate
 
 template <typename Signature>
-class QiSignal;
+class Signal;
 
 template <typename Ret>
-class QiSignal<Ret()>: public QiPrivate::QiSignalBase<Ret()>
+class Signal<Ret()>: public QiPrivate::SignalBase<Ret()>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<Ret()>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<Ret()>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<Ret()>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<Ret()>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -216,14 +219,14 @@ public:
     }
 };
 
-typedef QiSignal<void()> QiSignalVoid;
+typedef Signal<void()> SignalVoid;
 
 template<typename Param1>
-class QiSignal<void(Param1)>: public QiPrivate::QiSignalBase<void(Param1)>
+class Signal<void(Param1)>: public QiPrivate::SignalBase<void(Param1)>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<void(Param1)>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<void(Param1)>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<void(Param1)>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<void(Param1)>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -244,11 +247,11 @@ public:
 };
 
 template<typename Param1, typename Param2>
-class QiSignal<void(Param1, Param2)>: public QiPrivate::QiSignalBase<void(Param1, Param2)>
+class Signal<void(Param1, Param2)>: public QiPrivate::SignalBase<void(Param1, Param2)>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2)>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2)>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2)>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2)>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -270,11 +273,11 @@ public:
 };
 
 template<typename Param1, typename Param2, typename Param3>
-class QiSignal<void(Param1, Param2, Param3)>: public QiPrivate::QiSignalBase<void(Param1, Param2, Param3)>
+class Signal<void(Param1, Param2, Param3)>: public QiPrivate::SignalBase<void(Param1, Param2, Param3)>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3)>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3)>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3)>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3)>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -296,11 +299,11 @@ public:
 };
 
 template<typename Param1, typename Param2, typename Param3, typename Param4>
-class QiSignal<void(Param1, Param2, Param3, Param4)>: public QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4)>
+class Signal<void(Param1, Param2, Param3, Param4)>: public QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4)>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4)>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4)>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4)>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4)>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -322,11 +325,11 @@ public:
 };
 
 template<typename Param1, typename Param2, typename Param3, typename Param4, typename Param5>
-class QiSignal<void(Param1, Param2, Param3, Param4, Param5)>: public QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4, Param5)>
+class Signal<void(Param1, Param2, Param3, Param4, Param5)>: public QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4, Param5)>
 {
 public:
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4, Param5)>::Function_t Function_t;
-    typedef typename QiPrivate::QiSignalBase<void(Param1, Param2, Param3, Param4, Param5)>::SlotInfo SlotInfo;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4, Param5)>::Function_t Function_t;
+    typedef typename QiPrivate::SignalBase<void(Param1, Param2, Param3, Param4, Param5)>::SlotInfo SlotInfo;
 
     template <typename Slot, typename SlotFunction>
     quint32 connectSlot(Slot* slot, SlotFunction slotFunction) const
@@ -346,5 +349,7 @@ public:
         }
     }
 };
+
+} // end namespace Qi
 
 #endif // QI_SIGNAL_H

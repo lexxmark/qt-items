@@ -8,6 +8,9 @@
 #  define QI_EXPORT Q_DECL_IMPORT
 #endif
 
-static const quint32 QiInvalid = -1;
+namespace Qi
+{
+    static const quint32 Invalid = -1;
+}
 
 #endif // QI_API_H

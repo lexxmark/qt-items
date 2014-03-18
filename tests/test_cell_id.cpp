@@ -1,84 +1,86 @@
 #include "test_cell_id.h"
-#include "utils/QiCellID.h"
+#include "utils/CellID.h"
 #include <QtTest/QtTest>
 
 #include <set>
 
+using namespace Qi;
+
 void TestCellID::testClass()
 {
-    QiCellID cell;
-    QCOMPARE(cell.row, QiInvalid);
-    QCOMPARE(cell.column, QiInvalid);
+    CellID cell;
+    QCOMPARE(cell.row, Invalid);
+    QCOMPARE(cell.column, Invalid);
     QVERIFY(!cell.isValid());
-    QCOMPARE(cell, QiCellID());
+    QCOMPARE(cell, CellID());
 
     cell.row = 3;
     QVERIFY(!cell.isValid());
     cell.column = 5;
     QVERIFY(cell.isValid());
-    QCOMPARE(cell, QiCellID(3, 5));
+    QCOMPARE(cell, CellID(3, 5));
 
-    QVERIFY(cell < QiCellID(3, 6));
-    QVERIFY(cell < QiCellID(4, 2));
-    QVERIFY(!(cell < QiCellID(2, 2)));
+    QVERIFY(cell < CellID(3, 6));
+    QVERIFY(cell < CellID(4, 2));
+    QVERIFY(!(cell < CellID(2, 2)));
 }
 
 void TestCellID::testSet()
 {
     {
-        std::set<QiCellID> cells;
+        std::set<CellID> cells;
 
-        cells.insert(QiCellID(1, 1));
-        cells.insert(QiCellID(2, 2));
+        cells.insert(CellID(1, 1));
+        cells.insert(CellID(2, 2));
 
         QVERIFY(cells.size() == 2);
 
-        cells.insert(QiCellID(2, 2));
+        cells.insert(CellID(2, 2));
         QVERIFY(cells.size() == 2);
 
-        auto it = cells.find(QiCellID(23, 7));
+        auto it = cells.find(CellID(23, 7));
         QVERIFY(it == cells.end());
-        it = cells.find(QiCellID(1, 1));
+        it = cells.find(CellID(1, 1));
         QVERIFY(it != cells.end());
 
-        cells.erase(QiCellID(12, 1));
+        cells.erase(CellID(12, 1));
         QVERIFY(cells.size() == 2);
 
-        cells.erase(QiCellID(1, 1));
+        cells.erase(CellID(1, 1));
         QVERIFY(cells.size() == 1);
 
-        for (const QiCellID& cell: cells)
+        for (const CellID& cell: cells)
         {
-            QVERIFY(cell != QiCellID(32, 22));
+            QVERIFY(cell != CellID(32, 22));
         }
     }
 
     {
-        QSet<QiCellID> cells;
+        QSet<CellID> cells;
 
-        cells.insert(QiCellID(12, 3));
-        cells.insert(QiCellID(3, 3));
-        cells.insert(QiCellID(1, 87));
+        cells.insert(CellID(12, 3));
+        cells.insert(CellID(3, 3));
+        cells.insert(CellID(1, 87));
         QVERIFY(cells.size() == 3);
 
-        cells.insert(QiCellID(3, 3));
+        cells.insert(CellID(3, 3));
         QVERIFY(cells.size() == 3);
 
-        auto it = cells.find(QiCellID(23, 3));
+        auto it = cells.find(CellID(23, 3));
         QVERIFY(it == cells.end());
 
-        it = cells.find(QiCellID(1, 87));
+        it = cells.find(CellID(1, 87));
         QVERIFY(it != cells.end());
 
-        cells.remove(QiCellID(54, 3));
+        cells.remove(CellID(54, 3));
         QVERIFY(cells.size() == 3);
 
-        cells.remove(QiCellID(12, 3));
+        cells.remove(CellID(12, 3));
         QVERIFY(cells.size() == 2);
 
-        foreach(const QiCellID& cell, cells)
+        foreach(const CellID& cell, cells)
         {
-            QVERIFY(cell != QiCellID());
+            QVERIFY(cell != CellID());
         }
     }
 }
@@ -86,24 +88,24 @@ void TestCellID::testSet()
 void TestCellID::testMap()
 {
     {
-        std::map<QiCellID, int> m;
-        m[QiCellID(12, 12)] = 4;
-        m.insert(std::make_pair(QiCellID(1, 8), 8));
+        std::map<CellID, int> m;
+        m[CellID(12, 12)] = 4;
+        m.insert(std::make_pair(CellID(1, 8), 8));
 
-        QVERIFY(m[QiCellID(12, 12)] == 4);
-        QVERIFY(m[QiCellID(1, 8)] == 8);
+        QVERIFY(m[CellID(12, 12)] == 4);
+        QVERIFY(m[CellID(1, 8)] == 8);
 
-        auto it = m.find(QiCellID(1, 2));
+        auto it = m.find(CellID(1, 2));
         QVERIFY(it == m.end());
 
-        it = m.find(QiCellID(1, 8));
+        it = m.find(CellID(1, 8));
         QVERIFY(it != m.end());
         QVERIFY((*it).second == 8);
 
-        m.erase(QiCellID());
+        m.erase(CellID());
         QVERIFY(m.size() == 2);
 
-        m.erase(QiCellID(12, 12));
+        m.erase(CellID(12, 12));
         QVERIFY(m.size() == 1);
 
         m.erase(it);
@@ -111,28 +113,28 @@ void TestCellID::testMap()
     }
 
     {
-        QMap<QiCellID, QString> m;
-        m[QiCellID()] = tr("one");
-        m.insert(QiCellID(), tr("two"));
+        QMap<CellID, QString> m;
+        m[CellID()] = tr("one");
+        m.insert(CellID(), tr("two"));
 
         QVERIFY(m.size() == 1);
 
-        m.insert(QiCellID(1, 1), tr("three"));
+        m.insert(CellID(1, 1), tr("three"));
         QVERIFY(m.size() == 2);
 
-        QVERIFY(m.contains(QiCellID(1, 1)));
+        QVERIFY(m.contains(CellID(1, 1)));
 
-        auto it = m.find(QiCellID(2, 2));
+        auto it = m.find(CellID(2, 2));
         QVERIFY(it == m.end());
 
-        it = m.find(QiCellID());
+        it = m.find(CellID());
         QVERIFY(it != m.end());
         QVERIFY((*it) == tr("two"));
 
-        m.remove(QiCellID(2, 2));
+        m.remove(CellID(2, 2));
         QVERIFY(m.size() == 2);
 
-        m.remove(QiCellID(1, 1));
+        m.remove(CellID(1, 1));
         QVERIFY(m.size() == 1);
 
         m.erase(it);

@@ -6,35 +6,38 @@
 //#include <QPair>
 #include <QHash>
 
-class QI_EXPORT QiCellID
+namespace Qi
+{
+
+class QI_EXPORT CellID
 {
 public:
     quint32 row;
     quint32 column;
 
-    QiCellID()
-        : row(QiInvalid), column(QiInvalid)
+    CellID()
+        : row(Invalid), column(Invalid)
     {}
 
-    QiCellID(quint32 row, quint32 column)
+    CellID(quint32 row, quint32 column)
         : row(row), column(column)
     {}
 
-    bool isValid() const { return (row != QiInvalid) && (column != QiInvalid); }
+    bool isValid() const { return (row != Invalid) && (column != Invalid); }
 };
 
-inline bool operator==(QiCellID left, QiCellID right)
+inline bool operator==(CellID left, CellID right)
 {
     return (left.row == right.row) && (left.column == right.column);
 }
 
-inline bool operator!=(QiCellID left, QiCellID right)
+inline bool operator!=(CellID left, CellID right)
 {
     return !(left == right);
 }
 
 // std::set/std::map support
-inline bool operator<(QiCellID left, QiCellID right)
+inline bool operator<(CellID left, CellID right)
 {
     if (left.row == right.row)
         return left.column < right.column;
@@ -43,9 +46,11 @@ inline bool operator<(QiCellID left, QiCellID right)
 }
 
 // QSet/QMap support
-inline uint qHash(QiCellID key)
+inline uint qHash(CellID key)
 {
     return qHash(QPair<quint32, quint32>(key.row, key.column));
 }
+
+} // end namespace Qi
 
 #endif // QI_CELL_ID_H

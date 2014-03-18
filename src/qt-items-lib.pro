@@ -1,16 +1,20 @@
 include(../common.pri)
 
-TARGET = qt-items
+TARGET = QtItems
 TEMPLATE = lib
 VERSION = 0.0.1
 
 DEFINES += QI_LIBRARY
 
-SOURCES += QiAPI.cpp
+SOURCES += QiAPI.cpp \
+    utils/Range.cpp \
+    utils/ranges/RangesBasic.cpp
 
 HEADERS +=  QiAPI.h \
-            utils/QiSignal.h \
-            utils/QiCellID.h
+    utils/Signal.h \
+    utils/CellID.h \
+    utils/Range.h \
+    utils/ranges/RangesBasic.h
 
 win32 {
     TARGET_EXT = .dll

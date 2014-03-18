@@ -1,6 +1,8 @@
 #include "test_signal.h"
-#include "utils/QiSignal.h"
+#include "utils/Signal.h"
 #include <QtTest/QtTest>
+
+using namespace Qi;
 
 struct Receiver
 {
@@ -24,7 +26,7 @@ static void onStaticReceive()
 
 void TestSignal::testVoid()
 {
-    QiSignalVoid s;
+    SignalVoid s;
 
     {
         bool lambdaCalled = false;
@@ -115,7 +117,7 @@ void TestSignal::testVoid()
 
 void TestSignal::testConnectDisconnect()
 {
-    QiSignal<void(int)> s;
+    Signal<void(int)> s;
     int value = 0;
     quint32 c = s.connect([&value](int v) { value = v; });
 
@@ -162,9 +164,11 @@ void MyQObject::mySlot(const std::string& str, float val, MyObj& obj)
     static_sum += obj.value;
 }
 
+#ifdef ENABLE_SIGNAL_BENCHMARK
+
 void TestSignal::testConnectLambdaBenchmark()
 {
-    QiSignal<void(const std::string&, float, MyObj&)> s;
+    Signal<void(const std::string&, float, MyObj&)> s;
 
     QBENCHMARK
     {
@@ -178,7 +182,7 @@ void TestSignal::testConnectLambdaBenchmark()
 
 void TestSignal::testConnectStaticBenchmark()
 {
-    QiSignal<void(const std::string&, float, MyObj&)> s;
+    Signal<void(const std::string&, float, MyObj&)> s;
 
     QBENCHMARK
     {
@@ -190,7 +194,7 @@ void TestSignal::testConnectStaticBenchmark()
 
 void TestSignal::testConnectSlotBenchmark()
 {
-    QiSignal<void(const std::string&, float, MyObj&)> s;
+    Signal<void(const std::string&, float, MyObj&)> s;
     MyObj obj;
 
     QBENCHMARK
@@ -215,7 +219,7 @@ void TestSignal::testConnectQObjectBenchmark()
 
 void TestSignal::testEmitBenchmark()
 {
-    QiSignal<void(const std::string&, float, MyObj&)> s;
+    Signal<void(const std::string&, float, MyObj&)> s;
     MyObj obj;
     obj.value = 1;
     std::string txt("Hello");
@@ -265,5 +269,4 @@ void TestSignal::testEmitQObjectBenchmark()
         obj1.invoke(txt, 2.f, obj);
     }
 }
-
-
+#endif
