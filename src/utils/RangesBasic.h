@@ -1,7 +1,7 @@
 #ifndef QI_RANGESBASIC_H
 #define QI_RANGESBASIC_H
 
-#include "../Range.h"
+#include "Range.h"
 #include <QSet>
 
 namespace Qi
@@ -15,7 +15,7 @@ public:
     RangeNone(QObject* parent = nullptr);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
 };
 QI_EXPORT RangeNone* makeRangeNone(QObject* parent = nullptr);
 
@@ -27,7 +27,7 @@ public:
     RangeAll(QObject* parent = nullptr);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
 };
 QI_EXPORT RangeAll* makeRangeAll(QObject* parent = nullptr);
 
@@ -42,7 +42,7 @@ public:
     void setColumn(quint32 column);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
     
 private:
     quint32 m_column;
@@ -61,7 +61,7 @@ public:
     void setColumns(const QSet<quint32>& columns);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
     
 private:
     QSet<quint32> m_columns;
@@ -80,7 +80,7 @@ public:
     void setRow(quint32 row);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
     
 private:
     quint32 m_row;
@@ -99,7 +99,7 @@ public:
     void setRows(const QSet<quint32>& rows);
     
 protected:
-    bool HasCellImpl(const CellID &cell) const override;
+    bool hasCellImpl(const CellID &cell) const override;
     
 private:
     QSet<quint32> m_rows;

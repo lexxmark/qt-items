@@ -16,14 +16,14 @@ public:
     Range(QObject* parent = nullptr);
     virtual ~Range();
     
-    bool HasCell(const CellID& cell) const { return HasCellImpl(cell); }
-    bool HasCell(quint32 row, quint32 column) const { return HasCell(CellID(row, column)); }
+    bool hasCell(const CellID& cell) const { return hasCellImpl(cell); }
+    bool hasCell(quint32 row, quint32 column) const { return hasCell(CellID(row, column)); }
     
 Q_SIGNALS:
     void rangeChanged(const Range&);
 
 protected:
-    virtual bool HasCellImpl(const CellID &cell) const = 0;
+    virtual bool hasCellImpl(const CellID &cell) const = 0;
 };
 
 } // end namespace Qi

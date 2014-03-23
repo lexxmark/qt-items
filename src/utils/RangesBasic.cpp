@@ -8,7 +8,7 @@ RangeNone::RangeNone(QObject *parent)
 {
 }
 
-bool RangeNone::HasCellImpl(const CellID &cell) const
+bool RangeNone::hasCellImpl(const CellID &cell) const
 {
     return false;
 }
@@ -23,7 +23,7 @@ RangeAll::RangeAll(QObject *parent)
 {
 }
 
-bool RangeAll::HasCellImpl(const CellID &cell) const
+bool RangeAll::hasCellImpl(const CellID &cell) const
 {
     return true;
 }
@@ -48,7 +48,7 @@ void RangeColumn::setColumn(quint32 column)
     }
 }
 
-bool RangeColumn::HasCellImpl(const CellID &cell) const
+bool RangeColumn::hasCellImpl(const CellID &cell) const
 {
     return cell.column == m_column;
 }
@@ -81,7 +81,7 @@ void RangeColumns::setColumns(const QSet<quint32>& columns)
     }
 }
 
-bool RangeColumns::HasCellImpl(const CellID &cell) const
+bool RangeColumns::hasCellImpl(const CellID &cell) const
 {
     return m_columns.contains(cell.column);
 }
@@ -111,7 +111,7 @@ void RangeRow::setRow(quint32 row)
     }
 }
 
-bool RangeRow::HasCellImpl(const CellID &cell) const
+bool RangeRow::hasCellImpl(const CellID &cell) const
 {
     return cell.row == m_row;
 }
@@ -144,7 +144,7 @@ void RangeRows::setRows(const QSet<quint32>& rows)
     }
 }
 
-bool RangeRows::HasCellImpl(const CellID &cell) const
+bool RangeRows::hasCellImpl(const CellID &cell) const
 {
     return m_rows.contains(cell.row);
 }

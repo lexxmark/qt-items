@@ -4,13 +4,13 @@ QT       += core
 #QT       += script
 QT       += testlib
 
-TARGET = qi_tests
+TARGET = qi-tests
 
 CONFIG   += console
 CONFIG   -= app_bundle
 
 INCLUDEPATH += $$ROOT_DIR/src/
-LIBS += -L$$DESTDIR -lQtItems
+LIBS += -L$$DESTDIR -lqt-items
 
 TEMPLATE = app
 
