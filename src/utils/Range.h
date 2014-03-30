@@ -13,7 +13,7 @@ class QI_EXPORT Range: public QObject
     Q_DISABLE_COPY(Range)
 
 public:
-    Range(QObject* parent = nullptr);
+    Range();
     virtual ~Range();
     
     bool hasCell(const CellID& cell) const { return hasCellImpl(cell); }

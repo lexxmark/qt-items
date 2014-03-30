@@ -10,7 +10,21 @@
 
 namespace Qi
 {
-    static const quint32 Invalid = -1;
+
+static const quint32 Invalid = -1;
+    
+enum ChangeReasonFlag
+{
+    ChangeReasonLinesCount = 0x0001,
+    ChangeReasonLinesCountWeak = 0x0002,
+    ChangeReasonLineVisibility = 0x0004,
+    ChangeReasonLineSize = 0x0008,
+    ChangeReasonLineOrder = 0x0010
+};
+
+Q_DECLARE_FLAGS(ChangeReason, ChangeReasonFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ChangeReason)
+
 }
 
 #endif // QI_API_H

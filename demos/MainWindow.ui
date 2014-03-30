@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>417</height>
+    <width>520</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,35 +29,96 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>10</y>
-      <width>81</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>Close</string>
-    </property>
-   </widget>
-   <widget class="Qi::ItemWidget" name="itemWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>241</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
+   <property name="locale">
+    <locale language="English" country="UnitedStates"/>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="splitter">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="Qi::ItemWidget" name="itemWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>21</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widget222" native="true"/>
+      </widget>
+      <widget class="Qi::ListWidget" name="listWidget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="Qi::GridWidget" name="gridWidget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -66,6 +127,18 @@
    <class>Qi::ItemWidget</class>
    <extends>QWidget</extends>
    <header>widgets/ItemWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Qi::ListWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/ListWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Qi::GridWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/GridWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

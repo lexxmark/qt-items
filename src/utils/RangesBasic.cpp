@@ -3,8 +3,7 @@
 namespace Qi
 {
 
-RangeNone::RangeNone(QObject *parent)
-    : Range(parent)
+RangeNone::RangeNone()
 {
 }
 
@@ -13,13 +12,12 @@ bool RangeNone::hasCellImpl(const CellID &cell) const
     return false;
 }
 
-RangeNone* makeRangeNone(QObject* parent)
+QSharedPointer<RangeNone> makeRangeNone()
 {
-    return new RangeNone(parent);
+    return QSharedPointer<RangeNone>::create();
 }
 
-RangeAll::RangeAll(QObject *parent)
-    : Range(parent)
+RangeAll::RangeAll()
 {
 }
 
@@ -28,14 +26,13 @@ bool RangeAll::hasCellImpl(const CellID &cell) const
     return true;
 }
 
-RangeAll* makeRangeAll(QObject* parent)
+QSharedPointer<RangeAll> makeRangeAll()
 {
-    return new RangeAll(parent);
+    return QSharedPointer<RangeAll>::create();
 }
 
-RangeColumn::RangeColumn(quint32 column, QObject* parent)
-    : Range(parent),
-      m_column(column)
+RangeColumn::RangeColumn(quint32 column)
+    : m_column(column)
 {
 }
 
@@ -53,19 +50,17 @@ bool RangeColumn::hasCellImpl(const CellID &cell) const
     return cell.column == m_column;
 }
 
-RangeColumn* makeRangeColumn(quint32 column, QObject* parent)
+QSharedPointer<RangeColumn> makeRangeColumn(quint32 column)
 {
-    return new RangeColumn(column, parent);
+    return QSharedPointer<RangeColumn>::create(column);
 }
 
-RangeColumns::RangeColumns(const QSet<quint32>& columns, QObject* parent)
-    : Range(parent),
-      m_columns(columns)
+RangeColumns::RangeColumns(const QSet<quint32>& columns)
+    : m_columns(columns)
 {
 }
 
-RangeColumns::RangeColumns(quint32 columnBegin, quint32 columnEnd, QObject* parent)
-    : Range(parent)
+RangeColumns::RangeColumns(quint32 columnBegin, quint32 columnEnd)
 {
     Q_ASSERT(columnBegin <= columnEnd);
     for (quint32 column = columnBegin; column != columnEnd; ++column)
@@ -86,19 +81,18 @@ bool RangeColumns::hasCellImpl(const CellID &cell) const
     return m_columns.contains(cell.column);
 }
 
-RangeColumns* makeRangeColumns(const QSet<quint32>& columns, QObject* parent)
+QSharedPointer<RangeColumns> makeRangeColumns(const QSet<quint32>& columns)
 {
-    return new RangeColumns(columns, parent);
+    return QSharedPointer<RangeColumns>::create(columns);
 }
 
-RangeColumns* makeRangeColumns(quint32 columnBegin, quint32 columnEnd, QObject* parent)
+QSharedPointer<RangeColumns> makeRangeColumns(quint32 columnBegin, quint32 columnEnd)
 {
-    return new RangeColumns(columnBegin, columnEnd, parent);
+    return QSharedPointer<RangeColumns>::create(columnBegin, columnEnd);
 }
 
-RangeRow::RangeRow(quint32 row, QObject* parent)
-    : Range(parent),
-      m_row(row)
+RangeRow::RangeRow(quint32 row)
+    : m_row(row)
 {
 }
 
@@ -116,19 +110,17 @@ bool RangeRow::hasCellImpl(const CellID &cell) const
     return cell.row == m_row;
 }
 
-RangeRow* makeRangeRow(quint32 row, QObject* parent)
+QSharedPointer<RangeRow> makeRangeRow(quint32 row)
 {
-    return new RangeRow(row, parent);
+    return QSharedPointer<RangeRow>::create(row);
 }
 
-RangeRows::RangeRows(const QSet<quint32>& rows, QObject* parent)
-    : Range(parent),
-      m_rows(rows)
+RangeRows::RangeRows(const QSet<quint32>& rows)
+    : m_rows(rows)
 {
 }
 
-RangeRows::RangeRows(quint32 rowBegin, quint32 rowEnd, QObject* parent)
-    : Range(parent)
+RangeRows::RangeRows(quint32 rowBegin, quint32 rowEnd)
 {
     Q_ASSERT(rowBegin <= rowEnd);
     for (quint32 row = rowBegin; row != rowEnd; ++row)
@@ -149,14 +141,14 @@ bool RangeRows::hasCellImpl(const CellID &cell) const
     return m_rows.contains(cell.row);
 }
 
-RangeRows* makeRangeRows(const QSet<quint32>& rows, QObject* parent)
+QSharedPointer<RangeRows> makeRangeRows(const QSet<quint32>& rows)
 {
-    return new RangeRows(rows, parent);
+    return QSharedPointer<RangeRows>::create(rows);
 }
 
-RangeRows* makeRangeRows(quint32 rowBegin, quint32 rowEnd, QObject* parent)
+QSharedPointer<RangeRows> makeRangeRows(quint32 rowBegin, quint32 rowEnd)
 {
-    return new RangeRows(rowBegin, rowEnd, parent);
+    return QSharedPointer<RangeRows>::create(rowBegin, rowEnd);
 }
 
 } // end namespace Qi

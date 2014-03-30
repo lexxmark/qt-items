@@ -12,7 +12,11 @@ SOURCES += QiAPI.cpp \
     utils/Range.cpp \
     utils/RangesBasic.cpp \
     utils/Layout.cpp \
+    utils/LayoutBasic.cpp \
     utils/View.cpp \
+    utils/ViewBasic.cpp \
+    utils/Cache.cpp \
+    utils/Lines.cpp \
     widgets/GridWidget.cpp \
     widgets/ItemWidget.cpp \
     widgets/ListWidget.cpp
@@ -23,7 +27,12 @@ HEADERS +=  QiAPI.h \
     utils/Range.h \
     utils/RangesBasic.h \
     utils/Layout.h \
+    utils/LayoutBasic.h \
     utils/View.h \
+    utils/ViewBasic.h \
+    utils/DrawContext.h \
+    utils/Cache.h \
+    utils/Lines.h \
     widgets/GridWidget.h \
     widgets/ItemWidget.h \
     widgets/ListWidget.h

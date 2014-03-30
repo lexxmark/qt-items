@@ -32,9 +32,9 @@ void TestRanges::testRangeNone()
     }
     
     {
-        QScopedPointer<RangeNone> r(makeRangeNone(this));
+        QSharedPointer<Range> r = makeRangeNone();
         QVERIFY(r.data());
-        QVERIFY(r->parent() == this);
+        QVERIFY(!r->parent());
         QVERIFY(!r->hasCell(3, 4));
         QVERIFY(!r->hasCell(0, 0));
     }
@@ -50,9 +50,9 @@ void TestRanges::testRangeAll()
     }
     
     {
-        QScopedPointer<RangeAll> r(makeRangeAll(this));
+        QSharedPointer<RangeAll> r(makeRangeAll());
         QVERIFY(r.data());
-        QVERIFY(r->parent() == this);
+        QVERIFY(!r->parent());
         QVERIFY(r->hasCell(3, 4));
         QVERIFY(r->hasCell(0, 0));
     }
@@ -70,9 +70,9 @@ void TestRanges::testRangeColumn()
     }
     
     {
-        QScopedPointer<RangeColumn> r(makeRangeColumn(4, this));
+        QSharedPointer<RangeColumn> r = makeRangeColumn(4);
         QVERIFY(r.data());
-        QVERIFY(r->parent() == this);
+        QVERIFY(!r->parent());
         QCOMPARE(r->column(), 4u);
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(923, 4), true);
@@ -112,8 +112,8 @@ void TestRanges::testRangeColumns()
     }
     
     {
-        RangeColumns r(3, 6, this);
-        QVERIFY(r.parent() == this);
+        RangeColumns r(3, 6);
+        QVERIFY(!r.parent());
         QVERIFY(!r.hasCell(0, 2));
         QVERIFY(r.hasCell(0, 3));
         QVERIFY(r.hasCell(0, 4));
@@ -122,7 +122,7 @@ void TestRanges::testRangeColumns()
     }
     
     {
-        QScopedPointer<RangeColumns> r(makeRangeColumns(0, 10));
+        QSharedPointer<RangeColumns> r(makeRangeColumns(0, 10));
         QVERIFY(r.data());
         QSet<quint32> columns;
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -148,7 +148,7 @@ void TestRanges::testRangeColumns()
     {
         QSet<quint32> columns;
         columns << 0 << 10;
-        QScopedPointer<RangeColumns> r(makeRangeColumns(columns));
+        QSharedPointer<RangeColumns> r(makeRangeColumns(columns));
         QVERIFY(r.data());
         QVERIFY(r->columns() == columns);
         QVERIFY(r->hasCell(9, 10));
@@ -168,9 +168,9 @@ void TestRanges::testRangeRow()
     }
     
     {
-        QScopedPointer<RangeRow> r(makeRangeRow(4, this));
+        QSharedPointer<RangeRow> r(makeRangeRow(4));
         QVERIFY(r.data());
-        QVERIFY(r->parent() == this);
+        QVERIFY(!r->parent());
         QCOMPARE(r->row(), 4u);
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(4, 923), true);
@@ -210,8 +210,8 @@ void TestRanges::testRangeRows()
     }
     
     {
-        RangeRows r(3, 6, this);
-        QVERIFY(r.parent() == this);
+        RangeRows r(3, 6);
+        QVERIFY(!r.parent());
         QVERIFY(!r.hasCell(2, 0));
         QVERIFY(r.hasCell(3, 0));
         QVERIFY(r.hasCell(4, 0));
@@ -220,7 +220,7 @@ void TestRanges::testRangeRows()
     }
     
     {
-        QScopedPointer<RangeRows> r(makeRangeRows(0, 10));
+        QSharedPointer<RangeRows> r(makeRangeRows(0, 10));
         QVERIFY(r.data());
         QSet<quint32> rows;
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -246,7 +246,7 @@ void TestRanges::testRangeRows()
     {
         QSet<quint32> rows;
         rows << 0 << 10;
-        QScopedPointer<RangeRows> r(makeRangeRows(rows));
+        QSharedPointer<RangeRows> r(makeRangeRows(rows));
         QVERIFY(r.data());
         QVERIFY(r->rows() == rows);
         QVERIFY(r->hasCell(10, 9));

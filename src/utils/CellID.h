@@ -2,8 +2,6 @@
 #define QI_CELL_ID_H
 
 #include "QiAPI.h"
-
-//#include <QPair>
 #include <QHash>
 
 namespace Qi

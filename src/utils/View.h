@@ -1,10 +1,10 @@
 #ifndef QI_VIEW_H
 #define QI_VIEW_H
 
-#include <functional>
-#include <QObject>
-#include <QPainter>
 #include "CellID.h"
+#include "DrawContext.h"
+#include <QObject>
+#include <functional>
 
 namespace Qi
 {
@@ -15,11 +15,11 @@ class QI_EXPORT View: public QObject
     Q_DISABLE_COPY(View)
 
 public:
-    View(QObject* parent = nullptr);
+    View();
     virtual ~View();
     
-    void draw(QPainter& painter, const CellID& cell, const QRect& rect) const;
-    QSize sizeHint(QPainter& painter, const CellID& cell) const;
+    void draw(DrawContext& dc, const CellID& cell, const QRect& rect) const;
+    QSize sizeHint(DrawContext& dc, const CellID& cell) const;
     bool text(const CellID& cell, QString& text) const;
     bool tooltipText(const CellID& cell, QString& text) const;
     
@@ -29,8 +29,8 @@ Q_SIGNALS:
     void viewChanged(const View&);
 
 protected:
-    virtual void drawImpl(QPainter& painter, const CellID& cell, const QRect& rect) const;
-    virtual QSize sizeHintImpl(QPainter& painter, const CellID& cell) const;
+    virtual void drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const;
+    virtual QSize sizeHintImpl(DrawContext& dc, const CellID& cell) const;
     virtual bool textImpl(const CellID& cell, QString& text) const;
 };
 

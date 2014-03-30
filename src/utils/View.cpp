@@ -3,8 +3,7 @@
 namespace Qi
 {
 
-View::View(QObject* parent)
-    : QObject(parent)
+View::View()
 {
 }
 
@@ -12,14 +11,14 @@ View::~View()
 {
 }
 
-void View::draw(QPainter& painter, const CellID& cell, const QRect& rect) const
+void View::draw(DrawContext &dc, const CellID& cell, const QRect& rect) const
 {
-    drawImpl(painter, cell, rect);
+    drawImpl(dc, cell, rect);
 }
 
-QSize View::sizeHint(QPainter& painter, const CellID& cell) const
+QSize View::sizeHint(DrawContext &dc, const CellID& cell) const
 {
-    return sizeHintImpl(painter, cell);
+    return sizeHintImpl(dc, cell);
 }
 
 bool View::text(const CellID& cell, QString& text) const
@@ -35,12 +34,12 @@ bool View::tooltipText(const CellID& cell, QString& text) const
         return false;
 }
 
-void View::drawImpl(QPainter& painter, const CellID& cell, const QRect& rect) const
+void View::drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const
 {
     // do nothing
 }
 
-QSize View::sizeHintImpl(QPainter& painter, const CellID& cell) const
+QSize View::sizeHintImpl(DrawContext& dc, const CellID& cell) const
 {
     // returns an empty size hint
     return QSize(0, 0);
