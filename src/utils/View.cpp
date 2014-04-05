@@ -51,4 +51,4 @@ bool View::textImpl(const CellID& cell, QString& text) const
     return false;
 }
 
-}
+} // end namespace Qi

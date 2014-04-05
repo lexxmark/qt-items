@@ -22,4 +22,4 @@ void GridWidget::paintEvent(QPaintEvent* event)
     painter.drawText(rect(), Qt::AlignCenter, tr("GridWidget"));
 }
 
-}
+} // end namespace Qi

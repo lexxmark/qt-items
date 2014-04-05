@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PropertyWidget Demo</string>
+   <string>Qt-items Demo</string>
   </property>
   <property name="iconSize">
    <size>

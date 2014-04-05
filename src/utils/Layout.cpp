@@ -11,4 +11,4 @@ Layout::~Layout()
 {
 }
 
-}
+} // end namespace Qi

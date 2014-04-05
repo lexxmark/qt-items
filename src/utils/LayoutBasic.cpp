@@ -39,4 +39,4 @@ void LayoutLeft::doExpandSizeImpl(const View& view, const CellID& cell, DrawCont
     size.rheight() = qMax(size.height(), viewSize.height());
 }
 
-}
+} // end namespace Qi

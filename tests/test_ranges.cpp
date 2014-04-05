@@ -4,24 +4,6 @@
 
 using namespace Qi;
 
-struct RangeChangedHandler
-{
-public:
-    RangeChangedHandler()
-        : changeCount(0),
-          lastRange(nullptr)
-    {}
-    
-    void operator ()(const Range& range)
-    {
-        ++changeCount;
-        lastRange = &range;
-    }
-    
-    quint32 changeCount;
-    const Range* lastRange;
-};
-
 void TestRanges::testRangeNone()
 {
     {
@@ -77,16 +59,19 @@ void TestRanges::testRangeColumn()
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(923, 4), true);
         
-        RangeChangedHandler rh;
-        connect(r.data(), &Range::rangeChanged, std::ref(rh));
-        QCOMPARE(rh.changeCount, 0u);
+        int emitCount = 0;
+        auto lSlot = [&emitCount, &r](const Range& _range) {
+            Q_ASSERT(r.data() == &_range);
+            ++emitCount;
+        };
+        connect(r.data(), &Range::rangeChanged, lSlot);
+        QCOMPARE(emitCount, 0);
         
         r->setColumn(4);
-        QCOMPARE(rh.changeCount, 0u);
+        QCOMPARE(emitCount, 0);
         
         r->setColumn(0);
-        QCOMPARE(rh.changeCount, 1u);
-        QCOMPARE(rh.lastRange, r.data());
+        QCOMPARE(emitCount, 1);
         QVERIFY(r->hasCell(23, 0));
         QVERIFY(!r->hasCell(23, 23));
         QVERIFY(!r->hasCell(23, 4));
@@ -128,18 +113,21 @@ void TestRanges::testRangeColumns()
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->columns() == columns);
         
-        RangeChangedHandler rh;
-        connect(r.data(), &Range::rangeChanged, std::ref(rh));
-        QCOMPARE(rh.changeCount, 0u);
+        int emitCount = 0;
+        auto lSlot = [&emitCount, &r](const Range& _range) {
+            Q_ASSERT(r.data() == &_range);
+            ++emitCount;
+        };
+        connect(r.data(), &Range::rangeChanged, lSlot);
+        QCOMPARE(emitCount, 0);
         
         QVERIFY(r->hasCell(10, 6));
         QVERIFY(!r->hasCell(0, 10));
-        QCOMPARE(rh.changeCount, 0u);
+        QCOMPARE(emitCount, 0);
         
         columns << 32;
         r->setColumns(columns);
-        QCOMPARE(rh.changeCount, 1u);
-        QCOMPARE(rh.lastRange, r.data());
+        QCOMPARE(emitCount, 1);
         
         QVERIFY(r->hasCell(72, 32));
         QVERIFY(!r->hasCell(32, 72));
@@ -175,16 +163,19 @@ void TestRanges::testRangeRow()
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(4, 923), true);
         
-        RangeChangedHandler rh;
-        connect(r.data(), &Range::rangeChanged, std::ref(rh));
-        QCOMPARE(rh.changeCount, 0u);
+        int emitCount = 0;
+        auto lSlot = [&emitCount, &r](const Range& _range) {
+            Q_ASSERT(r.data() == &_range);
+            ++emitCount;
+        };
+        connect(r.data(), &Range::rangeChanged, lSlot);
+        QCOMPARE(emitCount, 0);
         
         r->setRow(4);
-        QCOMPARE(rh.changeCount, 0u);
+        QCOMPARE(emitCount, 0);
         
         r->setRow(0);
-        QCOMPARE(rh.changeCount, 1u);
-        QCOMPARE(rh.lastRange, r.data());
+        QCOMPARE(emitCount, 1);
         QVERIFY(r->hasCell(0, 23));
         QVERIFY(!r->hasCell(23, 23));
         QVERIFY(!r->hasCell(4, 23));
@@ -226,18 +217,21 @@ void TestRanges::testRangeRows()
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->rows() == rows);
         
-        RangeChangedHandler rh;
-        connect(r.data(), &Range::rangeChanged, std::ref(rh));
-        QCOMPARE(rh.changeCount, 0u);
+        int emitCount = 0;
+        auto lSlot = [&emitCount, &r](const Range& _range) {
+            Q_ASSERT(r.data() == &_range);
+            ++emitCount;
+        };
+        connect(r.data(), &Range::rangeChanged, lSlot);
+        QCOMPARE(emitCount, 0);
         
         QVERIFY(r->hasCell(6, 10));
         QVERIFY(!r->hasCell(10, 0));
-        QCOMPARE(rh.changeCount, 0u);
+        QCOMPARE(emitCount, 0);
         
         rows << 32;
         r->setRows(rows);
-        QCOMPARE(rh.changeCount, 1u);
-        QCOMPARE(rh.lastRange, r.data());
+        QCOMPARE(emitCount, 1);
         
         QVERIFY(!r->hasCell(72, 32));
         QVERIFY(r->hasCell(32, 72));

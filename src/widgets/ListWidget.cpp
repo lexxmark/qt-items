@@ -22,4 +22,4 @@ void ListWidget::paintEvent(QPaintEvent* event)
     painter.drawText(rect(), Qt::AlignCenter, tr("ListWidget"));
 }
 
-}
+} // end namespace Qi

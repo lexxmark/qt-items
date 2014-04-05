@@ -11,4 +11,4 @@ Range::~Range()
 {
 }
 
-}
+} // end namespace Qi

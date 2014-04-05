@@ -1,6 +1,8 @@
 #include "test_signal.h"
 #include "test_cell_id.h"
 #include "test_ranges.h"
+#include "test_lines.h"
+#include "test_grid.h"
 
 #include <QtTest/QtTest>
 
@@ -16,6 +18,8 @@ int main(int argc, char* argv[])
     tests.append(&TestSignal::staticMetaObject);
     tests.append(&TestCellID::staticMetaObject);
     tests.append(&TestRanges::staticMetaObject);
+    tests.append(&TestLines::staticMetaObject);
+    tests.append(&TestGrid::staticMetaObject);
 
     // run tests
     foreach (const QMetaObject* testMetaObject, tests)

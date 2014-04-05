@@ -1,7 +1,7 @@
 include(../common.pri)
 
 QT       += core
-#QT       += script
+#QT      += script
 QT       += testlib
 
 TARGET = qi-tests
@@ -16,9 +16,13 @@ TEMPLATE = app
 
 HEADERS +=  test_signal.h \
     test_cell_id.h \
-    test_ranges.h
+    test_ranges.h \
+    test_lines.h \
+    test_grid.h
 
 SOURCES +=  main.cpp \
     test_signal.cpp \
     test_cell_id.cpp \
-    test_ranges.cpp
+    test_ranges.cpp \
+    test_lines.cpp \
+    test_grid.cpp
