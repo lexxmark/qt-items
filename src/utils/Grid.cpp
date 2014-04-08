@@ -72,9 +72,19 @@ CellID Grid::toVisible(CellID absoluteCell) const
     return CellID(rows().toVisible(absoluteCell.row), columns().toVisible(absoluteCell.column));
 }
 
+CellID Grid::toVisibleSafe(CellID absoluteCell) const
+{
+    return CellID(rows().toVisibleSafe(absoluteCell.row), columns().toVisibleSafe(absoluteCell.column));
+}
+
 CellID Grid::toAbsolute(CellID visibleCell) const
 {
     return CellID(rows().toAbsolute(visibleCell.row), columns().toAbsolute(visibleCell.column));
+}
+
+CellID Grid::toAbsoluteSafe(CellID visibleCell) const
+{
+    return CellID(rows().toAbsoluteSafe(visibleCell.row), columns().toAbsoluteSafe(visibleCell.column));
 }
 
 CellID Grid::findVisCell(QPoint point) const
@@ -93,6 +103,23 @@ CellID Grid::findVisCell(QPoint point) const
     else
         cell.column = columns().findVisLine(point.x());
 
+    return cell;
+}
+
+CellID Grid::findVisCellExact(QPoint point) const
+{
+    CellID cell;
+    if (visibleDim().isEmpty())
+        return cell;
+
+    QSize size = visibleSize();
+
+    if (point.y() > 0 && point.y() < size.height())
+        cell.row = rows().findVisLine(point.y());
+    
+    if (point.x() > 0 && point.x() < size.width())
+        cell.column = columns().findVisLine(point.x());
+    
     return cell;
 }
 

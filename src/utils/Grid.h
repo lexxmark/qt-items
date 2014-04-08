@@ -35,9 +35,13 @@ public:
     QSize visibleSize() const;
     
     CellID toVisible(CellID absoluteCell) const;
+    CellID toVisibleSafe(CellID absoluteCell) const;
+
     CellID toAbsolute(CellID visibleCell) const;
+    CellID toAbsoluteSafe(CellID visibleCell) const;
     
     CellID findVisCell(QPoint point) const;
+    CellID findVisCellExact(QPoint point) const;
     
 signals:
     void gridChanged(const Grid&, ChangeReason);

@@ -1,6 +1,4 @@
 #include "test_cell_id.h"
-#include "utils/CellID.h"
-#include <QtTest/QtTest>
 
 #include <set>
 

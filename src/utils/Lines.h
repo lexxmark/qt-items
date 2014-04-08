@@ -33,11 +33,15 @@ public:
     void setAllLinesSize(quint32 size);
     bool isSizeSimilar() const;
     
+    // permutation[absolute] = visible
     const QVector<quint32>& permutation() const;
     void setPermutation(const QVector<quint32>& permutation);
     
     quint32 toVisible(quint32 i) const;
+    quint32 toVisibleSafe(quint32 i) const;
+
     quint32 toAbsolute(quint32 i) const;
+    quint32 toAbsoluteSafe(quint32 i) const;
     
     quint32 sizeAtVisLine(quint32 i) const;
     quint32 findVisLine(quint32 sizeAtLine) const;

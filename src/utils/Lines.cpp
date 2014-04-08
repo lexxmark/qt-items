@@ -210,12 +210,20 @@ void Lines::setPermutation(const QVector<quint32>& permutation)
 quint32 Lines::toVisible(quint32 i) const
 {
     validateConverters();
+    
     if (m_convertersCase == CC_ALL_HIDDEN)
         return Invalid;
     else if (m_convertersCase == CC_TRIVIAL)
         return i;
     else
         return m_absToVis[i];
+}
+
+quint32 Lines::toVisibleSafe(quint32 i) const
+{
+    if (i >= m_count)
+        return Invalid;
+    return toVisible(i);
 }
 
 quint32 Lines::toAbsolute(quint32 i) const
@@ -225,6 +233,14 @@ quint32 Lines::toAbsolute(quint32 i) const
         return i;
     else
         return m_visToAbs[i];
+}
+
+quint32 Lines::toAbsoluteSafe(quint32 i) const
+{
+    if (i >= visibleCount())
+        return Invalid;
+    else
+        return toAbsolute(i);
 }
 
 void Lines::invalidateConverters()
