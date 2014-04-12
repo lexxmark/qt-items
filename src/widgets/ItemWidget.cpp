@@ -20,7 +20,7 @@ void ItemWidget::addView(QSharedPointer<View> view, QSharedPointer<Layout> layou
     ViewInfo info;
     info.view = view;
     info.layout = layout;
-    m_views.append(info);
+    m_views.push_back(info);
     
     m_isCacheValid = false;
     m_sizeHint = QSize();

@@ -2,13 +2,16 @@
 #define QI_GRID_H
 
 #include "Lines.h"
-#include "CellID.h"
-#include <QSharedPointer>
+#include "CellsInfo.h"
 #include <QSize>
 #include <QPoint>
 
 namespace Qi
 {
+
+class Range;
+class View;
+class Layout;
 
 class QI_EXPORT Grid: public QObject
 {
@@ -43,6 +46,8 @@ public:
     CellID findVisCell(QPoint point) const;
     CellID findVisCellExact(QPoint point) const;
     
+    void addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
+    
 signals:
     void gridChanged(const Grid&, ChangeReason);
     
@@ -55,6 +60,7 @@ private:
     
     QSharedPointer<Lines> m_rows;
     QSharedPointer<Lines> m_columns;
+    std::vector<CellsInfo> m_cellsInfo;
 };
 
 } // end namespace Qi 

@@ -1,6 +1,6 @@
 include(../common.pri)
 
-QT       += core
+QT       += core widgets
 #QT      += script
 QT       += testlib
 

@@ -19,7 +19,9 @@ enum ChangeReasonFlag
     ChangeReasonLinesCountWeak = 0x0002,
     ChangeReasonLineVisibility = 0x0004,
     ChangeReasonLineSize = 0x0008,
-    ChangeReasonLineOrder = 0x0010
+    ChangeReasonLineOrder = 0x0010,
+    
+    ChangeReasonGridCellsInfo = 0x0020,
 };
 
 Q_DECLARE_FLAGS(ChangeReason, ChangeReasonFlag)

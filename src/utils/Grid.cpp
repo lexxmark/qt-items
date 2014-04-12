@@ -123,6 +123,17 @@ CellID Grid::findVisCellExact(QPoint point) const
     return cell;
 }
 
+void Grid::addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
+{
+    CellsInfo info;
+    info.range = range;
+    info.view = view;
+    info.layout = layout;
+    m_cellsInfo.push_back(info);
+    
+    emit gridChanged(*this, ChangeReasonGridCellsInfo);    
+}
+
 void Grid::connectLinesSignal()
 {
     connect(m_rows.data(), SIGNAL(linesChanged(const Lines&, ChangeReason)), this, SLOT(onLinesChanged(const Lines&, ChangeReason)));

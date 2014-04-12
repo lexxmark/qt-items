@@ -1,15 +1,10 @@
 #include "Cache.h"
+#include "ViewInfo.h"
 
 //#define DEBUG_RECTS
 
 namespace Qi
 {
-
-CacheView::CacheView()
-    : m_view(nullptr),
-      m_layout(nullptr)
-{
-}
 
 CacheView::CacheView(const View* view, const Layout *layout)
     : m_view(view),
@@ -17,11 +12,13 @@ CacheView::CacheView(const View* view, const Layout *layout)
 {
 }
 
-CacheView::CacheView(const CacheView& other)
-    : m_view(other.m_view),
-      m_layout(other.m_layout),
-      m_rect(other.m_rect)
+CacheView::CacheView(CacheView&& other)
+    : m_view(nullptr),
+      m_layout(nullptr)
 {
+    std::swap(m_view, other.m_view);
+    std::swap(m_layout, other.m_layout);
+    std::swap(m_rect, other.m_rect);
 }
 
 CacheView::~CacheView()
@@ -49,22 +46,23 @@ void CacheView::draw(DrawContext& dc, const CellID& cell) const
 }
 
 CacheCell::CacheCell(CellID cell)
-    : cell(cell),
+    : m_cell(cell),
       m_isLayoutValid(false)
 {
 }
 
-void CacheCell::reinit(const QVector<ViewInfo>& views, QRect cellRect)
+void CacheCell::reinit(const std::vector<ViewInfo>& views, QRect cellRect)
 {
-    QVector<CacheView> cacheViews;
+    std::vector<CacheView> cacheViews;
+    cacheViews.reserve(views.size());
     
     for (const auto& viewInfo: views)
     {
-        cacheViews.append(CacheView(viewInfo.view.data(), viewInfo.layout.data()));
+        cacheViews.emplace_back(CacheView(viewInfo.view.data(), viewInfo.layout.data()));
     }
     
     m_rect = cellRect;
-    m_cacheViews.swap(cacheViews);
+    std::swap(m_cacheViews, cacheViews);
     m_isLayoutValid = false;
 }
 
@@ -79,14 +77,14 @@ void CacheCell::draw(DrawContext& dc) const
         QRect availableRect = m_rect;
         for (const auto& cacheView: m_cacheViews)
         {
-            cacheView.doLayout(dc, cell, availableRect);
+            cacheView.doLayout(dc, m_cell, availableRect);
         }
         m_isLayoutValid = true;
     }
 
     for (const auto& cacheView: m_cacheViews)
     {
-        cacheView.draw(dc, cell);
+        cacheView.draw(dc, m_cell);
     }
 }
 
@@ -94,11 +92,10 @@ QSize CacheCell::sizeHint(DrawContext& dc) const
 {
     QSize size(0, 0);
     
-    QVectorIterator<CacheView> rit(m_cacheViews);
-    rit.toBack();
-    while (rit.hasPrevious())
+    // accumulate size in reverse order
+    for (auto rit = m_cacheViews.rbegin(); rit != m_cacheViews.rend(); ++rit)
     {
-        rit.previous().doExpandSize(dc, cell, size);
+        (*rit).doExpandSize(dc, m_cell, size);
     }
     
     return size;

@@ -2,6 +2,7 @@
 #define QI_ITEM_WIDGET_H
 
 #include "../utils/Cache.h"
+#include "../utils/ViewInfo.h"
 #include <QWidget>
 
 namespace Qi
@@ -27,7 +28,7 @@ protected:
 private:
     void validateCacheCell();
     
-    QVector<ViewInfo> m_views;
+    std::vector<ViewInfo> m_views;
     CacheCell m_cache;
     mutable QSize m_sizeHint;
     bool m_isCacheValid;

@@ -40,13 +40,13 @@ void Lines::setCount(quint32 count)
     else
     {
         // init lines visibilities
-        if (m_linesVisibility.isEmpty())
+        if (m_linesVisibility.empty())
         {
             // set default visibility to all lines
-            m_linesVisibility.append(DefaultVisibility);
+            m_linesVisibility.push_back(DefaultVisibility);
         }
         // if there are different visibilities
-        else if (m_linesVisibility.length() > 1)
+        else if (m_linesVisibility.size() > 1)
         {
             m_linesVisibility.resize(count);
             // init extra lines with default visibility
@@ -57,13 +57,13 @@ void Lines::setCount(quint32 count)
         }
         
         // init lines sizes
-        if (m_linesSizes.isEmpty())
+        if (m_linesSizes.empty())
         {
             // set default size to all lines
-            m_linesSizes.append(DefaultSize);
+            m_linesSizes.push_back(DefaultSize);
         }
         // if there are different sizes
-        else if (m_linesSizes.length() > 1)
+        else if (m_linesSizes.size() > 1)
         {
             m_linesSizes.resize(count);
             // set extra lines size to default
@@ -90,7 +90,7 @@ quint32 Lines::visibleCount() const
     if (m_convertersCase == CC_TRIVIAL)
         return m_count;
     else
-        return (quint32)m_visToAbs.length();
+        return (quint32)m_visToAbs.size();
 }
 
 quint32 Lines::visibleSize() const
@@ -105,7 +105,7 @@ quint32 Lines::visibleSize() const
 bool Lines::isLineVisible(quint32 i) const
 {
     if (m_linesVisibility.size() == 1)
-        return m_linesVisibility.first();
+        return m_linesVisibility.front();
     else
         return m_linesVisibility[i];
 }
@@ -113,20 +113,19 @@ bool Lines::isLineVisible(quint32 i) const
 void Lines::setLineVisible(quint32 i, bool isVisible)
 {
     // in case all visibilities are the same
-    if ((m_linesVisibility.length() == 1) && (m_count != 1))
+    if ((m_linesVisibility.size() == 1) && (m_count != 1))
     {
         // do nothing if visibility won't change
-        if (m_linesVisibility.first() == isVisible)
+        if (m_linesVisibility.front() == isVisible)
             return;
         
         // expand visibilities
-        m_linesVisibility.fill(m_linesVisibility.first(), m_count);
+        m_linesVisibility.assign(m_count, m_linesVisibility.front());
     }
     
-    bool& visibility = m_linesVisibility[i];
-    if (visibility != isVisible)
+    if (m_linesVisibility[i] != isVisible)
     {
-        visibility = isVisible;
+        m_linesVisibility[i] = isVisible;
         invalidateConverters();
         emit linesChanged(*this, ChangeReasonLineVisibility);
     }
@@ -134,10 +133,10 @@ void Lines::setLineVisible(quint32 i, bool isVisible)
 
 void Lines::setAllLinesVisible(bool isVisible)
 {
-    QVector<bool> linesVisibility(1, isVisible);
+    std::vector<bool> linesVisibility(1, isVisible);
     if (linesVisibility != m_linesVisibility)
     {
-        m_linesVisibility.swap(linesVisibility);
+        std::swap(m_linesVisibility, linesVisibility);
         invalidateConverters();
         emit linesChanged(*this, ChangeReasonLineVisibility);
     }
@@ -145,13 +144,13 @@ void Lines::setAllLinesVisible(bool isVisible)
 
 bool Lines::isVisibilitySimilar() const
 {
-    return m_linesVisibility.length() == 1;
+    return m_linesVisibility.size() == 1;
 }
 
 quint32 Lines::lineSize(quint32 i) const
 {
-    if (m_linesSizes.length() == 1)
-        return m_linesSizes.first();
+    if (m_linesSizes.size() == 1)
+        return m_linesSizes.front();
     else
         return m_linesSizes[i];
 }
@@ -159,14 +158,14 @@ quint32 Lines::lineSize(quint32 i) const
 void Lines::setLineSize(quint32 i, quint32 size)
 {
     // in case all sizes are the same
-    if ((m_linesSizes.length() == 1) && (m_count != 1))
+    if ((m_linesSizes.size() == 1) && (m_count != 1))
     {
         // do nothing if size won't change
-        if (m_linesSizes.first() == size)
+        if (m_linesSizes.front() == size)
             return;
         
         // expand sizes
-        m_linesSizes.fill(m_linesSizes.first(), m_count);
+        m_linesSizes.assign(m_count, m_linesSizes.front());
     }
 
     quint32& lineSize = m_linesSizes[i];
@@ -179,28 +178,28 @@ void Lines::setLineSize(quint32 i, quint32 size)
 
 void Lines::setAllLinesSize(quint32 size)
 {
-    QVector<quint32> linesSizes(1, size);
+    std::vector<quint32> linesSizes(1, size);
     if (linesSizes != m_linesSizes)
     {
-        m_linesSizes.swap(linesSizes);
+        std::swap(m_linesSizes, linesSizes);
         emit linesChanged(*this, ChangeReasonLineSize);
     }
 }
 
 bool Lines::isSizeSimilar() const
 {
-    return m_linesSizes.length() == 1;
+    return m_linesSizes.size() == 1;
 }
 
-const QVector<quint32>& Lines::permutation() const
+const std::vector<quint32>& Lines::permutation() const
 {
     return m_permutation;
 }
 
-void Lines::setPermutation(const QVector<quint32>& permutation)
+void Lines::setPermutation(const std::vector<quint32>& permutation)
 {
     // at least sizes should be equal
-    Q_ASSERT((quint32)permutation.length() == m_count);
+    Q_ASSERT((quint32)permutation.size() == m_count);
     
     m_permutation = permutation;
     invalidateConverters();
@@ -263,7 +262,7 @@ void Lines::validateConverters() const
         m_absToVis.clear();
         m_convertersCase = CC_ALL_HIDDEN;
     }
-    else if (m_permutation.isEmpty() && isVisibilitySimilar())
+    else if (m_permutation.empty() && isVisibilitySimilar())
     {
         m_visToAbs.clear();
         m_absToVis.clear();
@@ -272,15 +271,15 @@ void Lines::validateConverters() const
     else
     {
         // find inverted permutation
-        QVector<quint32> permutationInv(m_count);
-        if (m_permutation.isEmpty())
+        std::vector<quint32> permutationInv(m_count);
+        if (m_permutation.empty())
         {
             for (quint32 i = 0; i < m_count; ++i)
                 permutationInv[i] = i;
         }
         else
         {
-            Q_ASSERT((quint32)m_permutation.length() == m_count);
+            Q_ASSERT((quint32)m_permutation.size() == m_count);
             for (quint32 i = 0; i < m_count; ++i)
                 permutationInv[m_permutation[i]] = i;
         }
@@ -291,7 +290,7 @@ void Lines::validateConverters() const
             // all lines visible
             if (isLineVisible(0))
             {
-                m_visToAbs.swap(permutationInv);
+                std::swap(m_visToAbs, permutationInv);
                 m_convertersCase = CC_MAPPED;
             }
             // all lines invisible
@@ -307,21 +306,21 @@ void Lines::validateConverters() const
             for (quint32 i = 0; i < m_count; ++i)
             {
                 if (isLineVisible(permutationInv[i]))
-                    m_visToAbs.append(permutationInv[i]);
+                    m_visToAbs.push_back(permutationInv[i]);
             }
             m_convertersCase = CC_MAPPED;
         }
         
         // init absolute to visible conversion
-        if (m_visToAbs.isEmpty())
+        if (m_visToAbs.empty())
         {
             m_absToVis.clear();
             m_convertersCase = CC_ALL_HIDDEN;
         }
         else
         {
-            m_absToVis.fill(Invalid, m_count);
-            for (quint32 i = 0, n = m_visToAbs.length(); i < n; ++i)
+            m_absToVis.assign(m_count, Invalid);
+            for (quint32 i = 0, n = m_visToAbs.size(); i < n; ++i)
             {
                 m_absToVis[m_visToAbs[i]] = i;
             }
@@ -342,7 +341,7 @@ void Lines::validateSizeAtLine() const
     {
         quint32 totalSize = 0;
         m_sizeAtLine.resize(m_visToAbs.size());
-        for (quint32 i = 0, n = m_sizeAtLine.length(); i < n; ++i)
+        for (quint32 i = 0, n = m_sizeAtLine.size(); i < n; ++i)
         {
             totalSize = totalSize + lineSize(m_visToAbs[i]);
             m_sizeAtLine[i] = totalSize;
@@ -361,7 +360,7 @@ quint32 Lines::sizeAtVisLine(quint32 i) const
         return m_sizeAtLine[i];
 }
 
-static quint32 findValue(const QVector<quint32>& values, int a, int b, quint32 value)
+static quint32 findValue(const std::vector<quint32>& values, int a, int b, quint32 value)
 {
     if (a == b)
         return a;
@@ -393,10 +392,10 @@ quint32 Lines::findVisLine(quint32 sizeAtLine) const
         return qMin(sizeAtLine / lineSize(0), visibleCount() - 1);
     else
     {
-        if (sizeAtLine >= m_sizeAtLine.last())
-            return m_sizeAtLine.length() - 1;
+        if (sizeAtLine >= m_sizeAtLine.back())
+            return m_sizeAtLine.size() - 1;
         else
-            return findValue(m_sizeAtLine, 0, m_sizeAtLine.length() - 1, sizeAtLine);
+            return findValue(m_sizeAtLine, 0, m_sizeAtLine.size() - 1, sizeAtLine);
     }
 }
 

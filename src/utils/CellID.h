@@ -22,6 +22,12 @@ public:
     {}
 
     bool isValid() const { return (row != Invalid) && (column != Invalid); }
+    
+    void swap(CellID& other)
+    {
+        std::swap(row, other.row);
+        std::swap(column, other.column);
+    }
 };
 
 inline bool operator==(CellID left, CellID right)

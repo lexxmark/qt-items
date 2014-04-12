@@ -3,7 +3,7 @@
 
 #include "../QiAPI.h"
 #include <QObject>
-#include <QVector>
+#include <vector>
 
 namespace Qi
 {
@@ -34,8 +34,8 @@ public:
     bool isSizeSimilar() const;
     
     // permutation[absolute] = visible
-    const QVector<quint32>& permutation() const;
-    void setPermutation(const QVector<quint32>& permutation);
+    const std::vector<quint32>& permutation() const;
+    void setPermutation(const std::vector<quint32>& permutation);
     
     quint32 toVisible(quint32 i) const;
     quint32 toVisibleSafe(quint32 i) const;
@@ -56,11 +56,11 @@ private:
     
     quint32 m_count;
     // if (m_linesVisibility.length() == 1) => all lines has similar visibility
-    QVector<bool> m_linesVisibility;
+    std::vector<bool> m_linesVisibility;
     // if (m_linesSizes.length() == 1) => all lines has similar size
-    QVector<quint32> m_linesSizes;
+    std::vector<quint32> m_linesSizes;
     // if (m_permutation.isEmpty()) => lines are not ordered
-    QVector<quint32> m_permutation;
+    std::vector<quint32> m_permutation;
 
     enum CONVERTER_CASE
     {
@@ -74,14 +74,14 @@ private:
     // cases of conversion
     mutable CONVERTER_CASE m_convertersCase;
     // m_visToAbs[visibleIndex] = absoluteIndex
-    mutable QVector<quint32> m_visToAbs;
+    mutable std::vector<quint32> m_visToAbs;
     // m_absToVis[absoluteIndex] = visibleIndex | Invalid
-    mutable QVector<quint32> m_absToVis;
+    mutable std::vector<quint32> m_absToVis;
     
     // tracks validation of the m_sizeAtLine member
     mutable bool m_isSizeAtLineValid;
     // m_sizeAtLine[visibleIndex] = distance from 0 to the end of visibleIndex line
-    mutable QVector<quint32> m_sizeAtLine;
+    mutable std::vector<quint32> m_sizeAtLine;
 };
 
 } // end namespace Qi 

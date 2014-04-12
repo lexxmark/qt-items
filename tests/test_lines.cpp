@@ -193,7 +193,7 @@ void TestLines::testAbsVsVis()
     };
     QMetaObject::Connection cid = QObject::connect(&lines, &Lines::linesChanged, lSlot);
     
-    QVector<quint32> permutation(10);
+    std::vector<quint32> permutation(10);
     permutation[0] = 3;
     permutation[1] = 8;
     permutation[2] = 1;
@@ -288,7 +288,7 @@ void TestLines::testSizeAtLine()
     lines.setLineVisible(3, false);
     lines.setLineVisible(5, false);
     
-    QVector<quint32> permutation(10);
+    std::vector<quint32> permutation(10);
     permutation[0] = 6;
     permutation[1] = 4;
     permutation[2] = 1;
