@@ -9,8 +9,8 @@ void TestLines::testCount()
     Lines lines;
 
     int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines& _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == &_lines);
+    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
+        Q_ASSERT(&lines == _lines);
         Q_ASSERT(reason & (ChangeReasonLinesCount|ChangeReasonLinesCountWeak));
         if (reason & ChangeReasonLinesCount)
             ++emitCount;
@@ -45,8 +45,8 @@ void TestLines::testVisibility()
     lines.setCount(10);
     
     int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines& _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == &_lines);
+    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
+        Q_ASSERT(&lines == _lines);
         if (reason & ChangeReasonLineVisibility)
             ++emitCount;
     };
@@ -103,8 +103,8 @@ void TestLines::testSizes()
     lines.setCount(10);
     
     int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines& _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == &_lines);
+    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
+        Q_ASSERT(&lines == _lines);
         if (reason & ChangeReasonLineSize)
             ++emitCount;
     };
@@ -186,8 +186,8 @@ void TestLines::testAbsVsVis()
     QCOMPARE(lines.toAbsolute(9), 9u);
     
     int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines& _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == &_lines);
+    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
+        Q_ASSERT(&lines == _lines);
         if (reason & ChangeReasonLineOrder)
             ++emitCount;
     };

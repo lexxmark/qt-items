@@ -26,7 +26,7 @@ public:
     std::function<bool(const CellID& cell, QString& text)> tooltipTextCallback;
     
 Q_SIGNALS:
-    void viewChanged(const View&);
+    void viewChanged(const View*);
 
 protected:
     virtual void drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const;

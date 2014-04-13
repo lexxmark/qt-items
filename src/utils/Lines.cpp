@@ -27,7 +27,7 @@ void Lines::setCount(quint32 count)
 {
     if (m_count == count)
     {
-        emit linesChanged(*this, ChangeReasonLinesCountWeak);
+        emit linesChanged(this, ChangeReasonLinesCountWeak);
         return;
     }
     
@@ -80,7 +80,7 @@ void Lines::setCount(quint32 count)
     invalidateConverters();
 
     m_count = count;
-    emit linesChanged(*this, ChangeReasonLinesCount|ChangeReasonLinesCountWeak);
+    emit linesChanged(this, ChangeReasonLinesCount|ChangeReasonLinesCountWeak);
 }
 
 quint32 Lines::visibleCount() const
@@ -127,7 +127,7 @@ void Lines::setLineVisible(quint32 i, bool isVisible)
     {
         m_linesVisibility[i] = isVisible;
         invalidateConverters();
-        emit linesChanged(*this, ChangeReasonLineVisibility);
+        emit linesChanged(this, ChangeReasonLineVisibility);
     }
 }
 
@@ -138,7 +138,7 @@ void Lines::setAllLinesVisible(bool isVisible)
     {
         std::swap(m_linesVisibility, linesVisibility);
         invalidateConverters();
-        emit linesChanged(*this, ChangeReasonLineVisibility);
+        emit linesChanged(this, ChangeReasonLineVisibility);
     }
 }
 
@@ -172,7 +172,7 @@ void Lines::setLineSize(quint32 i, quint32 size)
     if (lineSize != size)
     {
         lineSize = size;
-        emit linesChanged(*this, ChangeReasonLineSize);
+        emit linesChanged(this, ChangeReasonLineSize);
     }
 }
 
@@ -182,7 +182,7 @@ void Lines::setAllLinesSize(quint32 size)
     if (linesSizes != m_linesSizes)
     {
         std::swap(m_linesSizes, linesSizes);
-        emit linesChanged(*this, ChangeReasonLineSize);
+        emit linesChanged(this, ChangeReasonLineSize);
     }
 }
 
@@ -203,7 +203,7 @@ void Lines::setPermutation(const std::vector<quint32>& permutation)
     
     m_permutation = permutation;
     invalidateConverters();
-    emit linesChanged(*this, ChangeReasonLineOrder);
+    emit linesChanged(this, ChangeReasonLineOrder);
 }
 
 quint32 Lines::toVisible(quint32 i) const

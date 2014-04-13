@@ -1,7 +1,7 @@
 #ifndef QI_DRAWCONTEXT_H
 #define QI_DRAWCONTEXT_H
 
-#include "QiAPI.h"
+#include "../QiAPI.h"
 #include <QPainter>
 #include <QStyle>
 #include <QWidget>

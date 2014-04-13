@@ -131,24 +131,25 @@ void Grid::addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer
     info.layout = layout;
     m_cellsInfo.push_back(info);
     
-    emit gridChanged(*this, ChangeReasonGridCellsInfo);    
+    emit gridChanged(this, ChangeReasonGridCellsInfo);
 }
 
 void Grid::connectLinesSignal()
 {
-    connect(m_rows.data(), SIGNAL(linesChanged(const Lines&, ChangeReason)), this, SLOT(onLinesChanged(const Lines&, ChangeReason)));
-    connect(m_columns.data(), SIGNAL(linesChanged(const Lines&, ChangeReason)), this, SLOT(onLinesChanged(const Lines&, ChangeReason)));
+    connect(m_rows.data(), SIGNAL(linesChanged(const Lines*, ChangeReason)), this, SLOT(onLinesChanged(const Lines*, ChangeReason)));
+    connect(m_columns.data(), SIGNAL(linesChanged(const Lines*, ChangeReason)), this, SLOT(onLinesChanged(const Lines*, ChangeReason)));
 }
 
 void Grid::disconnectLinesSignal()
 {
-    disconnect(m_rows.data(), SIGNAL(linesChanged(const Lines&, ChangeReason)), this, SLOT(onLinesChanged(const Lines&, ChangeReason)));
-    disconnect(m_columns.data(), SIGNAL(linesChanged(const Lines&, ChangeReason)), this, SLOT(onLinesChanged(const Lines&, ChangeReason)));
+    disconnect(m_rows.data(), SIGNAL(linesChanged(const Lines*, ChangeReason)), this, SLOT(onLinesChanged(const Lines*, ChangeReason)));
+    disconnect(m_columns.data(), SIGNAL(linesChanged(const Lines*, ChangeReason)), this, SLOT(onLinesChanged(const Lines*, ChangeReason)));
 }
 
-void Grid::onLinesChanged(const Lines& lines, ChangeReason reason)
+void Grid::onLinesChanged(const Lines* lines, ChangeReason reason)
 {
-    emit gridChanged(*this, reason);
+    Q_ASSERT(lines);
+    emit gridChanged(this, reason);
 }
 
 } // end namespace Qi

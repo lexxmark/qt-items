@@ -6,7 +6,7 @@ TARGET = qt-items
 TEMPLATE = lib
 VERSION = 0.0.1
 
-DEFINES += QI_LIBRARY
+DEFINES += QT_ITEMS_LIBRARY
 
 SOURCES += QiAPI.cpp \
     utils/Range.cpp \

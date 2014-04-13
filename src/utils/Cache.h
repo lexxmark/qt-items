@@ -27,6 +27,8 @@ public:
     // draws m_view within m_rects
     void draw(DrawContext& dc, const CellID& cell) const;
 
+    CacheView& operator=(CacheView&& other);
+
 protected:
     const View* m_view;
     const Layout* m_layout;

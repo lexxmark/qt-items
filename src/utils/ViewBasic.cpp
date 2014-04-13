@@ -36,7 +36,7 @@ void ViewCheck::drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect)
 
     QStyleOptionButton styleOption;
     styleOption.initFrom(dc.widget);
-    styleOption.state = QStyle::State_Enabled | check ? QStyle::State_On : QStyle::State_Off;
+    styleOption.state = QStyle::State_Enabled | (check ? QStyle::State_On : QStyle::State_Off);
     
     dc.style->drawControl(QStyle::CE_CheckBox, &styleOption, dc.painter, dc.widget);
 }
@@ -47,7 +47,7 @@ QSize ViewCheck::sizeHintImpl(DrawContext& dc, const CellID& cell) const
 
     QStyleOptionButton styleOption;
     styleOption.initFrom(dc.widget);
-    styleOption.state = QStyle::State_Enabled | check ? QStyle::State_On : QStyle::State_Off;
+    styleOption.state = QStyle::State_Enabled | (check ? QStyle::State_On : QStyle::State_Off);
     return dc.style->sizeFromContents(QStyle::CT_CheckBox, &styleOption, QSize(0, 0), dc.widget);
 }
 

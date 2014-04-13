@@ -20,7 +20,7 @@ public:
     bool hasCell(quint32 row, quint32 column) const { return hasCell(CellID(row, column)); }
     
 Q_SIGNALS:
-    void rangeChanged(const Range&);
+    void rangeChanged(const Range*);
 
 protected:
     virtual bool hasCellImpl(const CellID &cell) const = 0;

@@ -60,8 +60,8 @@ void TestRanges::testRangeColumn()
         QCOMPARE(r->hasCell(923, 4), true);
         
         int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range& _range) {
-            Q_ASSERT(r.data() == &_range);
+        auto lSlot = [&emitCount, &r](const Range* _range) {
+            Q_ASSERT(r.data() == _range);
             ++emitCount;
         };
         connect(r.data(), &Range::rangeChanged, lSlot);
@@ -114,8 +114,8 @@ void TestRanges::testRangeColumns()
         QVERIFY(r->columns() == columns);
         
         int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range& _range) {
-            Q_ASSERT(r.data() == &_range);
+        auto lSlot = [&emitCount, &r](const Range* _range) {
+            Q_ASSERT(r.data() == _range);
             ++emitCount;
         };
         connect(r.data(), &Range::rangeChanged, lSlot);
@@ -164,8 +164,8 @@ void TestRanges::testRangeRow()
         QCOMPARE(r->hasCell(4, 923), true);
         
         int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range& _range) {
-            Q_ASSERT(r.data() == &_range);
+        auto lSlot = [&emitCount, &r](const Range* _range) {
+            Q_ASSERT(r.data() == _range);
             ++emitCount;
         };
         connect(r.data(), &Range::rangeChanged, lSlot);
@@ -218,8 +218,8 @@ void TestRanges::testRangeRows()
         QVERIFY(r->rows() == rows);
         
         int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range& _range) {
-            Q_ASSERT(r.data() == &_range);
+        auto lSlot = [&emitCount, &r](const Range* _range) {
+            Q_ASSERT(r.data() == _range);
             ++emitCount;
         };
         connect(r.data(), &Range::rangeChanged, lSlot);

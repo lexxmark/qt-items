@@ -25,6 +25,14 @@ CacheView::~CacheView()
 {
 }
 
+CacheView& CacheView::operator=(CacheView&& other)
+{
+    std::swap(m_view, other.m_view);
+    std::swap(m_layout, other.m_layout);
+    std::swap(m_rect, other.m_rect);
+    return *this;
+}
+
 void CacheView::doLayout(DrawContext& dc, const CellID& cell, QRect& availableRect) const
 {
     m_rect = QRect(0, 0, 0, 0);

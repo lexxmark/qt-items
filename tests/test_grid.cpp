@@ -19,8 +19,8 @@ void TestGrid::test()
     QCOMPARE(grid.dim(), QSize(12, 10));
 
     int emitCount = 0;
-    auto lSlot = [&emitCount, &grid](const Grid& _grid, ChangeReason reason) {
-        Q_ASSERT(&grid == &_grid);
+    auto lSlot = [&emitCount, &grid](const Grid* _grid, ChangeReason reason) {
+        Q_ASSERT(&grid == _grid);
         ++emitCount;
     };
     connect(&grid, &Grid::gridChanged, lSlot);

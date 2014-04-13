@@ -49,10 +49,10 @@ public:
     void addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
     
 signals:
-    void gridChanged(const Grid&, ChangeReason);
+    void gridChanged(const Grid*, ChangeReason);
     
 private slots:
-    void onLinesChanged(const Lines& lines, ChangeReason reason);
+    void onLinesChanged(const Lines* lines, ChangeReason reason);
     
 private:
     void connectLinesSignal();

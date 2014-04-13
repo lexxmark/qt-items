@@ -19,7 +19,7 @@ public:
     void doExpandSize(const View& view, const CellID& cell, DrawContext& dc, QSize& size) const { doExpandSizeImpl(view, cell, dc, size); }
     
 Q_SIGNALS:
-    void layoutChanged(const Layout&);
+    void layoutChanged(const Layout*);
 
 protected:
     virtual void doLayoutImpl(const View& view, const CellID& cell, DrawContext& dc, QRect& availableRect, QRect& viewRect) const = 0;

@@ -47,7 +47,7 @@ public:
     quint32 findVisLine(quint32 sizeAtLine) const;
 
 Q_SIGNALS:
-    void linesChanged(const Lines&, ChangeReason);
+    void linesChanged(const Lines*, ChangeReason);
 
 private:
     void invalidateConverters();

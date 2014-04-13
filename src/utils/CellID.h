@@ -1,7 +1,7 @@
 #ifndef QI_CELL_ID_H
 #define QI_CELL_ID_H
 
-#include "QiAPI.h"
+#include "../QiAPI.h"
 #include <QHash>
 
 namespace Qi

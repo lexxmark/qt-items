@@ -41,7 +41,7 @@ void RangeColumn::setColumn(quint32 column)
     if (column != m_column)
     {
         m_column = column;
-        emit rangeChanged(*this);
+        emit rangeChanged(this);
     }
 }
 
@@ -52,7 +52,7 @@ bool RangeColumn::hasCellImpl(const CellID &cell) const
 
 QSharedPointer<RangeColumn> makeRangeColumn(quint32 column)
 {
-    return QSharedPointer<RangeColumn>::create(column);
+    return QSharedPointer<RangeColumn>(new RangeColumn(column));
 }
 
 RangeColumns::RangeColumns(const QSet<quint32>& columns)
@@ -72,7 +72,7 @@ void RangeColumns::setColumns(const QSet<quint32>& columns)
     if (m_columns != columns)
     {
         m_columns = columns;
-        emit rangeChanged(*this);
+        emit rangeChanged(this);
     }
 }
 
@@ -83,12 +83,12 @@ bool RangeColumns::hasCellImpl(const CellID &cell) const
 
 QSharedPointer<RangeColumns> makeRangeColumns(const QSet<quint32>& columns)
 {
-    return QSharedPointer<RangeColumns>::create(columns);
+    return QSharedPointer<RangeColumns>(new RangeColumns(columns));
 }
 
 QSharedPointer<RangeColumns> makeRangeColumns(quint32 columnBegin, quint32 columnEnd)
 {
-    return QSharedPointer<RangeColumns>::create(columnBegin, columnEnd);
+    return QSharedPointer<RangeColumns>(new RangeColumns(columnBegin, columnEnd));
 }
 
 RangeRow::RangeRow(quint32 row)
@@ -101,7 +101,7 @@ void RangeRow::setRow(quint32 row)
     if (row != m_row)
     {
         m_row = row;
-        emit rangeChanged(*this);
+        emit rangeChanged(this);
     }
 }
 
@@ -112,7 +112,7 @@ bool RangeRow::hasCellImpl(const CellID &cell) const
 
 QSharedPointer<RangeRow> makeRangeRow(quint32 row)
 {
-    return QSharedPointer<RangeRow>::create(row);
+    return QSharedPointer<RangeRow>(new RangeRow(row));
 }
 
 RangeRows::RangeRows(const QSet<quint32>& rows)
@@ -132,7 +132,7 @@ void RangeRows::setRows(const QSet<quint32>& rows)
     if (m_rows != rows)
     {
         m_rows = rows;
-        emit rangeChanged(*this);
+        emit rangeChanged(this);
     }
 }
 
@@ -143,12 +143,12 @@ bool RangeRows::hasCellImpl(const CellID &cell) const
 
 QSharedPointer<RangeRows> makeRangeRows(const QSet<quint32>& rows)
 {
-    return QSharedPointer<RangeRows>::create(rows);
+    return QSharedPointer<RangeRows>(new RangeRows(rows));
 }
 
 QSharedPointer<RangeRows> makeRangeRows(quint32 rowBegin, quint32 rowEnd)
 {
-    return QSharedPointer<RangeRows>::create(rowBegin, rowEnd);
+    return QSharedPointer<RangeRows>(new RangeRows(rowBegin, rowEnd));
 }
 
 } // end namespace Qi
