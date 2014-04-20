@@ -8,26 +8,25 @@
 namespace Qi
 {
 
-struct ViewInfo;
+struct ViewSchema;
 
 class QI_EXPORT CacheView
 {
     Q_DISABLE_COPY(CacheView)
 
 public:
-    //CacheView();
     CacheView(const View* view, const Layout* layout);
     CacheView(CacheView&& other);
     ~CacheView();
     
-    // initializes m_rect according to m_layout
-    void doLayout(DrawContext& dc, const CellID& cell, QRect& availableRect) const;
-    // expands size according to m_layout
-    void doExpandSize(DrawContext& dc, const CellID& cell, QSize& size) const;
-    // draws m_view within m_rects
-    void draw(DrawContext& dc, const CellID& cell) const;
-
     CacheView& operator=(CacheView&& other);
+
+    // initializes m_rect according to m_layout
+    void doLayout(const QWidget* widget, const CellID& cell, QRect& availableRect) const;
+    // expands size according to m_layout
+    void doExpandSize(const QWidget* widget, const CellID& cell, QSize& size) const;
+    // draws m_view within m_rects
+    void draw(QPainter* painter, const QWidget* widget, const CellID& cell) const;
 
 protected:
     const View* m_view;
@@ -41,33 +40,17 @@ class QI_EXPORT CacheCell
 
 public:
     explicit CacheCell(CellID cell);
+    CacheCell(CacheCell&& other);
 
-    CacheCell(CacheCell&& other)
-        : m_isLayoutValid(false)
-    {
-        swap(other);
-    }
+    CacheCell& operator=(CacheCell&& other);
+    void swap(CacheCell& other);
 
-    CacheCell& operator=(CacheCell&& other)
-    {
-        swap(other);
-        return *this;
-    }
-    
     const CellID& cell() const { return m_cell; }
     
-    void reinit(const std::vector<ViewInfo>& views, QRect cellRect);
+    void reinit(const std::vector<ViewSchema>& views, QRect cellRect);
     
-    void draw(DrawContext& dc) const;
-    QSize sizeHint(DrawContext& dc) const;
-    
-    void swap(CacheCell& other)
-    {
-        std::swap(m_cell, other.m_cell);
-        std::swap(m_rect, other.m_rect);
-        std::swap(m_cacheViews, other.m_cacheViews);
-        std::swap(m_isLayoutValid, other.m_isLayoutValid);
-    }
+    void draw(QPainter* painter, const QWidget* widget) const;
+    QSize sizeHint(const QWidget* widget) const;
     
 protected:
     CellID m_cell;

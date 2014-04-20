@@ -2,8 +2,8 @@
 #define QI_VIEW_H
 
 #include "CellID.h"
-#include "DrawContext.h"
-#include <QObject>
+#include <QWidget>
+#include <QPainter>
 #include <functional>
 
 namespace Qi
@@ -18,8 +18,8 @@ public:
     View();
     virtual ~View();
     
-    void draw(DrawContext& dc, const CellID& cell, const QRect& rect) const;
-    QSize sizeHint(DrawContext& dc, const CellID& cell) const;
+    void draw(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const;
+    QSize sizeHint(const QWidget* widget, const CellID& cell) const;
     bool text(const CellID& cell, QString& text) const;
     bool tooltipText(const CellID& cell, QString& text) const;
     
@@ -29,8 +29,8 @@ Q_SIGNALS:
     void viewChanged(const View*);
 
 protected:
-    virtual void drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const;
-    virtual QSize sizeHintImpl(DrawContext& dc, const CellID& cell) const;
+    virtual void drawImpl(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const;
+    virtual QSize sizeHintImpl(const QWidget* widget, const CellID& cell) const;
     virtual bool textImpl(const CellID& cell, QString& text) const;
 };
 

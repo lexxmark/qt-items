@@ -15,12 +15,14 @@ SOURCES += QiAPI.cpp \
     utils/LayoutBasic.cpp \
     utils/View.cpp \
     utils/ViewBasic.cpp \
+    utils/ViewGrid.cpp \
     utils/Cache.cpp \
     utils/CacheGrid.cpp \
     utils/Lines.cpp \
     utils/Grid.cpp \
-    widgets/GridWidget.cpp \
+    widgets/ItemWidget_p.cpp \
     widgets/ItemWidget.cpp \
+    widgets/GridWidget.cpp \
     widgets/ListWidget.cpp
 
 HEADERS +=  QiAPI.h \
@@ -32,15 +34,15 @@ HEADERS +=  QiAPI.h \
     utils/LayoutBasic.h \
     utils/View.h \
     utils/ViewBasic.h \
-    utils/DrawContext.h \
+    utils/ViewGrid.h \
     utils/Cache.h \
     utils/CacheGrid.h \
     utils/Lines.h \
     utils/Grid.h \
-    utils/CellsInfo.h \
-    utils/ViewInfo.h \
-    widgets/GridWidget.h \
+    utils/CellsSchema.h \
+    widgets/ItemWidget_p.h \
     widgets/ItemWidget.h \
+    widgets/GridWidget.h \
     widgets/ListWidget.h
 
 win32 {

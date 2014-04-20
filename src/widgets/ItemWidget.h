@@ -2,21 +2,23 @@
 #define QI_ITEM_WIDGET_H
 
 #include "../utils/Cache.h"
-#include "../utils/ViewInfo.h"
+#include "../utils/CellsSchema.h"
 #include <QWidget>
 
 namespace Qi
 {
+
+class ItemWidgetPrivate;
 
 class QI_EXPORT ItemWidget: public QWidget
 {
     Q_OBJECT
 
 public:
-    ItemWidget(QWidget *parent = nullptr);
+    explicit ItemWidget(QWidget *parent = nullptr);
     virtual ~ItemWidget();
     
-    void addView(QSharedPointer<View> view, QSharedPointer<Layout> layout);
+    void addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -26,12 +28,7 @@ protected:
     void resizeEvent(QResizeEvent * event) override;
     
 private:
-    void validateCacheCell();
-    
-    std::vector<ViewInfo> m_views;
-    CacheCell m_cache;
-    mutable QSize m_sizeHint;
-    bool m_isCacheValid;
+    QScopedPointer<ItemWidgetPrivate> d;
 };
 
 } // end namespace Qi

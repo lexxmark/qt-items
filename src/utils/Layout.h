@@ -15,15 +15,15 @@ public:
     Layout();
     virtual ~Layout();
     
-    void doLayout(const View& view, const CellID& cell, DrawContext& dc, QRect& availableRect, QRect& viewRect) const { doLayoutImpl(view, cell, dc, availableRect, viewRect); }
-    void doExpandSize(const View& view, const CellID& cell, DrawContext& dc, QSize& size) const { doExpandSizeImpl(view, cell, dc, size); }
+    void doLayout(const View* view, const CellID& cell, const QWidget* widget, QRect& availableRect, QRect& viewRect) const { doLayoutImpl(view, cell, widget, availableRect, viewRect); }
+    void doExpandSize(const View* view, const CellID& cell, const QWidget* widget, QSize& size) const { doExpandSizeImpl(view, cell, widget, size); }
     
 Q_SIGNALS:
     void layoutChanged(const Layout*);
 
 protected:
-    virtual void doLayoutImpl(const View& view, const CellID& cell, DrawContext& dc, QRect& availableRect, QRect& viewRect) const = 0;
-    virtual void doExpandSizeImpl(const View& view, const CellID& cell, DrawContext& dc, QSize& size) const = 0;
+    virtual void doLayoutImpl(const View* view, const CellID& cell, const QWidget* widget, QRect& availableRect, QRect& viewRect) const = 0;
+    virtual void doExpandSizeImpl(const View* view, const CellID& cell, const QWidget* widget, QSize& size) const = 0;
 };
 
 } // end namespace Qi

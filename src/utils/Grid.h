@@ -2,7 +2,7 @@
 #define QI_GRID_H
 
 #include "Lines.h"
-#include "CellsInfo.h"
+#include "CellsSchema.h"
 #include <QSize>
 #include <QPoint>
 
@@ -46,7 +46,9 @@ public:
     CellID findVisCell(QPoint point) const;
     CellID findVisCellExact(QPoint point) const;
     
-    void addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
+    const std::vector<CellsSchema>& cellsSchemas() const { return m_cellsSchemas; }
+
+    void addCellsSchema(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
     
 signals:
     void gridChanged(const Grid*, ChangeReason);
@@ -60,7 +62,7 @@ private:
     
     QSharedPointer<Lines> m_rows;
     QSharedPointer<Lines> m_columns;
-    std::vector<CellsInfo> m_cellsInfo;
+    std::vector<CellsSchema> m_cellsSchemas;
 };
 
 } // end namespace Qi 

@@ -15,8 +15,8 @@ public:
     ViewText();
 
 protected:
-    void drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const override;
-    QSize sizeHintImpl(DrawContext& dc, const CellID& cell) const override;
+    void drawImpl(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const override;
+    QSize sizeHintImpl(const QWidget* widget, const CellID& cell) const override;
     bool textImpl(const CellID& cell, QString& text) const override;
 };
 
@@ -29,8 +29,8 @@ public:
     ViewCheck();
 
 protected:
-    void drawImpl(DrawContext& dc, const CellID& cell, const QRect& rect) const override;
-    QSize sizeHintImpl(DrawContext& dc, const CellID& cell) const override;
+    void drawImpl(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const override;
+    QSize sizeHintImpl(const QWidget* widget, const CellID& cell) const override;
     bool textImpl(const CellID& cell, QString& text) const override;
 };
 

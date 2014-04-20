@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 #include "utils/ViewBasic.h"
 #include "utils/LayoutBasic.h"
+#include "utils/RangesBasic.h"
 
 using namespace Qi;
 
@@ -11,14 +12,32 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     
-    QSharedPointer<View> view = QSharedPointer<ViewCheck>::create();
-    QSharedPointer<Layout> layout = QSharedPointer<LayoutLeft>::create();
-    ui->itemWidget->addView(view, layout);
+    QSharedPointer<View> view;
+    QSharedPointer<Layout> layout;
+    QSharedPointer<Range> range;
+
+    view.reset(new ViewCheck());
+    layout.reset(new LayoutLeft());
+    ui->itemWidget->addViewSchema(view, layout);
     
-    view = QSharedPointer<ViewText>::create();
-    layout = QSharedPointer<LayoutAll>::create();
-    ui->itemWidget->addView(view, layout);
-   
+    view.reset(new ViewText());
+    layout.reset(new LayoutAll());
+    ui->itemWidget->addViewSchema(view, layout);
+
+    ui->listWidget->grid().rows().setCount(100);
+    ui->listWidget->grid().columns().setCount(10);
+    ui->listWidget->grid().columns().setAllLinesSize(100);
+
+    view.reset(new ViewCheck());
+    layout.reset(new LayoutLeft());
+    range.reset(new RangeColumn(1));
+    ui->listWidget->grid().addCellsSchema(range, view, layout);
+
+    view.reset(new ViewText());
+    layout.reset(new LayoutAll());
+    range.reset(new RangeAll());
+    ui->listWidget->grid().addCellsSchema(range, view, layout);
+
 }
 
 MainWindow::~MainWindow()

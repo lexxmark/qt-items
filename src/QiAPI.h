@@ -21,7 +21,7 @@ enum ChangeReasonFlag
     ChangeReasonLineSize = 0x0008,
     ChangeReasonLineOrder = 0x0010,
     
-    ChangeReasonGridCellsInfo = 0x0020,
+    ChangeReasonGridCellsSchema = 0x0020,
 };
 
 Q_DECLARE_FLAGS(ChangeReason, ChangeReasonFlag)

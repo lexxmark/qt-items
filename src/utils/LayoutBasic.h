@@ -15,8 +15,8 @@ public:
     LayoutAll();
 
 protected:
-    void doLayoutImpl(const View& view, const CellID& cell, DrawContext& dc, QRect& availableRect, QRect& viewRect) const override;
-    void doExpandSizeImpl(const View& view, const CellID& cell, DrawContext& dc, QSize& size) const override;
+    void doLayoutImpl(const View* view, const CellID& cell, const QWidget* widget, QRect& availableRect, QRect& viewRect) const override;
+    void doExpandSizeImpl(const View* view, const CellID& cell, const QWidget* widget, QSize& size) const override;
 };
 
 class QI_EXPORT LayoutLeft: public Layout
@@ -28,8 +28,8 @@ public:
     LayoutLeft();
 
 protected:
-    void doLayoutImpl(const View& view, const CellID& cell, DrawContext& dc, QRect& availableRect, QRect& viewRect) const override;
-    void doExpandSizeImpl(const View& view, const CellID& cell, DrawContext& dc, QSize& size) const override;
+    void doLayoutImpl(const View* view, const CellID& cell, const QWidget* widget, QRect& availableRect, QRect& viewRect) const override;
+    void doExpandSizeImpl(const View* view, const CellID& cell, const QWidget* widget, QSize& size) const override;
 };
 
 } // end namespace Qi

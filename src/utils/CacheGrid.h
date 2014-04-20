@@ -18,13 +18,17 @@ public:
     virtual ~CacheGrid();
     
     const QRect& frame() const;
-    void setFrame(const QRect& frame);
+    bool setFrame(const QRect& frame);
     
     const CellID& startVisibleCell() const { return m_startVisibleCell; }
     const CellID& endVisibleCell() const { return m_endVisibleCell; }
+
+    const CacheCell* cacheCell(const CellID& visibleCell) const;
+
+    void draw(QPainter* painter, const QWidget* widget) const;
    
 private slots:
-    void onGridChanged(const Grid& grid, ChangeReason reason);
+    void onGridChanged(const Grid* grid, ChangeReason reason);
     
 private:
     void validateFrame() const;
@@ -35,6 +39,7 @@ private:
     mutable bool m_isFrameValid;
     CellID m_startVisibleCell;
     CellID m_endVisibleCell;
+
     mutable std::vector<CacheCell> m_visibleCells;
 };
 

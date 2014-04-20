@@ -4,7 +4,7 @@ namespace Qi
 {
 
 static const bool DefaultVisibility = true;
-static const quint32 DefaultSize = 50;
+static const quint32 DefaultSize = 21;
 
 Lines::Lines()
     : m_count(0),

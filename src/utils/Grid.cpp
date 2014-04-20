@@ -123,15 +123,15 @@ CellID Grid::findVisCellExact(QPoint point) const
     return cell;
 }
 
-void Grid::addCellsInfo(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
+void Grid::addCellsSchema(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
 {
-    CellsInfo info;
-    info.range = range;
-    info.view = view;
-    info.layout = layout;
-    m_cellsInfo.push_back(info);
+    CellsSchema schema;
+    schema.range = range;
+    schema.vSchema.view = view;
+    schema.vSchema.layout = layout;
+    m_cellsSchemas.push_back(schema);
     
-    emit gridChanged(this, ChangeReasonGridCellsInfo);
+    emit gridChanged(this, ChangeReasonGridCellsSchema);
 }
 
 void Grid::connectLinesSignal()

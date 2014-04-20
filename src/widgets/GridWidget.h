@@ -12,7 +12,7 @@ class QI_EXPORT GridWidget: public QWidget
     Q_OBJECT
 
 public:
-    GridWidget(QWidget *parent = nullptr);
+    explicit GridWidget(QWidget *parent = nullptr);
     virtual ~GridWidget();
 
 protected:

@@ -50,7 +50,7 @@
        </property>
        <widget class="Qi::ItemWidget" name="itemWidget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -62,7 +62,14 @@
          </size>
         </property>
        </widget>
-       <widget class="QWidget" name="widget222" native="true"/>
+       <widget class="QWidget" name="widget222" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </widget>
       <widget class="Qi::ListWidget" name="listWidget" native="true">
        <property name="minimumSize">

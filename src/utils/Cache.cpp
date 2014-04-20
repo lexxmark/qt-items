@@ -1,5 +1,5 @@
 #include "Cache.h"
-#include "ViewInfo.h"
+#include "CellsSchema.h"
 
 //#define DEBUG_RECTS
 
@@ -33,24 +33,24 @@ CacheView& CacheView::operator=(CacheView&& other)
     return *this;
 }
 
-void CacheView::doLayout(DrawContext& dc, const CellID& cell, QRect& availableRect) const
+void CacheView::doLayout(const QWidget* widget, const CellID& cell, QRect& availableRect) const
 {
     m_rect = QRect(0, 0, 0, 0);
-    m_layout->doLayout(*m_view, cell, dc, availableRect, m_rect);
+    m_layout->doLayout(m_view, cell, widget, availableRect, m_rect);
 }
 
-void CacheView::doExpandSize(DrawContext& dc, const CellID& cell, QSize& size) const
+void CacheView::doExpandSize(const QWidget* widget, const CellID& cell, QSize& size) const
 {
-    m_layout->doExpandSize(*m_view, cell, dc, size);
+    m_layout->doExpandSize(m_view, cell, widget, size);
 }
 
-void CacheView::draw(DrawContext& dc, const CellID& cell) const
+void CacheView::draw(QPainter* painter, const QWidget* widget, const CellID& cell) const
 {
 #ifdef DEBUG_RECTS
-    dc.painter->drawRect(m_rect);
+    painter->drawRect(m_rect);
 #endif
     
-    m_view->draw(dc, cell, m_rect);
+    m_view->draw(painter, widget, cell, m_rect);
 }
 
 CacheCell::CacheCell(CellID cell)
@@ -59,7 +59,27 @@ CacheCell::CacheCell(CellID cell)
 {
 }
 
-void CacheCell::reinit(const std::vector<ViewInfo>& views, QRect cellRect)
+CacheCell::CacheCell(CacheCell&& other)
+    : m_isLayoutValid(false)
+{
+    swap(other);
+}
+
+CacheCell& CacheCell::operator=(CacheCell&& other)
+{
+    swap(other);
+    return *this;
+}
+
+void CacheCell::swap(CacheCell& other)
+{
+    std::swap(m_cell, other.m_cell);
+    std::swap(m_rect, other.m_rect);
+    std::swap(m_cacheViews, other.m_cacheViews);
+    std::swap(m_isLayoutValid, other.m_isLayoutValid);
+}
+
+void CacheCell::reinit(const std::vector<ViewSchema>& views, QRect cellRect)
 {
     std::vector<CacheView> cacheViews;
     cacheViews.reserve(views.size());
@@ -74,10 +94,10 @@ void CacheCell::reinit(const std::vector<ViewInfo>& views, QRect cellRect)
     m_isLayoutValid = false;
 }
 
-void CacheCell::draw(DrawContext& dc) const
+void CacheCell::draw(QPainter* painter, const QWidget* widget) const
 {
 #ifdef DEBUG_RECTS
-    dc.painter->drawRect(m_rect);
+    painter->drawRect(m_rect);
 #endif
     
     if (!m_isLayoutValid)
@@ -85,25 +105,28 @@ void CacheCell::draw(DrawContext& dc) const
         QRect availableRect = m_rect;
         for (const auto& cacheView: m_cacheViews)
         {
-            cacheView.doLayout(dc, m_cell, availableRect);
+            cacheView.doLayout(widget, m_cell, availableRect);
         }
         m_isLayoutValid = true;
     }
 
     for (const auto& cacheView: m_cacheViews)
     {
-        cacheView.draw(dc, m_cell);
+        cacheView.draw(painter, widget, m_cell);
     }
 }
 
-QSize CacheCell::sizeHint(DrawContext& dc) const
+QSize CacheCell::sizeHint(const QWidget* widget) const
 {
+    if (m_cacheViews.empty())
+        return QSize();
+
     QSize size(0, 0);
     
     // accumulate size in reverse order
     for (auto rit = m_cacheViews.rbegin(); rit != m_cacheViews.rend(); ++rit)
     {
-        (*rit).doExpandSize(dc, m_cell, size);
+        (*rit).doExpandSize(widget, m_cell, size);
     }
     
     return size;
