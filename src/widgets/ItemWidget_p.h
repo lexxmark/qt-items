@@ -18,6 +18,7 @@ public:
     ~ItemWidgetPrivate();
     
     void addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout);
+    void setCell(const CellID& cell);
 
     QSize doSizeHint() const;
     void doPaintEvent(QPaintEvent* event);

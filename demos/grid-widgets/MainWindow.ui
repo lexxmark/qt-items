@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Qt-items Demo</string>
+   <string>GridWidgets Demo</string>
   </property>
   <property name="iconSize">
    <size>
@@ -34,60 +34,7 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QSplitter" name="splitter_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QSplitter" name="splitter">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <widget class="Qi::ItemWidget" name="itemWidget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>50</width>
-          <height>21</height>
-         </size>
-        </property>
-       </widget>
-       <widget class="QWidget" name="widget222" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </widget>
-      <widget class="Qi::ListWidget" name="listWidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>100</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="Qi::GridWidget" name="gridWidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>100</height>
-        </size>
-       </property>
-      </widget>
-     </widget>
+     <widget class="Qi::GridWidget" name="gridWidget" native="true"/>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -130,18 +77,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>Qi::ItemWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/ItemWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Qi::ListWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/ListWidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Qi::GridWidget</class>
    <extends>QWidget</extends>

@@ -57,4 +57,35 @@ bool ViewCheck::textImpl(const CellID& cell, QString& text) const
     return false;
 }
 
+ViewRadio::ViewRadio()
+{
+}
+
+void ViewRadio::drawImpl(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const
+{
+    bool check = (cell.row == 1);
+
+    QStyleOptionButton styleOption;
+    styleOption.initFrom(widget);
+    styleOption.rect = rect;
+    styleOption.state = QStyle::State_Enabled | (check ? QStyle::State_On : QStyle::State_Off);
+
+    widget->style()->drawControl(QStyle::CE_RadioButton, &styleOption, painter, widget);
+}
+
+QSize ViewRadio::sizeHintImpl(const QWidget* widget, const CellID& cell) const
+{
+    bool check = (cell.row == 1);
+
+    QStyleOptionButton styleOption;
+    styleOption.initFrom(widget);
+    styleOption.state = QStyle::State_Enabled | (check ? QStyle::State_On : QStyle::State_Off);
+    return widget->style()->sizeFromContents(QStyle::CT_RadioButton, &styleOption, QSize(0, 0), widget);
+}
+
+bool ViewRadio::textImpl(const CellID& cell, QString& text) const
+{
+    return false;
+}
+
 } // end namespace Qi

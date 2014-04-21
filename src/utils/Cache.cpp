@@ -47,7 +47,10 @@ void CacheView::doExpandSize(const QWidget* widget, const CellID& cell, QSize& s
 void CacheView::draw(QPainter* painter, const QWidget* widget, const CellID& cell) const
 {
 #ifdef DEBUG_RECTS
+    painter->save();
+    painter->setPen(Qt::blue);
     painter->drawRect(m_rect);
+    painter->restore();
 #endif
     
     m_view->draw(painter, widget, cell, m_rect);
@@ -79,6 +82,16 @@ void CacheCell::swap(CacheCell& other)
     std::swap(m_isLayoutValid, other.m_isLayoutValid);
 }
 
+void CacheCell::setCell(const CellID& cell)
+{
+    if (m_cell == cell)
+        return;
+
+    m_cell = cell;
+    m_cacheViews.clear();
+    m_isLayoutValid = false;
+}
+
 void CacheCell::reinit(const std::vector<ViewSchema>& views, QRect cellRect)
 {
     std::vector<CacheView> cacheViews;
@@ -97,7 +110,10 @@ void CacheCell::reinit(const std::vector<ViewSchema>& views, QRect cellRect)
 void CacheCell::draw(QPainter* painter, const QWidget* widget) const
 {
 #ifdef DEBUG_RECTS
+    painter->save();
+    painter->setPen(Qt::red);
     painter->drawRect(m_rect);
+    painter->restore();
 #endif
     
     if (!m_isLayoutValid)

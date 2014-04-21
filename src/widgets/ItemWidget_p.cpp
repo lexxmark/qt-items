@@ -31,6 +31,16 @@ void ItemWidgetPrivate::addViewSchema(QSharedPointer<View> view, QSharedPointer<
     m_owner->updateGeometry();
 }
 
+void ItemWidgetPrivate::setCell(const CellID& cell)
+{
+    m_cache.setCell(cell);
+    m_isCacheValid = false;
+    m_sizeHint = QSize();
+
+    m_owner->update();
+    m_owner->updateGeometry();
+}
+
 QSize ItemWidgetPrivate::doSizeHint() const
 {
     if (!m_sizeHint.isValid())

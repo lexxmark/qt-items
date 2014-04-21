@@ -20,6 +20,11 @@ void ItemWidget::addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout>
     d->addViewSchema(view, layout);
 }
 
+void ItemWidget::setCell(const CellID& cell)
+{
+    d->setCell(cell);
+}
+
 QSize ItemWidget::sizeHint() const
 {
     return d->doSizeHint();

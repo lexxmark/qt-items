@@ -34,6 +34,20 @@ protected:
     bool textImpl(const CellID& cell, QString& text) const override;
 };
 
+class QI_EXPORT ViewRadio: public View
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ViewRadio)
+
+public:
+    ViewRadio();
+
+protected:
+    void drawImpl(QPainter* painter, const QWidget* widget, const CellID& cell, const QRect& rect) const override;
+    QSize sizeHintImpl(const QWidget* widget, const CellID& cell) const override;
+    bool textImpl(const CellID& cell, QString& text) const override;
+};
+
 } // end namespace Qi
 
 #endif // QI_VIEW_BASIC_H

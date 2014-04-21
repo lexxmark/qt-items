@@ -16,14 +16,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QSharedPointer<Layout> layout;
     QSharedPointer<Range> range;
 
-    view.reset(new ViewCheck());
-    layout.reset(new LayoutLeft());
-    ui->itemWidget->addViewSchema(view, layout);
-    
-    view.reset(new ViewText());
-    layout.reset(new LayoutAll());
-    ui->itemWidget->addViewSchema(view, layout);
-
     ui->listWidget->grid().rows().setCount(100);
     ui->listWidget->grid().columns().setCount(10);
     ui->listWidget->grid().columns().setAllLinesSize(100);
@@ -37,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     layout.reset(new LayoutAll());
     range.reset(new RangeAll());
     ui->listWidget->grid().addCellsSchema(range, view, layout);
-
 }
 
 MainWindow::~MainWindow()

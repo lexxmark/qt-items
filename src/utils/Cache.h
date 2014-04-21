@@ -46,6 +46,7 @@ public:
     void swap(CacheCell& other);
 
     const CellID& cell() const { return m_cell; }
+    void setCell(const CellID& cell);
     
     void reinit(const std::vector<ViewSchema>& views, QRect cellRect);
     

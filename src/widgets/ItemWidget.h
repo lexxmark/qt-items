@@ -19,6 +19,7 @@ public:
     virtual ~ItemWidget();
     
     void addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout);
+    void setCell(const CellID& cell);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
