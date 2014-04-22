@@ -1,5 +1,6 @@
 #include "test_lines.h"
 #include "utils/Lines.h"
+#include "SignalSpy.h"
 #include <QtTest/QtTest>
 
 using namespace Qi;
@@ -8,35 +9,30 @@ void TestLines::testCount()
 {
     Lines lines;
 
-    int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == _lines);
-        Q_ASSERT(reason & (ChangeReasonLinesCount|ChangeReasonLinesCountWeak));
-        if (reason & ChangeReasonLinesCount)
-            ++emitCount;
-    };
-    
     lines.setCount(10);
     QCOMPARE(lines.count(), 10u);
     
-    QMetaObject::Connection cid = QObject::connect(&lines, &Lines::linesChanged, lSlot);
+    auto signalSpy = createSignalSpy(&lines, &Lines::linesChanged);
     
     lines.setCount(92);
     QCOMPARE(lines.count(), 92u);
-    QCOMPARE(emitCount, 1);
+    QCOMPARE(signalSpy.size(), 1);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLinesCount|ChangeReasonLinesCountWeak);
 
     lines.setCount(92);
     QCOMPARE(lines.count(), 92u);
-    QCOMPARE(emitCount, 1);
-    
+    QCOMPARE(signalSpy.size(), 2);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLinesCountWeak);
+
     lines.setCount(0);
     QCOMPARE(lines.count(), 0u);
-    QCOMPARE(emitCount, 2);
-    
-    QObject::disconnect(cid);
+    QCOMPARE(signalSpy.size(), 3);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLinesCount|ChangeReasonLinesCountWeak);
+
+    signalSpy.disconnect();
     lines.setCount(3);
     QCOMPARE(lines.count(), 3u);
-    QCOMPARE(emitCount, 2);
+    QCOMPARE(signalSpy.size(), 3);
 }
     
 void TestLines::testVisibility()
@@ -44,13 +40,6 @@ void TestLines::testVisibility()
     Lines lines;
     lines.setCount(10);
     
-    int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == _lines);
-        if (reason & ChangeReasonLineVisibility)
-            ++emitCount;
-    };
-
     QCOMPARE(lines.isLineVisible(0), true);
     QCOMPARE(lines.isLineVisible(5), true);
     QCOMPARE(lines.isLineVisible(9), true);
@@ -59,36 +48,41 @@ void TestLines::testVisibility()
     QCOMPARE(lines.isLineVisible(0), false);
     QCOMPARE(lines.isLineVisible(1), true);
     
-    QMetaObject::Connection cid = QObject::connect(&lines, &Lines::linesChanged, lSlot);
+    auto signalSpy = createSignalSpy(&lines, &Lines::linesChanged);
 
     lines.setLineVisible(1, false);
     QCOMPARE(lines.isLineVisible(0), false);
     QCOMPARE(lines.isLineVisible(1), false);
     QCOMPARE(lines.isLineVisible(2), true);
-    QCOMPARE(emitCount, 1);
-    
+    QCOMPARE(signalSpy.size(), 1);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineVisibility);
+    QCOMPARE(signalSpy.getLast<0>(), &lines);
+
     lines.setAllLinesVisible(false);
     QCOMPARE(lines.isLineVisible(0), false);
     QCOMPARE(lines.isLineVisible(1), false);
     QCOMPARE(lines.isLineVisible(2), false);
     QCOMPARE(lines.isLineVisible(9), false);
-    QCOMPARE(emitCount, 2);
-    
+    QCOMPARE(signalSpy.size(), 2);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineVisibility);
+
     lines.setAllLinesVisible(true);
     QCOMPARE(lines.isLineVisible(0), true);
     QCOMPARE(lines.isLineVisible(1), true);
     QCOMPARE(lines.isLineVisible(2), true);
     QCOMPARE(lines.isLineVisible(9), true);
-    QCOMPARE(emitCount, 3);
-    
+    QCOMPARE(signalSpy.size(), 3);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineVisibility);
+
     lines.setLineVisible(2, true);
     QCOMPARE(lines.isLineVisible(2), true);
-    QCOMPARE(emitCount, 3);
+    QCOMPARE(signalSpy.size(), 3);
 
     lines.setLineVisible(2, false);
     QCOMPARE(lines.isLineVisible(2), false);
-    QCOMPARE(emitCount, 4);
-    
+    QCOMPARE(signalSpy.size(), 4);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineVisibility);
+
     lines.setCount(5);
     QCOMPARE(lines.count(), 5u);
     QCOMPARE(lines.isLineVisible(2), false);
@@ -102,13 +96,6 @@ void TestLines::testSizes()
     Lines lines;
     lines.setCount(10);
     
-    int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == _lines);
-        if (reason & ChangeReasonLineSize)
-            ++emitCount;
-    };
-    
     quint32 defaultLineSize = lines.lineSize(0);
 
     QCOMPARE(lines.lineSize(5), defaultLineSize);
@@ -118,36 +105,40 @@ void TestLines::testSizes()
     QCOMPARE(lines.lineSize(0), 16u);
     QCOMPARE(lines.lineSize(1), defaultLineSize);
     
-    QMetaObject::Connection cid = QObject::connect(&lines, &Lines::linesChanged, lSlot);
+    auto signalSpy = createSignalSpy(&lines, &Lines::linesChanged);
 
     lines.setLineSize(1, 28);
     QCOMPARE(lines.lineSize(0), 16u);
     QCOMPARE(lines.lineSize(1), 28u);
     QCOMPARE(lines.lineSize(2), defaultLineSize);
-    QCOMPARE(emitCount, 1);
-    
+    QCOMPARE(signalSpy.size(), 1);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineSize);
+
     lines.setAllLinesSize(15);
     QCOMPARE(lines.lineSize(0), 15u);
     QCOMPARE(lines.lineSize(1), 15u);
     QCOMPARE(lines.lineSize(2), 15u);
     QCOMPARE(lines.lineSize(9), 15u);
-    QCOMPARE(emitCount, 2);
-    
+    QCOMPARE(signalSpy.size(), 2);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineSize);
+
     lines.setAllLinesSize(4);
     QCOMPARE(lines.lineSize(0), 4u);
     QCOMPARE(lines.lineSize(1), 4u);
     QCOMPARE(lines.lineSize(2), 4u);
     QCOMPARE(lines.lineSize(9), 4u);
-    QCOMPARE(emitCount, 3);
-    
+    QCOMPARE(signalSpy.size(), 3);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineSize);
+
     lines.setLineSize(2, 4);
     QCOMPARE(lines.lineSize(2), 4u);
-    QCOMPARE(emitCount, 3);
+    QCOMPARE(signalSpy.size(), 3);
 
     lines.setLineSize(2, 8);
     QCOMPARE(lines.lineSize(2), 8u);
-    QCOMPARE(emitCount, 4);
-    
+    QCOMPARE(signalSpy.size(), 4);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineSize);
+
     lines.setCount(5);
     QCOMPARE(lines.count(), 5u);
     QCOMPARE(lines.lineSize(2), 8u);
@@ -185,14 +176,8 @@ void TestLines::testAbsVsVis()
     QCOMPARE(lines.toAbsolute(8), 8u);
     QCOMPARE(lines.toAbsolute(9), 9u);
     
-    int emitCount = 0;
-    auto lSlot = [&emitCount, &lines](const Lines* _lines, ChangeReason reason) {
-        Q_ASSERT(&lines == _lines);
-        if (reason & ChangeReasonLineOrder)
-            ++emitCount;
-    };
-    QMetaObject::Connection cid = QObject::connect(&lines, &Lines::linesChanged, lSlot);
-    
+    auto signalSpy = createSignalSpy(&lines, &Lines::linesChanged);
+
     std::vector<quint32> permutation(10);
     permutation[0] = 3;
     permutation[1] = 8;
@@ -207,8 +192,9 @@ void TestLines::testAbsVsVis()
     
     lines.setPermutation(permutation);
     
-    QCOMPARE(emitCount, 1);
-    
+    QCOMPARE(signalSpy.size(), 1);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLineOrder);
+
     QCOMPARE(lines.toVisible(0), 3u);
     QCOMPARE(lines.toVisible(1), 8u);
     QCOMPARE(lines.toVisible(2), 1u);

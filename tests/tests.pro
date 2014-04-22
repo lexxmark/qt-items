@@ -14,7 +14,8 @@ LIBS += -L$$DESTDIR -lqt-items
 
 TEMPLATE = app
 
-HEADERS +=  test_signal.h \
+HEADERS +=  SignalSpy.h\
+    test_signal.h \
     test_cell_id.h \
     test_ranges.h \
     test_lines.h \

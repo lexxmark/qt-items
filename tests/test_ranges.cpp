@@ -1,5 +1,6 @@
 #include "test_ranges.h"
 #include "utils/RangesBasic.h"
+#include "SignalSpy.h"
 #include <QtTest/QtTest>
 
 using namespace Qi;
@@ -59,19 +60,14 @@ void TestRanges::testRangeColumn()
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(923, 4), true);
         
-        int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range* _range) {
-            Q_ASSERT(r.data() == _range);
-            ++emitCount;
-        };
-        connect(r.data(), &Range::rangeChanged, lSlot);
-        QCOMPARE(emitCount, 0);
+        auto signalSpy = createSignalSpy(r.data(), &Range::rangeChanged);
+        QCOMPARE(signalSpy.empty(), true);
         
         r->setColumn(4);
-        QCOMPARE(emitCount, 0);
-        
+        QCOMPARE(signalSpy.empty(), true);
+
         r->setColumn(0);
-        QCOMPARE(emitCount, 1);
+        QCOMPARE(signalSpy.size(), 1);
         QVERIFY(r->hasCell(23, 0));
         QVERIFY(!r->hasCell(23, 23));
         QVERIFY(!r->hasCell(23, 4));
@@ -113,21 +109,16 @@ void TestRanges::testRangeColumns()
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->columns() == columns);
         
-        int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range* _range) {
-            Q_ASSERT(r.data() == _range);
-            ++emitCount;
-        };
-        connect(r.data(), &Range::rangeChanged, lSlot);
-        QCOMPARE(emitCount, 0);
+        auto signalSpy = createSignalSpy(r.data(), &Range::rangeChanged);
+        QCOMPARE(signalSpy.empty(), true);
         
         QVERIFY(r->hasCell(10, 6));
         QVERIFY(!r->hasCell(0, 10));
-        QCOMPARE(emitCount, 0);
+        QCOMPARE(signalSpy.empty(), true);
         
         columns << 32;
         r->setColumns(columns);
-        QCOMPARE(emitCount, 1);
+        QCOMPARE(signalSpy.size(), 1);
         
         QVERIFY(r->hasCell(72, 32));
         QVERIFY(!r->hasCell(32, 72));
@@ -163,19 +154,14 @@ void TestRanges::testRangeRow()
         QCOMPARE(r->hasCell(2, 2), false);
         QCOMPARE(r->hasCell(4, 923), true);
         
-        int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range* _range) {
-            Q_ASSERT(r.data() == _range);
-            ++emitCount;
-        };
-        connect(r.data(), &Range::rangeChanged, lSlot);
-        QCOMPARE(emitCount, 0);
+        auto signalSpy = createSignalSpy(r.data(), &Range::rangeChanged);
+        QCOMPARE(signalSpy.empty(), true);
         
         r->setRow(4);
-        QCOMPARE(emitCount, 0);
+        QCOMPARE(signalSpy.empty(), true);
         
         r->setRow(0);
-        QCOMPARE(emitCount, 1);
+        QCOMPARE(signalSpy.size(), 1);
         QVERIFY(r->hasCell(0, 23));
         QVERIFY(!r->hasCell(23, 23));
         QVERIFY(!r->hasCell(4, 23));
@@ -217,21 +203,16 @@ void TestRanges::testRangeRows()
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->rows() == rows);
         
-        int emitCount = 0;
-        auto lSlot = [&emitCount, &r](const Range* _range) {
-            Q_ASSERT(r.data() == _range);
-            ++emitCount;
-        };
-        connect(r.data(), &Range::rangeChanged, lSlot);
-        QCOMPARE(emitCount, 0);
+        auto signalSpy = createSignalSpy(r.data(), &Range::rangeChanged);
+        QCOMPARE(signalSpy.size(), 0);
         
         QVERIFY(r->hasCell(6, 10));
         QVERIFY(!r->hasCell(10, 0));
-        QCOMPARE(emitCount, 0);
+        QCOMPARE(signalSpy.size(), 0);
         
         rows << 32;
         r->setRows(rows);
-        QCOMPARE(emitCount, 1);
+        QCOMPARE(signalSpy.size(), 1);
         
         QVERIFY(!r->hasCell(72, 32));
         QVERIFY(r->hasCell(32, 72));

@@ -1,6 +1,7 @@
 #include "test_grid.h"
 #include "test_cell_id.h"
 #include "utils/Grid.h"
+#include <SignalSpy.h>
 #include <QtTest/QtTest>
 
 using namespace Qi;
@@ -18,25 +19,24 @@ void TestGrid::test()
     
     QCOMPARE(grid.dim(), QSize(12, 10));
 
-    int emitCount = 0;
-    auto lSlot = [&emitCount, &grid](const Grid* _grid, ChangeReason reason) {
-        Q_ASSERT(&grid == _grid);
-        ++emitCount;
-    };
-    connect(&grid, &Grid::gridChanged, lSlot);
-    
+    auto signalSpy = createSignalSpy(&grid, &Grid::gridChanged);
+
     grid.rows().setCount(10);
     // ChangeReasonLinesCountWeak should be fired
-    QCOMPARE(emitCount, 1);
+    QCOMPARE(signalSpy.size(), 1);
+    QCOMPARE(signalSpy.getLast<1>(), ChangeReasonLinesCountWeak);
     
     grid.rows().setLineVisible(2, true);
-    QCOMPARE(emitCount, 1);
+    QCOMPARE(signalSpy.size(), 1);
 
     grid.rows().setCount(12);
-    QCOMPARE(emitCount, 2);
-    
+    QCOMPARE(signalSpy.size(), 2);
+
     QCOMPARE(grid.dim(), QSize(12, 12));
     QCOMPARE(grid.visibleDim(), QSize(12, 12));
+    QCOMPARE(grid.visibleSize(), QSize(252, 252));
+    grid.rows().setAllLinesSize(50);
+    grid.columns().setAllLinesSize(50);
     QCOMPARE(grid.visibleSize(), QSize(600, 600));
     QCOMPARE(grid.findVisCell(QPoint(-2, -2)), CellID(0, 0));
     QCOMPARE(grid.findVisCell(QPoint(-2, 3)), CellID(0, 0));
@@ -138,4 +138,6 @@ void TestGrid::test()
     QCOMPARE(grid2.findVisCell(QPoint(145, 150)), CellID(8, 5));
     grid.rows().setCount(2);
     QCOMPARE(grid2.rows().count(), 2u);
+
+    QCOMPARE(signalSpy.size(), 26);
 }
