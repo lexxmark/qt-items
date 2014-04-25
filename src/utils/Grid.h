@@ -46,9 +46,10 @@ public:
     CellID findVisCell(QPoint point) const;
     CellID findVisCellExact(QPoint point) const;
     
-    const std::vector<CellsSchema>& cellsSchemas() const { return m_cellsSchemas; }
+    const QVector<CellsSchema>& cellsSchemas() const { return m_cellsSchemas; }
 
-    void addCellsSchema(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
+    void addCellsSchema(Range* range, Layout* layout, View* view, ControllerMouse* controller = nullptr);
+    void clearCellsSchemas();
     
 signals:
     void gridChanged(const Grid*, ChangeReason);
@@ -62,7 +63,7 @@ private:
     
     QSharedPointer<Lines> m_rows;
     QSharedPointer<Lines> m_columns;
-    std::vector<CellsSchema> m_cellsSchemas;
+    QVector<CellsSchema> m_cellsSchemas;
 };
 
 } // end namespace Qi 

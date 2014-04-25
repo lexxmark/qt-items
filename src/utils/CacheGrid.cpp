@@ -3,17 +3,17 @@
 namespace Qi
 {
 
-CacheGrid::CacheGrid(const Grid& grid)
+CacheGrid::CacheGrid(Grid* grid)
     : m_grid(grid),
       m_frame(0, 0, 0, 0),
       m_isFrameValid(false)
 {
-    connect(&m_grid, SIGNAL(gridChanged(const Grid*, ChangeReason)), this, SLOT(onGridChanged(const Grid*, ChangeReason)));
+    connect(m_grid.data(), SIGNAL(gridChanged(const Grid*, ChangeReason)), this, SLOT(onGridChanged(const Grid*, ChangeReason)));
 }
 
 CacheGrid::~CacheGrid()
 {
-    disconnect(&m_grid, SIGNAL(gridChanged(const Grid*, ChangeReason)), this, SLOT(onGridChanged(const Grid*, ChangeReason)));
+    disconnect(m_grid.data(), SIGNAL(gridChanged(const Grid*, ChangeReason)), this, SLOT(onGridChanged(const Grid*, ChangeReason)));
 }
 
 const QRect& CacheGrid::frame() const
@@ -44,7 +44,7 @@ const CacheCell* CacheGrid::cacheCell(const CellID& visibleCell) const
 
     quint32 visibleColumns = m_endVisibleCell.column - m_startVisibleCell.column + 1;
     quint32 index = (visibleCell.row - m_startVisibleCell.row) * visibleColumns + visibleCell.column - m_startVisibleCell.column;
-    Q_ASSERT(index < m_visibleCells.size());
+    Q_ASSERT(index < (quint32)m_visibleCells.size());
     return &m_visibleCells[index];
 }
 
@@ -71,8 +71,8 @@ void CacheGrid::validateFrame() const
     if (m_isFrameValid)
         return;
     
-    CellID newStartVisibleCell = m_grid.findVisCell(m_frame.topLeft());
-    CellID newEndVisibleCell = m_grid.findVisCell(m_frame.bottomRight());
+    CellID newStartVisibleCell = m_grid->findVisCell(m_frame.topLeft());
+    CellID newEndVisibleCell = m_grid->findVisCell(m_frame.bottomRight());
     
     if (newStartVisibleCell == m_startVisibleCell && newEndVisibleCell == m_endVisibleCell)
     {
@@ -83,20 +83,21 @@ void CacheGrid::validateFrame() const
     Q_ASSERT(newStartVisibleCell.row <= newEndVisibleCell.row);
     Q_ASSERT(newStartVisibleCell.column <= newEndVisibleCell.column);
 
-    const Lines& rows = m_grid.rows();
-    const Lines& columns = m_grid.columns();
+    const Lines& rows = m_grid->rows();
+    const Lines& columns = m_grid->columns();
 
-    std::vector<CacheCell> cells;
+    QVector<CacheCell> cells;
     cells.reserve((newEndVisibleCell.row - newStartVisibleCell.row + 1)*(newEndVisibleCell.column - newStartVisibleCell.column + 1));
+
     for (CellID visibleCell = newStartVisibleCell; visibleCell.row <= newEndVisibleCell.row; ++visibleCell.row)
     {
         for (visibleCell.column = newStartVisibleCell.column; visibleCell.column <= newEndVisibleCell.column; ++visibleCell.column)
         {
-            CellID absCell = m_grid.toAbsolute(visibleCell);
-            cells.push_back(CacheCell(absCell));
+            CellID absCell = m_grid->toAbsolute(visibleCell);
+            cells.append(CacheCell(absCell));
 
             CacheCell& cacheCell = cells.back();
-            std::vector<ViewSchema> views;
+            QVector<ViewSchema> views;
             QRect cellRect(0, 0, 0, 0);
             if (visibleCell.row > 0)
                 cellRect.setTop(rows.sizeAtVisLine(visibleCell.row - 1));
@@ -105,12 +106,12 @@ void CacheGrid::validateFrame() const
             cellRect.setBottom(rows.sizeAtVisLine(visibleCell.row));
             cellRect.setRight(columns.sizeAtVisLine(visibleCell.column));
 
-            for (const auto& cellsSchema: m_grid.cellsSchemas())
+            for (const auto& cellsSchema: m_grid->cellsSchemas())
             {
                 if (!cellsSchema.range->hasCell(absCell))
                     continue;
 
-                views.push_back(cellsSchema.vSchema);
+                views.append(cellsSchema.viewSchema);
             }
 
             cacheCell.reinit(views, cellRect);
@@ -118,11 +119,12 @@ void CacheGrid::validateFrame() const
     }
 
     std::swap(m_visibleCells, cells);
+    m_isFrameValid = true;
 }
 
 void CacheGrid::onGridChanged(const Grid* grid, ChangeReason reason)
 {
-    Q_ASSERT(&m_grid == grid);
+    Q_ASSERT(m_grid.data() == grid);
     m_isFrameValid = false;
 }
 

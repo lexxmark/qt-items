@@ -16,7 +16,7 @@ ListWidget::ListWidget(QWidget *parent)
     init();
 }
 
-ListWidget::ListWidget(const QSharedPointer<Grid>& grid, QWidget *parent)
+ListWidget::ListWidget(Grid* grid, QWidget *parent)
     : QAbstractScrollArea(parent),
       m_grid(grid)
 {
@@ -25,6 +25,9 @@ ListWidget::ListWidget(const QSharedPointer<Grid>& grid, QWidget *parent)
 
 ListWidget::~ListWidget()
 {
+    Q_ASSERT(viewport());
+    // grid should exist
+    Q_ASSERT(!m_grid.isNull());
 }
 
 Grid& ListWidget::grid()
@@ -37,24 +40,27 @@ const Grid& ListWidget::grid() const
     return *m_grid;
 }
 
-void ListWidget::setGrid(const QSharedPointer<Grid>& grid)
+void ListWidget::setGrid(Grid* grid)
 {
     m_grid = grid;
+    if (!m_grid->parent())
+        m_grid->setParent(this);
+
     m_viewGrid->setGrid(m_grid);
 }
 
-void ListWidget::paintEvent(QPaintEvent* event)
+bool ListWidget::viewportEvent(QEvent* event)
 {
-    d->doPaintEvent(event);
+    bool result = QAbstractScrollArea::viewportEvent(event);
+    d->event(event);
+    return result;
 }
 
 void ListWidget::resizeEvent(QResizeEvent* event)
 {
-    d->doResizeEvent(event);
-
     // update scrollbars
     QSize viewportSize = viewport()->size();
-    QSize virtualSize = d->doSizeHint();
+    QSize virtualSize = d->sizeHint();
 
     verticalScrollBar()->setSingleStep(viewportSize.height() / 10);
     verticalScrollBar()->setPageStep(viewportSize.height());
@@ -85,10 +91,13 @@ void ListWidget::init()
     // should be initialized
     Q_ASSERT(!m_grid.isNull());
 
-    m_viewGrid.reset(new ViewGrid(m_grid));
+    if (!m_grid->parent())
+        m_grid->setParent(this);
+
+    m_viewGrid = new ViewGrid(m_grid);
 
     d.reset(new ItemWidgetPrivate(viewport()));
-    d->addViewSchema(m_viewGrid, QSharedPointer<Layout>(new LayoutAll()));
+    d->addViewSchema(new LayoutAll(), m_viewGrid.data());
 
     viewport()->setMouseTracking(true);
 }

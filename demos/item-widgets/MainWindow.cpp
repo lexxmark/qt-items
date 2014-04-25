@@ -16,37 +16,33 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->checkBox2->setCell(CellID(1, 0));
     ui->checkBox3->setCell(CellID(2, 0));
 
-    QSharedPointer<View> view;
-    QSharedPointer<Layout> layout;
-    QSharedPointer<Range> range;
+    Layout* layout = new LayoutLeft();
+    View* view = new ViewCheck();
+    ui->checkBox1->addViewSchema(layout, view);
+    ui->checkBox2->addViewSchema(layout, view);
+    ui->checkBox3->addViewSchema(layout, view);
 
-    view.reset(new ViewCheck());
-    layout.reset(new LayoutLeft());
-    ui->checkBox1->addViewSchema(view, layout);
-    ui->checkBox2->addViewSchema(view, layout);
-    ui->checkBox3->addViewSchema(view, layout);
-
-    view.reset(new ViewText());
-    layout.reset(new LayoutAll());
-    ui->checkBox1->addViewSchema(view, layout);
-    ui->checkBox2->addViewSchema(view, layout);
-    ui->checkBox3->addViewSchema(view, layout);
+    view = new ViewText();
+    layout = new LayoutAll();
+    ui->checkBox1->addViewSchema(layout, view);
+    ui->checkBox2->addViewSchema(layout, view);
+    ui->checkBox3->addViewSchema(layout, view);
 
     ui->radioButton1->setCell(CellID(0, 0));
     ui->radioButton2->setCell(CellID(1, 0));
     ui->radioButton3->setCell(CellID(2, 0));
 
-    view.reset(new ViewRadio());
-    layout.reset(new LayoutLeft());
-    ui->radioButton1->addViewSchema(view, layout);
-    ui->radioButton2->addViewSchema(view, layout);
-    ui->radioButton3->addViewSchema(view, layout);
+    view = new ViewRadio();
+    layout = new LayoutLeft();
+    ui->radioButton1->addViewSchema(layout, view);
+    ui->radioButton2->addViewSchema(layout, view);
+    ui->radioButton3->addViewSchema(layout, view);
 
-    view.reset(new ViewText());
-    layout.reset(new LayoutAll());
-    ui->radioButton1->addViewSchema(view, layout);
-    ui->radioButton2->addViewSchema(view, layout);
-    ui->radioButton3->addViewSchema(view, layout);
+    view = new ViewText();
+    layout = new LayoutAll();
+    ui->radioButton1->addViewSchema(layout, view);
+    ui->radioButton2->addViewSchema(layout, view);
+    ui->radioButton3->addViewSchema(layout, view);
 }
 
 MainWindow::~MainWindow()

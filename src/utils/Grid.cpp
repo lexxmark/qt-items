@@ -20,6 +20,7 @@ Grid::Grid(const QSharedPointer<Lines>& rows, const QSharedPointer<Lines>& colum
 Grid::~Grid()
 {
     disconnectLinesSignal();
+    clearCellsSchemas();
 }
 
 const Lines& Grid::rows() const
@@ -123,15 +124,33 @@ CellID Grid::findVisCellExact(QPoint point) const
     return cell;
 }
 
-void Grid::addCellsSchema(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
+void Grid::addCellsSchema(Range* range, Layout* layout, View* view, ControllerMouse* controller)
 {
     CellsSchema schema;
     schema.range = range;
-    schema.vSchema.view = view;
-    schema.vSchema.layout = layout;
-    m_cellsSchemas.push_back(schema);
+    schema.viewSchema.view = view;
+    schema.viewSchema.layout = layout;
+    schema.viewSchema.controller = controller;
+    // init owner
+    schema.initOwner(this);
+
+    m_cellsSchemas.append(schema);
     
     emit gridChanged(this, ChangeReasonGridCellsSchema);
+}
+
+void Grid::clearCellsSchemas()
+{
+    QVector<CellsSchema> cellsSchemas;
+    cellsSchemas.swap(m_cellsSchemas);
+
+    emit gridChanged(this, ChangeReasonGridCellsSchema);
+
+    // delete own objects explicitly
+    for (auto& schema: cellsSchemas)
+    {
+        schema.deleteIfOwnedBy(this);
+    }
 }
 
 void Grid::connectLinesSignal()

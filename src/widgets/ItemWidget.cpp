@@ -15,9 +15,14 @@ ItemWidget::~ItemWidget()
 {
 }
 
-void ItemWidget::addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout)
+void ItemWidget::addViewSchema(Layout* layout, View* view, ControllerMouse* controller)
 {
-    d->addViewSchema(view, layout);
+    d->addViewSchema(layout, view, controller);
+}
+
+void ItemWidget::clearViewSchemas()
+{
+    d->clearViewSchemas();
 }
 
 void ItemWidget::setCell(const CellID& cell)
@@ -27,14 +32,22 @@ void ItemWidget::setCell(const CellID& cell)
 
 QSize ItemWidget::sizeHint() const
 {
-    return d->doSizeHint();
+    return d->sizeHint();
 }
 
 QSize ItemWidget::minimumSizeHint() const
 {
-    return d->doSizeHint();
+    return d->sizeHint();
 }
 
+bool ItemWidget::event(QEvent* event)
+{
+    bool result = QWidget::event(event);
+    d->event(event);
+    return result;
+}
+
+/*
 void ItemWidget::paintEvent(QPaintEvent* event)
 {
     d->doPaintEvent(event);
@@ -45,5 +58,5 @@ void ItemWidget::resizeEvent(QResizeEvent * event)
     QWidget::resizeEvent(event);
     d->doResizeEvent(event);
 }
-
+*/
 } // end namespace Qi

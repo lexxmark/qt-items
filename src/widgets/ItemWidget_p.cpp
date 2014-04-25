@@ -1,5 +1,6 @@
 #include "ItemWidget_p.h"
-#include <QEvent>
+#include <QPaintEvent>
+#include <QResizeEvent>
 #include <QPainter>
 
 namespace Qi
@@ -15,20 +16,49 @@ ItemWidgetPrivate::ItemWidgetPrivate(QWidget* owner)
 
 ItemWidgetPrivate::~ItemWidgetPrivate()
 {
+    clearViewSchemas();
 }
 
-void ItemWidgetPrivate::addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout)
+void ItemWidgetPrivate::addViewSchema(Layout* layout, View* view, ControllerMouse* controller)
 {
+    Q_ASSERT(layout);
+    Q_ASSERT(view);
+
     ViewSchema schema;
-    schema.view = view;
     schema.layout = layout;
-    m_views.push_back(schema);
+    schema.view = view;
+    schema.controller = controller;
+    // init ownership
+    schema.initOwner(m_owner);
+
+    m_views.append(schema);
     
     m_isCacheValid = false;
     m_sizeHint = QSize();
 
+    // notify owner to repaint and resize
     m_owner->update();
     m_owner->updateGeometry();
+}
+
+void ItemWidgetPrivate::clearViewSchemas()
+{
+    QVector<ViewSchema> views;
+    views.swap(m_views);
+
+    m_isCacheValid = false;
+    m_cache.clear();
+    m_sizeHint = QSize();
+
+    // notify owner to repaint and resize
+    m_owner->update();
+    m_owner->updateGeometry();
+
+    // delete own objects explicitly
+    for (auto& viewSchema: views)
+    {
+        viewSchema.deleteIfOwnedBy(m_owner);
+    }
 }
 
 void ItemWidgetPrivate::setCell(const CellID& cell)
@@ -37,11 +67,12 @@ void ItemWidgetPrivate::setCell(const CellID& cell)
     m_isCacheValid = false;
     m_sizeHint = QSize();
 
+    // notify owner to repaint and resize
     m_owner->update();
     m_owner->updateGeometry();
 }
 
-QSize ItemWidgetPrivate::doSizeHint() const
+QSize ItemWidgetPrivate::sizeHint() const
 {
     if (!m_sizeHint.isValid())
     {
@@ -50,6 +81,22 @@ QSize ItemWidgetPrivate::doSizeHint() const
     }
 
     return m_sizeHint;
+}
+
+void ItemWidgetPrivate::event(QEvent* event)
+{
+    switch (event->type())
+    {
+    case QEvent::Paint:
+        doPaintEvent(static_cast<QPaintEvent*>(event));
+        break;
+
+    case QEvent::Resize:
+        doResizeEvent(static_cast<QResizeEvent*>(event));
+
+    default:
+        ;
+    }
 }
 
 void ItemWidgetPrivate::doPaintEvent(QPaintEvent* event)

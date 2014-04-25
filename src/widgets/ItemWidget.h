@@ -18,15 +18,17 @@ public:
     explicit ItemWidget(QWidget *parent = nullptr);
     virtual ~ItemWidget();
     
-    void addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout);
+    void addViewSchema(Layout* layout, View* view, ControllerMouse* controller = nullptr);
+    void clearViewSchemas();
     void setCell(const CellID& cell);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
     
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    void resizeEvent(QResizeEvent * event) override;
+    bool event(QEvent* event) override;
+//    void paintEvent(QPaintEvent* event) override;
+//    void resizeEvent(QResizeEvent * event) override;
     
 private:
     QScopedPointer<ItemWidgetPrivate> d;

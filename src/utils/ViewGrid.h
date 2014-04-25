@@ -3,6 +3,7 @@
 
 #include "View.h"
 #include "Grid.h"
+#include <QPointer>
 
 namespace Qi
 {
@@ -15,11 +16,11 @@ class QI_EXPORT ViewGrid: public View
     Q_DISABLE_COPY(ViewGrid)
 
 public:
-    ViewGrid(const QSharedPointer<Grid>& grid);
+    ViewGrid(Grid* grid);
     virtual ~ViewGrid();
     
-    const QSharedPointer<Grid>& grid() const { return m_grid; }
-    void setGrid(const QSharedPointer<Grid>& grid);
+    const Grid& grid() const { return *m_grid; }
+    void setGrid(Grid* grid);
 
     const QRect& frame() const;
     void setFrame(const QRect& frame);
@@ -30,7 +31,7 @@ protected:
     bool textImpl(const CellID& cell, QString& text) const override;
 
 private:
-    QSharedPointer<Grid> m_grid;
+    QPointer<Grid> m_grid;
     QScopedPointer<CacheGrid> m_cache;
 };
 

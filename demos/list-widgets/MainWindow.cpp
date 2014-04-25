@@ -12,23 +12,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     
-    QSharedPointer<View> view;
-    QSharedPointer<Layout> layout;
-    QSharedPointer<Range> range;
-
     ui->listWidget->grid().rows().setCount(100);
     ui->listWidget->grid().columns().setCount(10);
     ui->listWidget->grid().columns().setAllLinesSize(100);
 
-    view.reset(new ViewCheck());
-    layout.reset(new LayoutLeft());
-    range.reset(new RangeColumn(1));
-    ui->listWidget->grid().addCellsSchema(range, view, layout);
-
-    view.reset(new ViewText());
-    layout.reset(new LayoutAll());
-    range.reset(new RangeAll());
-    ui->listWidget->grid().addCellsSchema(range, view, layout);
+    ui->listWidget->grid().addCellsSchema(new RangeColumn(1), new LayoutLeft(), new ViewCheck());
+    ui->listWidget->grid().addCellsSchema(new RangeAll(), new LayoutAll(), new ViewText());
 }
 
 MainWindow::~MainWindow()

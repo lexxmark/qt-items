@@ -2,7 +2,7 @@ include(../../common.pri)
 
 QT += core gui widgets
 
-TARGET = qi-demos-list-widgets
+TARGET = qi-demos-grid-widgets
 TEMPLATE = app
 DESTDIR = $$OUT_PWD/../../bin/
 

@@ -17,10 +17,14 @@ public:
     explicit ItemWidgetPrivate(QWidget* owner);
     ~ItemWidgetPrivate();
     
-    void addViewSchema(QSharedPointer<View> view, QSharedPointer<Layout> layout);
+    void addViewSchema(Layout* layout, View* view, ControllerMouse* controller = nullptr);
+    void clearViewSchemas();
     void setCell(const CellID& cell);
 
-    QSize doSizeHint() const;
+    QSize sizeHint() const;
+    void event(QEvent* event);
+
+private:
     void doPaintEvent(QPaintEvent* event);
     void doResizeEvent(QResizeEvent * event);
     
@@ -28,7 +32,7 @@ public:
     
     QWidget* m_owner;
 
-    std::vector<ViewSchema> m_views;
+    QVector<ViewSchema> m_views;
 
     mutable CacheCell m_cache;
     mutable bool m_isCacheValid;

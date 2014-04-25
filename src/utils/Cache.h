@@ -1,25 +1,21 @@
 #ifndef QI_CACHE_H
 #define QI_CACHE_H
 
-#include "Layout.h"
-#include "Range.h"
-#include <vector>
+#include "CellsSchema.h"
+#include <QVector>
 
 namespace Qi
 {
 
-struct ViewSchema;
-
 class QI_EXPORT CacheView
 {
-    Q_DISABLE_COPY(CacheView)
-
 public:
-    CacheView(const View* view, const Layout* layout);
-    CacheView(CacheView&& other);
+    CacheView();
+    CacheView(const ViewSchema& schema);
+    CacheView(const CacheView& other);
     ~CacheView();
     
-    CacheView& operator=(CacheView&& other);
+    CacheView& operator=(const CacheView& other);
 
     // initializes m_rect according to m_layout
     void doLayout(const QWidget* widget, const CellID& cell, QRect& availableRect) const;
@@ -29,26 +25,25 @@ public:
     void draw(QPainter* painter, const QWidget* widget, const CellID& cell) const;
 
 protected:
-    const View* m_view;
-    const Layout* m_layout;
+    ViewSchema m_schema;
     mutable QRect m_rect;
 };
 
 class QI_EXPORT CacheCell
 {
-    Q_DISABLE_COPY(CacheCell)
-
 public:
+    CacheCell();
     explicit CacheCell(CellID cell);
-    CacheCell(CacheCell&& other);
+    CacheCell(const CacheCell& other);
 
-    CacheCell& operator=(CacheCell&& other);
+    CacheCell& operator=(const CacheCell& other);
     void swap(CacheCell& other);
 
     const CellID& cell() const { return m_cell; }
     void setCell(const CellID& cell);
     
-    void reinit(const std::vector<ViewSchema>& views, QRect cellRect);
+    void reinit(const QVector<ViewSchema>& views, QRect cellRect);
+    void clear();
     
     void draw(QPainter* painter, const QWidget* widget) const;
     QSize sizeHint(const QWidget* widget) const;
@@ -56,7 +51,7 @@ public:
 protected:
     CellID m_cell;
     QRect m_rect;
-    std::vector<CacheView> m_cacheViews;
+    QVector<CacheView> m_cacheViews;
     mutable bool m_isLayoutValid;
 };
 

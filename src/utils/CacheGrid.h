@@ -14,7 +14,7 @@ class QI_EXPORT CacheGrid: public QObject
     Q_DISABLE_COPY(CacheGrid)
 
 public:
-    CacheGrid(const Grid& grid);
+    CacheGrid(Grid* grid);
     virtual ~CacheGrid();
     
     const QRect& frame() const;
@@ -33,14 +33,14 @@ private slots:
 private:
     void validateFrame() const;
     
-    const Grid& m_grid;
+    QPointer<Grid> m_grid;
     
     QRect m_frame;
     mutable bool m_isFrameValid;
     CellID m_startVisibleCell;
     CellID m_endVisibleCell;
 
-    mutable std::vector<CacheCell> m_visibleCells;
+    mutable QVector<CacheCell> m_visibleCells;
 };
 
 } // end namespace Qi 

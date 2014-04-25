@@ -4,23 +4,23 @@
 namespace Qi
 {
 
-ViewGrid::ViewGrid(const QSharedPointer<Grid>& grid)
+ViewGrid::ViewGrid(Grid* grid)
     : m_grid(grid)
 {
     Q_ASSERT(m_grid);
-    m_cache.reset(new CacheGrid(*m_grid));
+    m_cache.reset(new CacheGrid(m_grid));
 }
 
 ViewGrid::~ViewGrid()
 {
 }
 
-void ViewGrid::setGrid(const QSharedPointer<Grid>& grid)
+void ViewGrid::setGrid(Grid* grid)
 {
     Q_ASSERT(m_grid);
 
     m_grid = grid;
-    m_cache.reset(new CacheGrid(*m_grid));
+    m_cache.reset(new CacheGrid(m_grid));
 
     emit viewChanged(this);
 }

@@ -1,6 +1,8 @@
 #ifndef QI_API_H
 #define QI_API_H
+
 #include <QtCore/qglobal.h>
+#include <QPointer>
 
 #if defined(QT_ITEMS_LIBRARY)
 #  define QI_EXPORT Q_DECL_EXPORT

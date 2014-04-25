@@ -16,10 +16,13 @@ SOURCES += QiAPI.cpp \
     utils/View.cpp \
     utils/ViewBasic.cpp \
     utils/ViewGrid.cpp \
+    utils/ControllerMouse.cpp \
     utils/Cache.cpp \
     utils/CacheGrid.cpp \
+    utils/CacheController.cpp \
     utils/Lines.cpp \
     utils/Grid.cpp \
+    utils/CellsSchema.cpp \
     widgets/ItemWidget_p.cpp \
     widgets/ItemWidget.cpp \
     widgets/GridWidget.cpp \
@@ -35,8 +38,10 @@ HEADERS +=  QiAPI.h \
     utils/View.h \
     utils/ViewBasic.h \
     utils/ViewGrid.h \
+    utils/ControllerMouse.h \
     utils/Cache.h \
     utils/CacheGrid.h \
+    utils/CacheController.h \
     utils/Lines.h \
     utils/Grid.h \
     utils/CellsSchema.h \
