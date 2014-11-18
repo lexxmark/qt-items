@@ -1,7 +1,7 @@
 #ifndef QI_GRID_WIDGET_H
 #define QI_GRID_WIDGET_H
 
-#include "../QiAPI.h"
+#include "QiAPI.h"
 #include <QWidget>
 
 namespace Qi

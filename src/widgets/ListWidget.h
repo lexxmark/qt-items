@@ -1,29 +1,29 @@
 #ifndef QI_LIST_WIDGET_H
 #define QI_LIST_WIDGET_H
 
-#include "../QiAPI.h"
-#include "../utils/Grid.h"
+#include "QiAPI.h"
+#include "space/SpaceGrid.h"
 #include <QAbstractScrollArea>
 
 namespace Qi
 {
 
 class ItemWidgetPrivate;
-class ViewGrid;
-
+class ViewCache;
+/*
 class QI_EXPORT ListWidget: public QAbstractScrollArea
 {
     Q_OBJECT
 
 public:
     explicit ListWidget(QWidget *parent = nullptr);
-    explicit ListWidget(Grid* grid, QWidget *parent = nullptr);
+    explicit ListWidget(SpaceGrid* grid, QWidget *parent = nullptr);
     virtual ~ListWidget();
 
-    Grid& grid();
-    const Grid& grid() const;
+    SpaceGrid& grid();
+    const SpaceGrid& grid() const;
 
-    void setGrid(Grid* grid);
+    void setGrid(SpaceGrid* grid);
 
 protected:
     bool viewportEvent(QEvent* event) override;
@@ -36,10 +36,10 @@ private:
 
     QScopedPointer<ItemWidgetPrivate> d;
 
-    QPointer<Grid> m_grid;
-    QPointer<ViewGrid> m_viewGrid;
+    QPointer<SpaceGrid> m_grid;
+    QPointer<ViewCache> m_viewGrid;
 };
-
+*/
 } // end namespace Qi
 
 #endif // QI_LIST_WIDGET_H

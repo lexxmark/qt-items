@@ -1,5 +1,5 @@
 #include "test_signal.h"
-#include "test_cell_id.h"
+#include "test_item_id.h"
 #include "test_ranges.h"
 #include "test_lines.h"
 #include "test_grid.h"
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 
     // register tests
     tests.append(&TestSignal::staticMetaObject);
-    tests.append(&TestCellID::staticMetaObject);
+    tests.append(&TestItemID::staticMetaObject);
     tests.append(&TestRanges::staticMetaObject);
     tests.append(&TestLines::staticMetaObject);
     tests.append(&TestGrid::staticMetaObject);

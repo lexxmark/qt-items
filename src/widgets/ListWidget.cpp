@@ -1,7 +1,9 @@
 #include "ListWidget.h"
-#include "ItemWidget_p.h"
-#include "../utils/ViewGrid.h"
-#include "../utils/LayoutBasic.h"
+//#include "ItemWidget_p.h"
+
+/*
+#include "items/cache/ViewCache.h"
+#include "core/Layouts.h"
 #include <QPainter>
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -11,12 +13,12 @@ namespace Qi
 
 ListWidget::ListWidget(QWidget *parent)
     : QAbstractScrollArea(parent),
-      m_grid(new Grid())
+      m_grid(new SpaceGrid())
 {
     init();
 }
 
-ListWidget::ListWidget(Grid* grid, QWidget *parent)
+ListWidget::ListWidget(SpaceGrid* grid, QWidget *parent)
     : QAbstractScrollArea(parent),
       m_grid(grid)
 {
@@ -30,17 +32,17 @@ ListWidget::~ListWidget()
     Q_ASSERT(!m_grid.isNull());
 }
 
-Grid& ListWidget::grid()
+SpaceGrid& ListWidget::grid()
 {
     return *m_grid;
 }
 
-const Grid& ListWidget::grid() const
+const SpaceGrid& ListWidget::grid() const
 {
     return *m_grid;
 }
 
-void ListWidget::setGrid(Grid* grid)
+void ListWidget::setGrid(SpaceGrid* grid)
 {
     m_grid = grid;
     if (!m_grid->parent())
@@ -94,7 +96,7 @@ void ListWidget::init()
     if (!m_grid->parent())
         m_grid->setParent(this);
 
-    m_viewGrid = new ViewGrid(m_grid);
+    m_viewGrid = new ViewCache(m_grid);
 
     d.reset(new ItemWidgetPrivate(viewport()));
     d->addViewSchema(new LayoutAll(), m_viewGrid.data());
@@ -113,3 +115,4 @@ void ListWidget::updateFrame()
 }
 
 } // end namespace Qi
+*/

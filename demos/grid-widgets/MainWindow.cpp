@@ -1,8 +1,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "utils/ViewBasic.h"
-#include "utils/LayoutBasic.h"
-#include "utils/RangesBasic.h"
+//#include "core/Views.h"
+//#include "core/Layouts.h"
+//#include "core/Ranges.h"
 
 using namespace Qi;
 
@@ -23,12 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :
     view.reset(new ViewCheck());
     layout.reset(new LayoutLeft());
     range.reset(new RangeColumn(1));
-    ui->listWidget->grid().addCellsSchema(range, view, layout);
+    ui->listWidget->grid().addItemSchema(range, view, layout);
 
     view.reset(new ViewText());
     layout.reset(new LayoutAll());
     range.reset(new RangeAll());
-    ui->listWidget->grid().addCellsSchema(range, view, layout);
+    ui->listWidget->grid().addItemSchema(range, view, layout);
     */
 }
 

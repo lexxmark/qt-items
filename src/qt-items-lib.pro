@@ -8,47 +8,86 @@ VERSION = 0.0.1
 
 DEFINES += QT_ITEMS_LIBRARY
 
+INCLUDEPATH += $$PWD
+#message($$INCLUDEPATH)
+
 SOURCES += QiAPI.cpp \
-    utils/Range.cpp \
-    utils/RangesBasic.cpp \
-    utils/Layout.cpp \
-    utils/LayoutBasic.cpp \
-    utils/View.cpp \
-    utils/ViewBasic.cpp \
-    utils/ViewGrid.cpp \
-    utils/ControllerMouse.cpp \
-    utils/Cache.cpp \
-    utils/CacheGrid.cpp \
-    utils/CacheController.cpp \
-    utils/Lines.cpp \
-    utils/Grid.cpp \
-    utils/CellsSchema.cpp \
-    widgets/ItemWidget_p.cpp \
+    core/Range.cpp \
+    core/ext/Ranges.cpp \
+    core/Layout.cpp \
+    core/ext/Layouts.cpp \
+    core/View.cpp \
+    core/ext/Views.cpp \
+    core/Model.cpp \
+    core/ControllerMouse.cpp \
+    core/ItemSchema.cpp \
+    space/Lines.cpp \
+    space/Space.cpp \
+    space/SpaceGrid.cpp \
     widgets/ItemWidget.cpp \
     widgets/GridWidget.cpp \
-    widgets/ListWidget.cpp
+    widgets/ListWidget.cpp \
+    cache/CacheItem.cpp \
+    cache/CacheView.cpp \
+    space/SpaceItem.cpp \
+    cache/space/CacheSpace.cpp \
+    cache/space/CacheSpaceGrid.cpp \
+    cache/space/CacheSpaceItem.cpp \
+    core/ext/ViewComposite.cpp \
+    items/cache/ViewCacheSpace.cpp \
+    core/ext/ControllerMouseMultiple.cpp \
+    cache/CacheControllerMouse.cpp \
+    cache/CacheItemIterator.cpp \
+    core/ext/ControllerMouseCaptured.cpp \
+    core/ext/ControllerMousePushable.cpp \
+    items/checkbox/Check.cpp \
+    items/radiobutton/Radio.cpp \
+    items/text/Text.cpp \
+    widgets/SpaceWidget_p.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
-    utils/CellID.h \
-    utils/Range.h \
-    utils/RangesBasic.h \
-    utils/Layout.h \
-    utils/LayoutBasic.h \
-    utils/View.h \
-    utils/ViewBasic.h \
-    utils/ViewGrid.h \
-    utils/ControllerMouse.h \
-    utils/Cache.h \
-    utils/CacheGrid.h \
-    utils/CacheController.h \
-    utils/Lines.h \
-    utils/Grid.h \
-    utils/CellsSchema.h \
-    widgets/ItemWidget_p.h \
+    core/ItemID.h \
+    core/Range.h \
+    core/ext/Ranges.h \
+    core/Layout.h \
+    core/ext/Layouts.h \
+    core/View.h \
+    core/ext/Views.h \
+    core/Model.h \
+    core/ControllerMouse.h \
+    core/ItemSchema.h \
+    space/Lines.h \
+    space/Space.h \
+    space/SpaceGrid.h \
     widgets/ItemWidget.h \
     widgets/GridWidget.h \
-    widgets/ListWidget.h
+    widgets/ListWidget.h \
+    cache/CacheItem.h \
+    core/GuiContext.h \
+    cache/CacheView.h \
+    space/SpaceItem.h \
+    cache/space/CacheSpace.h \
+    cache/space/CacheSpaceGrid.h \
+    utils/auto_value.h \
+    cache/space/CacheSpaceItem.h \
+    core/ext/ViewComposite.h \
+    core/ext/ModelTyped.h \
+    core/ItemsIterator.h \
+    core/ext/ModelStore.h \
+    core/ext/ModelCallback.h \
+    core/ext/ModelConversion.h \
+    items/cache/ViewCacheSpace.h \
+    core/ext/ControllerMouseMultiple.h \
+    cache/CacheControllerMouse.h \
+    cache/CacheItemIterator.h \
+    core/ext/ControllerMouseCaptured.h \
+    core/ext/ControllerMousePushable.h \
+    core/ext/ViewModeled.h \
+    items/checkbox/Check.h \
+    items/radiobutton/Radio.h \
+    items/text/Text.h \
+    widgets/SpaceWidget_p.h
 
 win32 {
     TARGET_EXT = .dll
