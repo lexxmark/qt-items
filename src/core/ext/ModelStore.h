@@ -13,36 +13,37 @@ class ModelStorageGrid: public ModelTyped<T>
 {
 public:
     ModelStorageGrid(const QSharedPointer<SpaceGrid>& grid)
-        : m_grid(grid)
+        : m_grid(grid),
+          m_rowsCount(0)
     {
         Q_ASSERT(grid);
-        QObject::connect(grid.data(), &Space::spaceChanged, this, &ModelStorageGrid::onGridChanged);
+        m_connection = QObject::connect(grid.data(), &Space::spaceChanged, [this] (const Space* space, ChangeReason reason) {
+            onSpaceChanged(space, reason);
+        });
         resize();
     }
 
     ~ModelStorageGrid()
     {
-        QSharedPointer<SpaceGrid> grid = m_grid.toStrongRef();
-        if (grid)
-        {
-            QObject::disconnect(grid.data(), &Space::spaceChanged, this, &ModelStorageGrid::onGridChanged);
-        }
+        QObject::disconnect(m_connection);
     }
 
 protected:
     T valueImpl(const ItemID& item) const override
     {
-        if (item.row >= m_values.size() || item.column >= m_values[item.row].size())
+        int index = item.column * m_rowsCount + item.row;
+        if (index >= m_values.size())
             throw std::logic_error("Cannot return value");
 
-        return m_values[item.row][item.column];
+        return m_values[index];
     }
 
     bool setValueImpl(const ItemID& item, T value) override
     {
-        if (item.row < m_values.size() && item.column < m_values[item.row].size())
+        int index = item.column * m_rowsCount + item.row;
+        if (index < m_values.size())
         {
-            m_values[item.row][item.column] = value;
+            m_values[index] = value;
             return true;
         }
         else
@@ -52,9 +53,10 @@ protected:
     }
 
 private slots:
-    void onCountChanged(const Space* space, ChangeReason reason)
+    void onSpaceChanged(const Space* space, ChangeReason reason)
     {
-        if (reason & ChangeReasonSpaceStructure)
+        if ((reason & ChangeReasonSpaceStructure) &&
+            (reason & ChangeReasonLinesCount))
         {
             Q_ASSERT(space == m_grid.data());
             resize();
@@ -65,15 +67,14 @@ private:
     void resize()
     {
         auto grid = m_grid.toStrongRef();
-        m_values.resize(grid->rowsCount());
-        for (int row = 0; row < m_values.size(); ++row)
-        {
-            m_values[row].resize(grid->columnsCount());
-        }
+        m_rowsCount = grid->rowsCount();
+        m_values.resize(grid->rowsCount()*grid->columnsCount());
     }
 
     QWeakPointer<SpaceGrid> m_grid;
-    QVector<QVector<StorageT>> m_values;
+    QVector<StorageT> m_values;
+    int m_rowsCount;
+    QMetaObject::Connection m_connection;
 };
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
@@ -110,10 +111,10 @@ template <typename T, typename StorageT = typename std::decay<T>::type>
 class ModelStorageColumns: public ModelTyped<T>
 {
 public:
-    ModelStorageColumns(const QSharedPointer<Lines>& rows, const QSet<quint32>& columns) { init(rows, columns); }
-    ModelStorageColumns(const QSharedPointer<Lines>& rows, quint32 minColumn, quint32 maxColumn) { init(rows, minColumn, maxColumn); }
-    ModelStorageColumns(const QSharedPointer<SpaceGrid>& grid, const QSet<quint32>& columns) { init(grid->rows(), columns); }
-    ModelStorageColumns(const QSharedPointer<SpaceGrid>& grid, quint32 minColumn, quint32 maxColumn) { init(grid->rows(), minColumn, maxColumn); }
+    ModelStorageColumns(const QSharedPointer<Lines>& rows, const QSet<int>& columns) { init(rows, columns); }
+    ModelStorageColumns(const QSharedPointer<Lines>& rows, int minColumn, int maxColumn) { init(rows, minColumn, maxColumn); }
+    ModelStorageColumns(const QSharedPointer<SpaceGrid>& grid, const QSet<int>& columns) { init(grid->rows(), columns); }
+    ModelStorageColumns(const QSharedPointer<SpaceGrid>& grid, int minColumn, int maxColumn) { init(grid->rows(), minColumn, maxColumn); }
 
     ~ModelStorageColumns()
     {
@@ -158,7 +159,7 @@ private slots:
     }
 
 private:
-    void init(const QSharedPointer<Lines>& rows, const QSet<quint32>& columns)
+    void init(const QSharedPointer<Lines>& rows, const QSet<int>& columns)
     {
         m_rows = rows;
 
@@ -172,12 +173,12 @@ private:
         resize();
     }
 
-    void init(const QSharedPointer<Lines>& rows, quint32 minColumn, quint32 maxColumn)
+    void init(const QSharedPointer<Lines>& rows, int minColumn, int maxColumn)
     {
         m_rows = rows;
 
         QVector<StorageT> emptyValues;
-        for (quint32 column = minColumn; column <= maxColumn; ++column)
+        for (int column = minColumn; column <= maxColumn; ++column)
         {
             m_values[column] = emptyValues;
         }
@@ -198,7 +199,7 @@ private:
     }
 
     QWeakPointer<Lines> m_rows;
-    QMap<quint32, QVector<StorageT> > m_values;
+    QMap<int, QVector<StorageT> > m_values;
 };
 
 template <typename T, typename StorageT = typename std::decay<T>::type>

@@ -10,18 +10,18 @@ namespace Qi
 class QI_EXPORT ItemID
 {
 public:
-    quint32 row;
-    quint32 column;
+    int row;
+    int column;
 
     ItemID()
-        : row(Invalid), column(Invalid)
+        : row(InvalidIndex), column(InvalidIndex)
     {}
 
-    ItemID(quint32 row, quint32 column)
+    ItemID(int row, int column)
         : row(row), column(column)
     {}
 
-    bool isValid() const { return (row != Invalid) && (column != Invalid); }
+    bool isValid() const { return row >= 0 && column >= 0; }
     
     void swap(ItemID& other)
     {
@@ -65,7 +65,7 @@ inline bool operator<(ItemID left, ItemID right)
 // QSet/QMap support
 inline uint qHash(ItemID key)
 {
-    return qHash(QPair<quint32, quint32>(key.row, key.column));
+    return qHash(QPair<int, int>(key.row, key.column));
 }
 
 } // end namespace Qi

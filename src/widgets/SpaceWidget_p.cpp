@@ -42,7 +42,7 @@ bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
         case QEvent::Resize:
         {
             QResizeEvent* resizeEvent = static_cast<QResizeEvent*>(event);
-            // resize window of the cache
+            // resize window of the cache to occupy whole widget rect
             m_cacheSpace->setWindow(QRect(QPoint(0, 0), resizeEvent->size()));
             break;
         }
@@ -73,6 +73,16 @@ bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
 
     // process event by controllers
     return m_cacheControllers->processEvent(event);
+}
+
+void SpaceWidgetPrivate::stopControllers()
+{
+    m_cacheControllers->stop();
+}
+
+void SpaceWidgetPrivate::resumeControllers()
+{
+    m_cacheControllers->resume();
 }
 
 void SpaceWidgetPrivate::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason)

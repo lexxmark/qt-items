@@ -45,7 +45,7 @@ void TestGrid::test()
     Lines& rows = grid.rows();
     
     {
-        std::vector<quint32> perm(12, 0);
+        std::vector<int> perm(12, 0);
         perm[0] = 3;
         perm[1] = 6;
         perm[2] = 1;
@@ -76,7 +76,7 @@ void TestGrid::test()
     Lines& columns = grid.columns();
     
     {
-        std::vector<quint32> perm(12, 0);
+        std::vector<int> perm(12, 0);
         perm[0] = 11;
         perm[1] =10;
         perm[2] = 9;

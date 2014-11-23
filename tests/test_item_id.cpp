@@ -7,8 +7,8 @@ using namespace Qi;
 void TestItemID::testClass()
 {
     ItemID item;
-    QCOMPARE(item.row, Invalid);
-    QCOMPARE(item.column, Invalid);
+    QCOMPARE(item.row, InvalidIndex);
+    QCOMPARE(item.column, InvalidIndex);
     QVERIFY(!item.isValid());
     QCOMPARE(item, ItemID());
 

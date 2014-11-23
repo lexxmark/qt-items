@@ -25,7 +25,7 @@ private:
     ViewApplicationMask m_viewApplicationMask;
 
     // cache items by columns
-    QMap<quint32, CacheItem> m_cacheItems;
+    QMap<int, CacheItem> m_cacheItems;
 };
 
 } // end namespace Qi

@@ -51,7 +51,7 @@ public:
     const QVector<ItemSchema>& schemasOrdered() const;
 
 signals:
-    void spaceChanged(const Space*, ChangeReason);
+    void spaceChanged(const Space* space, ChangeReason reason);
 
 private slots:
     void onRangeChanged(const Range* range, ChangeReason reason);

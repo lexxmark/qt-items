@@ -4,6 +4,7 @@
 #include <QtCore/qglobal.h>
 #include <QPointer>
 #include <QSharedPointer>
+#include <QDebug>
 
 #if defined(QT_ITEMS_LIBRARY)
 #  define QI_EXPORT Q_DECL_EXPORT
@@ -16,15 +17,15 @@
 namespace Qi
 {
 
-static const quint32 Invalid = -1;
+static const int InvalidIndex = -1;
     
 enum ChangeReasonFlag
 {
     ChangeReasonLinesCount = 0x0001,
     ChangeReasonLinesCountWeak = 0x0002,
-    ChangeReasonLineVisibility = 0x0004,
-    ChangeReasonLineSize = 0x0008,
-    ChangeReasonLineOrder = 0x0010,
+    ChangeReasonLinesVisibility = 0x0004,
+    ChangeReasonLinesSize = 0x0008,
+    ChangeReasonLinesOrder = 0x0010,
     
     ChangeReasonRange = 0x0020,
     ChangeReasonLayout = 0x0040,

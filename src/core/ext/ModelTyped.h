@@ -32,7 +32,7 @@ public:
     typedef T ValueType_t;
 
     ValueType_t value(const ItemID& item) const { return valueImpl(item); }
-    ValueType_t value(quint32 row, quint32 column) const { return value(ItemID(row, column)); }
+    ValueType_t value(int row, int column) const { return value(ItemID(row, column)); }
 
     bool setValue(const ItemID& item, ValueType_t value)
     {
@@ -43,7 +43,7 @@ public:
         }
         return false;
     }
-    bool setValue(quint32 row, quint32 column, ValueType_t value) { return setValue(ItemID(row, column), value); }
+    bool setValue(int row, int column, ValueType_t value) { return setValue(ItemID(row, column), value); }
 
     bool setValueMultiple(ItemsIterator& itemsIterator, ValueType_t value)
     {
@@ -78,8 +78,7 @@ protected:
 };
 
 // export already specialized ModelTyped classes
-QI_EXPORT_TEMPLATE template class QI_EXPORT ModelTyped<quint32>;
-QI_EXPORT_TEMPLATE template class QI_EXPORT ModelTyped<int>;
+//QI_EXPORT_TEMPLATE template class QI_EXPORT ModelTyped<int>;
 
 } // end namespace Qi
 

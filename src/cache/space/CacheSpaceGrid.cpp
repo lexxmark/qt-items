@@ -60,8 +60,8 @@ ItemID CacheSpaceGrid::visibleItemByPosition(const QPoint& point) const
     QPoint gridPoint = window2Space(point);
 
     ItemID visibleItem;
-    visibleItem.row = m_grid->rows()->findVisLine(gridPoint.y());
-    visibleItem.column = m_grid->columns()->findVisLine(gridPoint.x());
+    visibleItem.row = m_grid->rows()->findVisibleIDByPos(gridPoint.y());
+    visibleItem.column = m_grid->columns()->findVisibleIDByPos(gridPoint.x());
 
     return visibleItem;
 }
@@ -93,15 +93,15 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     const Lines& rows = *m_grid->rows();
     const Lines& columns = *m_grid->columns();
 
-    quint32 visibleRowStart = rows.findVisLine(m_scrollOffset.y());
-    quint32 visibleRowEnd = rows.findVisLine(m_scrollOffset.y() + m_window.height());
-    quint32 visibleColumnStart = columns.findVisLine(m_scrollOffset.x());
-    quint32 visibleColumnEnd = columns.findVisLine(m_scrollOffset.x() + m_window.width());
+    int visibleRowStart = rows.findVisibleIDByPos(m_scrollOffset.y());
+    int visibleRowEnd = rows.findVisibleIDByPos(m_scrollOffset.y() + m_window.height());
+    int visibleColumnStart = columns.findVisibleIDByPos(m_scrollOffset.x());
+    int visibleColumnEnd = columns.findVisibleIDByPos(m_scrollOffset.x() + m_window.width());
 
-    Q_ASSERT(visibleRowStart != Invalid);
-    Q_ASSERT(visibleRowEnd != Invalid);
-    Q_ASSERT(visibleColumnStart != Invalid);
-    Q_ASSERT(visibleColumnEnd != Invalid);
+    Q_ASSERT(visibleRowStart != InvalidIndex);
+    Q_ASSERT(visibleRowEnd != InvalidIndex);
+    Q_ASSERT(visibleColumnStart != InvalidIndex);
+    Q_ASSERT(visibleColumnEnd != InvalidIndex);
 
     ItemID newItemStart(visibleRowStart, visibleColumnStart);
     ItemID newItemEnd(visibleRowEnd, visibleColumnEnd);
@@ -128,8 +128,8 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     if (!m_items.isEmpty())
     {
         // find intersection between old and new items
-        ItemID intersectionStart(std::max(m_itemStart.row, newItemStart.row), std::max(m_itemStart.column, newItemStart.column));
-        ItemID intersectionEnd(std::min(m_itemEnd.row, newItemEnd.row), std::min(m_itemEnd.column, newItemEnd.column));
+        ItemID intersectionStart(qMax(m_itemStart.row, newItemStart.row), qMax(m_itemStart.column, newItemStart.column));
+        ItemID intersectionEnd(qMin(m_itemEnd.row, newItemEnd.row), qMin(m_itemEnd.column, newItemEnd.column));
 
         // copy intersected cache items
         size_t oldItemColumns = m_itemEnd.column - m_itemStart.column + 1;
@@ -153,7 +153,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     for (ItemID itemVisible = newItemStart; itemVisible.column <= newItemEnd.column; ++itemVisible.column)
     {
         itemAbsolute.column = columns.toAbsolute(itemVisible.column);
-        itemOrigin.rx() = (int)columns.sizeAtVisLine(itemVisible.column) + origin.x();
+        itemOrigin.rx() = (int)columns.startPos(itemVisible.column) + origin.x();
         itemSize.rwidth() = (int)columns.lineSize(itemAbsolute.column);
 
         for (itemVisible.row = newItemStart.row; itemVisible.row <= newItemEnd.row; ++itemVisible.row)
@@ -165,7 +165,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
                 continue;
 
             itemAbsolute.row = rows.toAbsolute(itemVisible.row);
-            itemOrigin.ry() = (int)rows.sizeAtVisLine(itemVisible.row) + origin.y();
+            itemOrigin.ry() = (int)rows.startPos(itemVisible.row) + origin.y();
             itemSize.rheight() = (int)rows.lineSize(itemAbsolute.row);
 
             cacheItem = createCacheItem(itemAbsolute, itemOrigin, itemSize);
@@ -195,7 +195,7 @@ QSharedPointer<CacheItem> CacheSpaceGrid::createCacheItem(const ItemID& itemAbso
     if (m_grid->hints() & SpaceHintSimilarViewsByColumns)
     {
         if (!m_viewsByColumnOptimization)
-            m_viewsByColumnOptimization.reset(new QMap<quint32, ViewSchema>());
+            m_viewsByColumnOptimization.reset(new QMap<int, ViewSchema>());
 
         ViewSchema& columnSchema = (*m_viewsByColumnOptimization)[itemAbsolute.column];
         if (!columnSchema.isValid())
@@ -251,8 +251,8 @@ const CacheItem* CacheSpaceGrid::cacheItemByPositionImpl(const QPoint& point) co
     QPoint gridPoint = window2Space(point);
 
     ItemID visibleItem;
-    visibleItem.row = m_grid->rows()->findVisLineInterval(gridPoint.y(), m_itemStart.row, m_itemEnd.row);
-    visibleItem.column = m_grid->columns()->findVisLineInterval(gridPoint.x(), m_itemStart.column, m_itemEnd.column);
+    visibleItem.row = m_grid->rows()->findVisibleIDByPos(gridPoint.y(), m_itemStart.row, m_itemEnd.row);
+    visibleItem.column = m_grid->columns()->findVisibleIDByPos(gridPoint.x(), m_itemStart.column, m_itemEnd.column);
 
     if (!isItemInFrame(visibleItem))
         return nullptr;

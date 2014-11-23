@@ -12,6 +12,8 @@ namespace Qi
 namespace QiPrivate
 {
 
+const quint32 Invalid = -1;
+
 template <typename Signature>
 class SignalBase
 {

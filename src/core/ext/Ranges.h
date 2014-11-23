@@ -81,100 +81,100 @@ class QI_EXPORT RangeColumn: public Range
     Q_OBJECT
     
 public:
-    explicit RangeColumn(quint32 column);
+    explicit RangeColumn(int column);
     
-    quint32 column() const { return m_column; }
-    void setColumn(quint32 column);
+    int column() const { return m_column; }
+    void setColumn(int column);
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
     
 private:
-    quint32 m_column;
+    int m_column;
 };
-QI_EXPORT QSharedPointer<RangeColumn> makeRangeColumn(quint32 column);
+QI_EXPORT QSharedPointer<RangeColumn> makeRangeColumn(int column);
 
 class QI_EXPORT RangeColumns: public Range
 {
     Q_OBJECT
     
 public:
-    explicit RangeColumns(const QSet<quint32>& columns);
-    RangeColumns(quint32 columnBegin, quint32 columnEnd);
+    explicit RangeColumns(const QSet<int>& columns);
+    RangeColumns(int columnBegin, int columnEnd);
     
-    const QSet<quint32>& columns() const { return m_columns; }
-    void setColumns(const QSet<quint32>& columns);
+    const QSet<int>& columns() const { return m_columns; }
+    void setColumns(const QSet<int>& columns);
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
     
 private:
-    QSet<quint32> m_columns;
+    QSet<int> m_columns;
 };
-QI_EXPORT QSharedPointer<RangeColumns> makeRangeColumns(const QSet<quint32>& columns);
-QI_EXPORT QSharedPointer<RangeColumns> makeRangeColumns(quint32 columnBegin, quint32 columnEnd);
+QI_EXPORT QSharedPointer<RangeColumns> makeRangeColumns(const QSet<int>& columns);
+QI_EXPORT QSharedPointer<RangeColumns> makeRangeColumns(int columnBegin, int columnEnd);
 
 class QI_EXPORT RangeRow: public Range
 {
     Q_OBJECT
     
 public:
-    explicit RangeRow(quint32 row);
+    explicit RangeRow(int row);
     
-    quint32 row() const { return m_row; }
-    void setRow(quint32 row);
+    int row() const { return m_row; }
+    void setRow(int row);
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
     
 private:
-    quint32 m_row;
+    int m_row;
 };
-QI_EXPORT QSharedPointer<RangeRow> makeRangeRow(quint32 row);
+QI_EXPORT QSharedPointer<RangeRow> makeRangeRow(int row);
 
 class QI_EXPORT RangeRows: public Range
 {
     Q_OBJECT
     
 public:
-    explicit RangeRows(const QSet<quint32>& rows);
-    RangeRows(quint32 rowBegin, quint32 rowEnd);
+    explicit RangeRows(const QSet<int>& rows);
+    RangeRows(int rowBegin, int rowEnd);
     
-    const QSet<quint32>& rows() const { return m_rows; }
-    void setRows(const QSet<quint32>& rows);
+    const QSet<int>& rows() const { return m_rows; }
+    void setRows(const QSet<int>& rows);
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
     
 private:
-    QSet<quint32> m_rows;
+    QSet<int> m_rows;
 };
-QI_EXPORT QSharedPointer<RangeRows> makeRangeRows(const QSet<quint32>& rows);
-QI_EXPORT QSharedPointer<RangeRows> makeRangeRows(quint32 rowBegin, quint32 rowEnd);
+QI_EXPORT QSharedPointer<RangeRows> makeRangeRows(const QSet<int>& rows);
+QI_EXPORT QSharedPointer<RangeRows> makeRangeRows(int rowBegin, int rowEnd);
 
 class QI_EXPORT RangeRect: public Range
 {
     Q_OBJECT
 
 public:
-    RangeRect(const QSet<quint32>& rows, const QSet<quint32>& columns);
-    RangeRect(quint32 rowBegin, quint32 rowEnd, quint32 columnBegin, quint32 columnEnd);
+    RangeRect(const QSet<int>& rows, const QSet<int>& columns);
+    RangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd);
 
-    const QSet<quint32>& rows() const { return m_rows; }
-    void setRows(const QSet<quint32>& rows);
+    const QSet<int>& rows() const { return m_rows; }
+    void setRows(const QSet<int>& rows);
 
-    const QSet<quint32>& columns() const { return m_columns; }
-    void setColumns(const QSet<quint32>& columns);
+    const QSet<int>& columns() const { return m_columns; }
+    void setColumns(const QSet<int>& columns);
 
 protected:
     bool hasItemImpl(const ItemID &item) const override;
 
 private:
-    QSet<quint32> m_rows;
-    QSet<quint32> m_columns;
+    QSet<int> m_rows;
+    QSet<int> m_columns;
 };
-QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(const QSet<quint32>& rows, const QSet<quint32>& columns);
-QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(quint32 rowBegin, quint32 rowEnd, quint32 columnBegin, quint32 columnEnd);
+QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(const QSet<int>& rows, const QSet<int>& columns);
+QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd);
 
 } // end namespace Qi
 

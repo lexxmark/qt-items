@@ -66,12 +66,12 @@ QSharedPointer<RangeAll> makeRangeAll()
     return QSharedPointer<RangeAll>::create();
 }
 
-RangeColumn::RangeColumn(quint32 column)
+RangeColumn::RangeColumn(int column)
     : m_column(column)
 {
 }
 
-void RangeColumn::setColumn(quint32 column)
+void RangeColumn::setColumn(int column)
 {
     if (column != m_column)
     {
@@ -85,24 +85,24 @@ bool RangeColumn::hasItemImpl(const ItemID& item) const
     return item.column == m_column;
 }
 
-QSharedPointer<RangeColumn> makeRangeColumn(quint32 column)
+QSharedPointer<RangeColumn> makeRangeColumn(int column)
 {
     return QSharedPointer<RangeColumn>::create(column);
 }
 
-RangeColumns::RangeColumns(const QSet<quint32>& columns)
+RangeColumns::RangeColumns(const QSet<int>& columns)
     : m_columns(columns)
 {
 }
 
-RangeColumns::RangeColumns(quint32 columnBegin, quint32 columnEnd)
+RangeColumns::RangeColumns(int columnBegin, int columnEnd)
 {
     Q_ASSERT(columnBegin <= columnEnd);
-    for (quint32 column = columnBegin; column != columnEnd; ++column)
+    for (int column = columnBegin; column != columnEnd; ++column)
         m_columns.insert(column);
 }
 
-void RangeColumns::setColumns(const QSet<quint32>& columns)
+void RangeColumns::setColumns(const QSet<int>& columns)
 {
     if (m_columns != columns)
     {
@@ -116,22 +116,22 @@ bool RangeColumns::hasItemImpl(const ItemID& item) const
     return m_columns.contains(item.column);
 }
 
-QSharedPointer<RangeColumns> makeRangeColumns(const QSet<quint32>& columns)
+QSharedPointer<RangeColumns> makeRangeColumns(const QSet<int>& columns)
 {
     return QSharedPointer<RangeColumns>::create(columns);
 }
 
-QSharedPointer<RangeColumns> makeRangeColumns(quint32 columnBegin, quint32 columnEnd)
+QSharedPointer<RangeColumns> makeRangeColumns(int columnBegin, int columnEnd)
 {
     return QSharedPointer<RangeColumns>(new RangeColumns(columnBegin, columnEnd));
 }
 
-RangeRow::RangeRow(quint32 row)
+RangeRow::RangeRow(int row)
     : m_row(row)
 {
 }
 
-void RangeRow::setRow(quint32 row)
+void RangeRow::setRow(int row)
 {
     if (row != m_row)
     {
@@ -145,24 +145,24 @@ bool RangeRow::hasItemImpl(const ItemID& item) const
     return item.row == m_row;
 }
 
-QSharedPointer<RangeRow> makeRangeRow(quint32 row)
+QSharedPointer<RangeRow> makeRangeRow(int row)
 {
     return QSharedPointer<RangeRow>::create(row);
 }
 
-RangeRows::RangeRows(const QSet<quint32>& rows)
+RangeRows::RangeRows(const QSet<int>& rows)
     : m_rows(rows)
 {
 }
 
-RangeRows::RangeRows(quint32 rowBegin, quint32 rowEnd)
+RangeRows::RangeRows(int rowBegin, int rowEnd)
 {
     Q_ASSERT(rowBegin <= rowEnd);
-    for (quint32 row = rowBegin; row != rowEnd; ++row)
+    for (int row = rowBegin; row != rowEnd; ++row)
         m_rows.insert(row);
 }
 
-void RangeRows::setRows(const QSet<quint32>& rows)
+void RangeRows::setRows(const QSet<int>& rows)
 {
     if (m_rows != rows)
     {
@@ -176,23 +176,23 @@ bool RangeRows::hasItemImpl(const ItemID& item) const
     return m_rows.contains(item.row);
 }
 
-QSharedPointer<RangeRows> makeRangeRows(const QSet<quint32>& rows)
+QSharedPointer<RangeRows> makeRangeRows(const QSet<int>& rows)
 {
     return QSharedPointer<RangeRows>::create(rows);
 }
 
-QSharedPointer<RangeRows> makeRangeRows(quint32 rowBegin, quint32 rowEnd)
+QSharedPointer<RangeRows> makeRangeRows(int rowBegin, int rowEnd)
 {
     return QSharedPointer<RangeRows>::create(rowBegin, rowEnd);
 }
 
-RangeRect::RangeRect(const QSet<quint32>& rows, const QSet<quint32>& columns)
+RangeRect::RangeRect(const QSet<int>& rows, const QSet<int>& columns)
     : m_rows(rows),
       m_columns(columns)
 {
 }
 
-RangeRect::RangeRect(quint32 rowBegin, quint32 rowEnd, quint32 columnBegin, quint32 columnEnd)
+RangeRect::RangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd)
 {
     Q_ASSERT(rowBegin <= rowEnd);
     Q_ASSERT(columnBegin <= columnEnd);
@@ -204,7 +204,7 @@ RangeRect::RangeRect(quint32 rowBegin, quint32 rowEnd, quint32 columnBegin, quin
         m_columns.insert(columnBegin);
 }
 
-void RangeRect::setRows(const QSet<quint32>& rows)
+void RangeRect::setRows(const QSet<int>& rows)
 {
     if (m_rows != rows)
     {
@@ -213,7 +213,7 @@ void RangeRect::setRows(const QSet<quint32>& rows)
     }
 }
 
-void RangeRect::setColumns(const QSet<quint32>& columns)
+void RangeRect::setColumns(const QSet<int>& columns)
 {
     if (m_columns != columns)
     {
@@ -227,12 +227,12 @@ bool RangeRect::hasItemImpl(const ItemID& item) const
     return m_rows.contains(item.row) && m_columns.contains(item.column);
 }
 
-QSharedPointer<RangeRect> makeRangeRect(const QSet<quint32>& rows, const QSet<quint32>& columns)
+QSharedPointer<RangeRect> makeRangeRect(const QSet<int>& rows, const QSet<int>& columns)
 {
     return QSharedPointer<RangeRect>::create(rows, columns);
 }
 
-QSharedPointer<RangeRect> makeRangeRect(quint32 rowBegin, quint32 rowEnd, quint32 columnBegin, quint32 columnEnd)
+QSharedPointer<RangeRect> makeRangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd)
 {
     return QSharedPointer<RangeRect>::create(rowBegin, rowEnd, columnBegin, columnEnd);
 }

@@ -26,6 +26,9 @@ public:
     
     bool ownerEvent(QEvent* event);
 
+    void stopControllers();
+    void resumeControllers();
+
 private:
     void onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason);
 

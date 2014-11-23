@@ -56,7 +56,7 @@ void TestRanges::testRangeColumn()
         QSharedPointer<RangeColumn> r = makeRangeColumn(4);
         QVERIFY(r.data());
         QVERIFY(!r->parent());
-        QCOMPARE(r->column(), 4u);
+        QCOMPARE(r->column(), 4);
         QCOMPARE(r->hasItem(2, 2), false);
         QCOMPARE(r->hasItem(923, 4), true);
         
@@ -77,15 +77,15 @@ void TestRanges::testRangeColumn()
 void TestRanges::testRangeColumns()
 {
     {
-        QSet<quint32> columns;
+        QSet<int> columns;
         RangeColumns r(columns);
         QVERIFY(!r.parent());
-        QCOMPARE(r.columns(), QSet<quint32>());
+        QCOMPARE(r.columns(), QSet<int>());
         QVERIFY(!r.hasItem(0, 0));
     }
     
     {
-        QSet<quint32> columns;
+        QSet<int> columns;
         columns << 1 << 3;
         RangeColumns r(columns);
         QVERIFY(r.hasItem(1, 1));
@@ -105,7 +105,7 @@ void TestRanges::testRangeColumns()
     {
         QSharedPointer<RangeColumns> r(makeRangeColumns(0, 10));
         QVERIFY(r.data());
-        QSet<quint32> columns;
+        QSet<int> columns;
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->columns() == columns);
         
@@ -125,7 +125,7 @@ void TestRanges::testRangeColumns()
     }
 
     {
-        QSet<quint32> columns;
+        QSet<int> columns;
         columns << 0 << 10;
         QSharedPointer<RangeColumns> r(makeRangeColumns(columns));
         QVERIFY(r.data());
@@ -150,7 +150,7 @@ void TestRanges::testRangeRow()
         QSharedPointer<RangeRow> r(makeRangeRow(4));
         QVERIFY(r.data());
         QVERIFY(!r->parent());
-        QCOMPARE(r->row(), 4u);
+        QCOMPARE(r->row(), 4);
         QCOMPARE(r->hasItem(2, 2), false);
         QCOMPARE(r->hasItem(4, 923), true);
         
@@ -171,15 +171,15 @@ void TestRanges::testRangeRow()
 void TestRanges::testRangeRows()
 {
     {
-        QSet<quint32> rows;
+        QSet<int> rows;
         RangeRows r(rows);
         QVERIFY(!r.parent());
-        QCOMPARE(r.rows(), QSet<quint32>());
+        QCOMPARE(r.rows(), QSet<int>());
         QVERIFY(!r.hasItem(0, 0));
     }
     
     {
-        QSet<quint32> rows;
+        QSet<int> rows;
         rows << 1 << 3;
         RangeRows r(rows);
         QVERIFY(r.hasItem(1, 1));
@@ -199,7 +199,7 @@ void TestRanges::testRangeRows()
     {
         QSharedPointer<RangeRows> r(makeRangeRows(0, 10));
         QVERIFY(r.data());
-        QSet<quint32> rows;
+        QSet<int> rows;
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
         QVERIFY(r->rows() == rows);
         
@@ -219,7 +219,7 @@ void TestRanges::testRangeRows()
     }
     
     {
-        QSet<quint32> rows;
+        QSet<int> rows;
         rows << 0 << 10;
         QSharedPointer<RangeRows> r(makeRangeRows(rows));
         QVERIFY(r.data());

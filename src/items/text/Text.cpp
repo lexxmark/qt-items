@@ -53,6 +53,7 @@ QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode
 void ViewText::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
     /*
+     * cannot use this stuff because textElideMode is not working
     QStyleOptionViewItem option;
     option.initFrom(ctx.widget);
     option.rect = cache.cacheView.rect();

@@ -145,11 +145,12 @@ void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
-//    ctx.preDrawSpace(m_window);
+    painter->save();
+    painter->setClipRect(m_window);
 
     drawImpl(painter, ctx);
 
-//    ctx.postDrawSpace();
+    painter->restore();
 }
 
 void CacheSpace::tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const

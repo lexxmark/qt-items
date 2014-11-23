@@ -48,7 +48,7 @@ private:
     mutable QVector<QSharedPointer<CacheItem>> m_items;
 
     // hints optimizations
-    mutable QScopedPointer<QMap<quint32, ViewSchema>> m_viewsByColumnOptimization;
+    mutable QScopedPointer<QMap<int, ViewSchema>> m_viewsByColumnOptimization;
 };
 
 } // end namespace Qi 

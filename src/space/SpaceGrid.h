@@ -28,16 +28,16 @@ public:
     const QSharedPointer<Lines>& rows() const { return m_rows; }
     const QSharedPointer<Lines>& columns() const { return m_columns; }
 
-    void setDimensions(quint32 rows, quint32 columns);
-    void setRowsCount(quint32 rows) { m_rows->setCount(rows); }
-    void setColumnsCount(quint32 columns) { m_columns->setCount(columns); }
+    void setDimensions(int rows, int columns);
+    void setRowsCount(int rows) { m_rows->setCount(rows); }
+    void setColumnsCount(int columns) { m_columns->setCount(columns); }
 
     QSize dimensions() const;
-    quint32 rowsCount() const { return m_rows->count(); }
-    quint32 columnsCount() const { return m_columns->count(); }
+    int rowsCount() const { return m_rows->count(); }
+    int columnsCount() const { return m_columns->count(); }
 
-    quint32 rowsVisibleCount() const { return m_rows->visibleCount(); }
-    quint32 columnsVisibleCount() const { return m_columns->visibleCount(); }
+    int rowsVisibleCount() const { return m_rows->visibleCount(); }
+    int columnsVisibleCount() const { return m_columns->visibleCount(); }
 
     void shareRows(const QSharedPointer<Lines>& rows);
     void shareColumns(const QSharedPointer<Lines>& columns);
@@ -51,11 +51,11 @@ public:
     bool checkVisibleItem(const ItemID& item) const;
     bool isItemVisible(const ItemID& item) const;
 
-    void sortColumnByModel(quint32 column, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
-    void sortRowByModel(quint32 row, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
+    void sortColumnByModel(int column, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
+    void sortRowByModel(int row, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
 
-    void sortColumnByRangedModel(quint32 column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
-    void sortRowByRangedModel(quint32 row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
+    void sortColumnByRangedModel(int column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
+    void sortRowByRangedModel(int row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
 
 private slots:
     void onLinesChanged(const Lines* lines, ChangeReason reason);

@@ -17,7 +17,7 @@ public:
     virtual ~Range();
     
     bool hasItem(const ItemID& item) const { return hasItemImpl(item); }
-    bool hasItem(quint32 row, quint32 column) const { return hasItem(ItemID(row, column)); }
+    bool hasItem(int row, int column) const { return hasItem(ItemID(row, column)); }
     
 signals:
     void rangeChanged(const Range*, ChangeReason);

@@ -21,8 +21,12 @@ public:
     const SpaceItem& space() const { return *m_space; }
     SpaceItem& space() { return *m_space; }
 
+    // there are two ways to synchronize space size:
+    // 1. sync with widget size (minimumSizeHint will work by default)
+    // 2. sync with item content (minimumSizeHint will return desired item size)
     void syncSpaceSizeWithContent(bool enable);
 
+protected:
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
     bool event(QEvent* e) override;

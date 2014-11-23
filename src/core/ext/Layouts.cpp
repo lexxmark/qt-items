@@ -91,21 +91,21 @@ bool LayoutCenter::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) cons
 void LayoutCenter::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
 {
     QSize viewSize = viewInfo.size();
-    size.rwidth() = std::max<int>(size.width(), viewSize.width());
-    size.rheight() = std::max<int>(size.height(), viewSize.height());
+    size.rwidth() = qMax(size.width(), viewSize.width());
+    size.rheight() = qMax(size.height(), viewSize.height());
 }
 
 void LayoutHor::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
 {
     QSize viewSize = viewInfo.size();
     size.rwidth() += (viewSize.width()+1);
-    size.rheight() = std::max<int>(size.height(), viewSize.height());
+    size.rheight() = qMax(size.height(), viewSize.height());
 }
 
 void LayoutVer::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
 {
     QSize viewSize = viewInfo.size();
-    size.rwidth() = std::max<int>(size.width(), viewSize.width());
+    size.rwidth() = qMax(size.width(), viewSize.width());
     size.rheight() += (viewSize.height()+1);
 }
 
@@ -130,7 +130,7 @@ bool LayoutLeft::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
     QSize viewSize = viewInfo.size();
 
     info.viewRect = info.itemRect;
-    info.viewRect.setRight(std::min<int>(info.viewRect.right(), info.viewRect.left() + viewSize.width()));
+    info.viewRect.setRight(qMin(info.viewRect.right(), info.viewRect.left() + viewSize.width()));
     if (!isTransparent())
         info.itemRect.setLeft(info.viewRect.right()+1);
 
@@ -142,7 +142,7 @@ bool LayoutRight::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
     QSize viewSize = viewInfo.size();
 
     info.viewRect = info.itemRect;
-    info.viewRect.setLeft(std::max<int>(info.viewRect.left(), info.viewRect.right() - viewSize.width()));
+    info.viewRect.setLeft(qMax(info.viewRect.left(), info.viewRect.right() - viewSize.width()));
     if (!isTransparent())
         info.itemRect.setRight(info.viewRect.left()-1);
 
@@ -154,7 +154,7 @@ bool LayoutTop::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
     QSize viewSize = viewInfo.size();
 
     info.viewRect = info.itemRect;
-    info.viewRect.setBottom(std::min<int>(info.viewRect.bottom(), info.viewRect.top() + viewSize.height()));
+    info.viewRect.setBottom(qMin(info.viewRect.bottom(), info.viewRect.top() + viewSize.height()));
     if (!isTransparent())
         info.itemRect.setTop(info.viewRect.bottom()+1);
 
@@ -166,7 +166,7 @@ bool LayoutBottom::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) cons
     QSize viewSize = viewInfo.size();
 
     info.viewRect = info.itemRect;
-    info.viewRect.setTop(std::max<int>(info.viewRect.top(), info.viewRect.bottom() - viewSize.height()));
+    info.viewRect.setTop(qMax(info.viewRect.top(), info.viewRect.bottom() - viewSize.height()));
     if (!isTransparent())
         info.itemRect.setBottom(info.viewRect.top()-1);
 

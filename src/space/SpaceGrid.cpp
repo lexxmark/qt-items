@@ -13,17 +13,17 @@ QSharedPointer<Range> CreateCellRangeRect(const SpaceGrid& grid, const ItemID& d
     if (!grid.checkVisibleItem(displayCorner1) || !grid.checkVisibleItem(displayCorner2))
         return QSharedPointer<Range>();
 
-    ItemID itemTopLeft(std::min(displayCorner1.row, displayCorner2.row), std::min(displayCorner1.column, displayCorner2.column));
-    ItemID itemBottomRight(std::max(displayCorner1.row, displayCorner2.row), std::max(displayCorner1.column, displayCorner2.column));
+    ItemID itemTopLeft(qMin(displayCorner1.row, displayCorner2.row), qMin(displayCorner1.column, displayCorner2.column));
+    ItemID itemBottomRight(qMax(displayCorner1.row, displayCorner2.row), qMax(displayCorner1.column, displayCorner2.column));
 
-    QSet<quint32> rows;
-    for (quint32 row = itemTopLeft.row; row <= itemBottomRight.row; ++row)
+    QSet<int> rows;
+    for (int row = itemTopLeft.row; row <= itemBottomRight.row; ++row)
     {
         rows.insert(grid.rows()->toAbsolute(row));
     }
 
-    QSet<quint32> columns;
-    for (quint32 column = itemTopLeft.column; column <= itemBottomRight.column; ++column)
+    QSet<int> columns;
+    for (int column = itemTopLeft.column; column <= itemBottomRight.column; ++column)
     {
         columns.insert(grid.columns()->toAbsolute(column));
     }
@@ -34,13 +34,13 @@ QSharedPointer<Range> CreateCellRangeRect(const SpaceGrid& grid, const ItemID& d
 class AscendingColumnComparatorByModel
 {
 public:
-    AscendingColumnComparatorByModel(quint32 column, const QSharedPointer<ModelComparable>& model)
+    AscendingColumnComparatorByModel(int column, const QSharedPointer<ModelComparable>& model)
         : m_leftItem(0, column),
           m_rightItem(0, column),
           m_model(model)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.row = left;
         m_rightItem.row = right;
@@ -56,13 +56,13 @@ private:
 class DescendingColumnComparatorByModel
 {
 public:
-    DescendingColumnComparatorByModel(quint32 column, const QSharedPointer<ModelComparable>& model)
+    DescendingColumnComparatorByModel(int column, const QSharedPointer<ModelComparable>& model)
         : m_leftItem(0, column),
         m_rightItem(0, column),
         m_model(model)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.row = left;
         m_rightItem.row = right;
@@ -78,13 +78,13 @@ private:
 class AscendingRowComparatorByModel
 {
 public:
-    AscendingRowComparatorByModel(quint32 row, const QSharedPointer<ModelComparable>& model)
+    AscendingRowComparatorByModel(int row, const QSharedPointer<ModelComparable>& model)
         : m_leftItem(row, 0),
         m_rightItem(row, 0),
         m_model(model)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.column = left;
         m_rightItem.column = right;
@@ -100,13 +100,13 @@ private:
 class DescendingRowComparatorByModel
 {
 public:
-    DescendingRowComparatorByModel(quint32 row, const QSharedPointer<ModelComparable>& model)
+    DescendingRowComparatorByModel(int row, const QSharedPointer<ModelComparable>& model)
         : m_leftItem(row, 0),
         m_rightItem(row, 0),
         m_model(model)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.column = left;
         m_rightItem.column = right;
@@ -136,13 +136,13 @@ protected:
 class AscendingColumnComparatorByRangedModel : public ModelRangeInfo
 {
 public:
-    AscendingColumnComparatorByRangedModel(quint32 column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
+    AscendingColumnComparatorByRangedModel(int column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
         : ModelRangeInfo(model, range, outOfRangeIsSmall),
         m_leftItem(0, column),
         m_rightItem(0, column)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.row = left;
         m_rightItem.row = right;
@@ -168,13 +168,13 @@ private:
 class DescendingColumnComparatorByRangedModel : public ModelRangeInfo
 {
 public:
-    DescendingColumnComparatorByRangedModel(quint32 column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
+    DescendingColumnComparatorByRangedModel(int column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
         : ModelRangeInfo(model, range, outOfRangeIsSmall),
         m_leftItem(0, column),
         m_rightItem(0, column)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.row = left;
         m_rightItem.row = right;
@@ -200,13 +200,13 @@ private:
 class AscendingRowComparatorByRangedModel : public ModelRangeInfo
 {
 public:
-    AscendingRowComparatorByRangedModel(quint32 row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
+    AscendingRowComparatorByRangedModel(int row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
         : ModelRangeInfo(model, range, outOfRangeIsSmall),
         m_leftItem(row, 0),
         m_rightItem(row, 0)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.column = left;
         m_rightItem.column = right;
@@ -232,13 +232,13 @@ private:
 class DescendingRowComparatorByRangedModel : public ModelRangeInfo
 {
 public:
-    DescendingRowComparatorByRangedModel(quint32 row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
+    DescendingRowComparatorByRangedModel(int row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool outOfRangeIsSmall)
         : ModelRangeInfo(model, range, outOfRangeIsSmall),
         m_leftItem(row, 0),
         m_rightItem(row, 0)
     {}
 
-    bool operator() (quint32 left, quint32 right)
+    bool operator() (int left, int right)
     {
         m_leftItem.column = left;
         m_rightItem.column = right;
@@ -285,7 +285,7 @@ SpaceGrid::~SpaceGrid()
     disconnectLines(m_columns);
 }
 
-void SpaceGrid::setDimensions(quint32 rows, quint32 columns)
+void SpaceGrid::setDimensions(int rows, int columns)
 {
     m_rows->setCount(rows);
     m_columns->setCount(columns);
@@ -304,13 +304,10 @@ QSize SpaceGrid::size() const
 QRect SpaceGrid::itemRect(const ItemID& visibleItem) const
 {
     QRect rect(0, 0, 0, 0);
-    if (visibleItem.row > 0)
-        rect.setTop(m_rows->sizeAtVisLine(visibleItem.row - 1));
-    if (visibleItem.column > 0)
-        rect.setLeft(m_columns->sizeAtVisLine(visibleItem.column - 1));
-
-    rect.setBottom(m_rows->sizeAtVisLine(visibleItem.row));
-    rect.setRight(m_columns->sizeAtVisLine(visibleItem.column));
+    rect.setTop(m_rows->startPos(visibleItem.row));
+    rect.setLeft(m_columns->startPos(visibleItem.column));
+    rect.setBottom(m_rows->endPos(visibleItem.row));
+    rect.setRight(m_columns->endPos(visibleItem.column));
 
     return rect;
 }
@@ -333,13 +330,13 @@ void SpaceGrid::disconnectLines(const QSharedPointer<Lines>& lines)
 ItemID SpaceGrid::trimItem(const ItemID& item) const
 {
     Q_ASSERT(item.isValid());
-    return ItemID(std::min(item.row, m_rows->count() - 1), std::min(item.column, m_columns->count() - 1));
+    return ItemID(qMin(item.row, m_rows->count() - 1), qMin(item.column, m_columns->count() - 1));
 }
 
 ItemID SpaceGrid::trimVisibleItem(const ItemID& item) const
 {
     Q_ASSERT(item.isValid());
-    return ItemID(std::min(item.row, m_rows->visibleCount() - 1), std::min(item.column, m_columns->visibleCount() - 1));
+    return ItemID(qMin(item.row, m_rows->visibleCount() - 1), qMin(item.column, m_columns->visibleCount() - 1));
 }
 
 void SpaceGrid::unshareRows()
@@ -396,7 +393,7 @@ bool SpaceGrid::isItemVisible(const ItemID& item) const
     return m_rows->isLineVisible(item.row) && m_columns->isLineVisible(item.column);
 }
 
-void SpaceGrid::sortColumnByModel(quint32 column, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable)
+void SpaceGrid::sortColumnByModel(int column, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable)
 {
     // avoid invalid column
     if (column >= m_columns->count())
@@ -408,7 +405,7 @@ void SpaceGrid::sortColumnByModel(quint32 column, const QSharedPointer<ModelComp
         m_rows->sort(stable, DescendingColumnComparatorByModel(column, model));
 }
 
-void SpaceGrid::sortRowByModel(quint32 row, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable)
+void SpaceGrid::sortRowByModel(int row, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable)
 {
     // avoid invalid row
     if (row >= m_rows->count())
@@ -420,7 +417,7 @@ void SpaceGrid::sortRowByModel(quint32 row, const QSharedPointer<ModelComparable
         m_columns->sort(stable, DescendingRowComparatorByModel(row, model));
 }
 
-void SpaceGrid::sortColumnByRangedModel(quint32 column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall)
+void SpaceGrid::sortColumnByRangedModel(int column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall)
 {
     // avoid invalid column
     if (column >= m_columns->count())
@@ -432,7 +429,7 @@ void SpaceGrid::sortColumnByRangedModel(quint32 column, const QSharedPointer<Mod
         m_rows->sort(stable, DescendingColumnComparatorByRangedModel(column, model, range, outOfRangeIsSmall));
 }
 
-void SpaceGrid::sortRowByRangedModel(quint32 row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall)
+void SpaceGrid::sortRowByRangedModel(int row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall)
 {
     // avoid invalid row
     if (row >= m_rows->count())
@@ -446,7 +443,7 @@ void SpaceGrid::sortRowByRangedModel(quint32 row, const QSharedPointer<ModelComp
 
 void SpaceGrid::onLinesChanged(const Lines* lines, ChangeReason reason)
 {
-    if (reason & (ChangeReasonLinesCount|ChangeReasonLineVisibility|ChangeReasonLineSize|ChangeReasonLineOrder))
+    if (reason & (ChangeReasonLinesCount|ChangeReasonLinesVisibility|ChangeReasonLinesSize|ChangeReasonLinesOrder))
     {
         emit spaceChanged(this, ChangeReasonSpaceStructure);
     }

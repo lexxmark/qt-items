@@ -3,111 +3,160 @@
 
 #include "QiAPI.h"
 #include <QObject>
-#include <vector>
+#include <QVector>
 
 namespace Qi
 {
+
+class LinesVisibility;
 
 class QI_EXPORT Lines: public QObject
 {
     Q_OBJECT
 
 public:
-    Lines();
-    virtual ~Lines();
-    
+    Lines(int count = 0);
+
     QSharedPointer<Lines> clone() const;
 
-    quint32 count() const;
-    void setCount(quint32 count);
+    int count() const { return m_count; }
+    void setCount(int count);
 
-    quint32 visibleCount() const;
-    quint32 visibleSize() const;
-    
-    bool isEmpty() const { return count() == 0; }
+    int visibleCount() const;
+    int visibleSize() const;
+
+    bool isEmpty() const { return m_count == 0; }
     bool isEmptyVisible() const { return visibleCount() == 0; }
 
-    bool isLineVisible(quint32 i) const;
-    void setLineVisible(quint32 i, bool isVisible);
-    void setAllLinesVisible(bool isVisible);
-    bool isVisibilitySimilar() const;
-    
-    quint32 lineSize(quint32 i) const;
-    void setLineSize(quint32 i, quint32 size);
-    void setAllLinesSize(quint32 size);
-    bool isSizeSimilar() const;
-    
-    // permutation[absolute] = visible
-    const std::vector<quint32>& permutation() const;
-    void setPermutation(const std::vector<quint32>& permutation);
-    
-    quint32 toVisible(quint32 i) const;
-    quint32 toVisibleSafe(quint32 i) const;
+    int lineSize(int line) const;
+    void setLineSize(int line, int size);
+    void setLineSizeAll(int size);
 
-    quint32 toAbsolute(quint32 i) const;
-    quint32 toAbsoluteSafe(quint32 i) const;
-    
-    quint32 sizeAtVisLine(quint32 i) const;
+    bool isLineVisible(int line) const;
+    // returns 0 - all invisible
+    // returns 1 - all visible
+    // returns -1 - some visible and invisible
+    int isLinesVisibleAll() const;
+    void setLineVisible(int line, bool visible);
+    void setLineVisibleAll(bool visible);
 
-    quint32 findVisLine(quint32 sizeAtLine) const;
-    quint32 findVisLine(int sizeAtLine) const { return sizeAtLine < 0 ? 0 : findVisLine(quint32(sizeAtLine)); }
+    void setLinesVisible(const QVector<int>& lines, bool visible);
+    void setLinesVisibleExact(const QVector<int>& lines, bool visible);
 
-    quint32 findVisLineInterval(quint32 sizeAtLine, quint32 startLine, quint32 endLine) const;
-    quint32 findVisLineInterval(int sizeAtLine, quint32 startLine, quint32 endLine) const { return sizeAtLine < 0 ? 0 : findVisLineInterval(quint32(sizeAtLine), startLine, endLine); }
+    bool addLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility);
+    bool removeLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility);
+    void clearLinesVisibility();
 
-    // pred is less operator - bool operator() (quint32 leftLine, quint32 rightLine) const;
+    int moveLines(int oldAbsoluteLine, int newRelativeLine, int linesCount = 1);
+    int moveVisibleLines(int oldLine, int newLine, int linesCount = 1);
+    int insertVisibleLines(int lineBefore, int linesCount = 1);
+
+    int toAbsolute(int visibleLine) const { validateVisibles(); Q_ASSERT(visibleLine < m_visible2absolute.size()); return m_visible2absolute[visibleLine]; }
+    int toVisible(int absoluteLine) const { validateVisibles(); Q_ASSERT(absoluteLine < m_absolute2visible.size()); return m_absolute2visible[absoluteLine]; }
+
+    int toAbsoluteSafe(int visibleLine) const { validateVisibles(); return (visibleLine < m_visible2absolute.size()) ? m_visible2absolute[visibleLine] : InvalidIndex; }
+    int toVisibleSafe(int absoluteLine) const { validateVisibles(); return (absoluteLine < m_absolute2visible.size()) ? m_absolute2visible[absoluteLine] : InvalidIndex; }
+
+    // see m_visibleLinesSizes for possible return values
+    int findVisibleIDByPos(int position, bool noTailLine = true) const;
+    int findVisibleIDByPos(int position, int fromVisibleLine, int toVisibleLine) const;
+
+    int startPos(int visibleLine) const;
+    int endPos(int visibleLine) const;
+
+    // pred has less operator - bool operator() (int leftLine, int rightLine) const;
     template <typename Pred> void sort(bool stable, const Pred& pred)
     {
         if (stable)
-            std::stable_sort(m_permutation.begin(), m_permutation.end(), pred);
+            std::stable_sort(m_relative2absolute.begin(), m_relative2absolute.end(), pred);
         else
-            std::sort(m_permutation.begin(), m_permutation.end(), pred);
+            std::sort(m_relative2absolute.begin(), m_relative2absolute.end(), pred);
 
-        invalidateConverters();
-        emit linesChanged(this, ChangeReasonLineOrder);
+        invalidateVisibles();
+        emit linesChanged(this, ChangeReasonLinesOrder);
     }
+
+    // permutation[relativeID] == absoluteID
+    const QVector<int>& permutation() const { return m_relative2absolute; }
+    void setPermutation(const QVector<int>& permutation);
 
 signals:
     void linesChanged(const Lines*, ChangeReason);
 
 private:
-    Lines(const Lines& other);
-    Lines(Lines&& other);
-    Lines& operator =(const Lines& other);
-    Lines& operator =(Lines&& other);
+    Lines(const Lines& lines);
+    Lines& operator=(const Lines&);
 
-    void invalidateConverters();
-    void validateConverters() const;
-    void validateSizeAtLine() const;
-    
-    quint32 m_count;
-    // if (m_linesVisibility.length() == 1) => all lines has similar visibility
-    std::vector<bool> m_linesVisibility;
-    // if (m_linesSizes.length() == 1) => all lines has similar size
-    std::vector<quint32> m_linesSizes;
-    // if (m_permutation.isEmpty()) => lines are not ordered
-    std::vector<quint32> m_permutation;
+    bool isLineVisibleRaw(int line) const;
 
-    enum CONVERTER_CASE
-    {
-        CC_INVALID, // not initialized
-        CC_ALL_HIDDEN, // lines are empty or all lines are invisible
-        CC_TRIVIAL, // all lines visible and not reordered
-        CC_MAPPED // m_visToAbs and m_absToVis have mappings absolute vs visible indexes
-    };
-    // tracks validation of m_visToAbs and m_absToVis members
-    mutable bool m_isConvertersValid;
-    // cases of conversion
-    mutable CONVERTER_CASE m_convertersCase;
-    // m_visToAbs[visibleIndex] = absoluteIndex
-    mutable std::vector<quint32> m_visToAbs;
-    // m_absToVis[absoluteIndex] = visibleIndex | Invalid
-    mutable std::vector<quint32> m_absToVis;
-    
-    // tracks validation of the m_sizeAtLine member
-    mutable bool m_isSizeAtLineValid;
-    // m_sizeAtLine[visibleIndex] = distance from 0 to the end of visibleIndex line
-    mutable std::vector<quint32> m_sizeAtLine;
+    int findVisibleIDByPosImpl(int position, int fromVisibleLine, int toVisibleLine) const;
+
+    void invalidateVisibles() { m_visible2absolute.clear(); m_absolute2visible.clear(); invalidateSizes(); }
+    void validateVisibles() const;
+
+    void invalidateSizes() { m_visibleLinesSizes.clear(); }
+    void validateSizes() const;
+
+    void onLinesVisibilityChanged(const LinesVisibility*);
+
+    // lines count
+    int m_count;
+
+    // lines sizes
+    // m_linesSize.empty - all lines has DEFAULT_LINE_SIZE size
+    // m_linesSize.size() == 1 - all lines has size m_linesSize[0]
+    QVector<int> m_linesSize;
+    // lines visible
+    // m_linesVisible.empty - all lines has DEFAULT_LINE_VISIBILITY visibility
+    // m_linesVisible.size() == 1 - all lines has m_linesVisible[0] visibility
+    QVector<bool> m_linesVisible;
+
+    // lines permutation (m_indices[relativeLine] = absoluteLine)
+    mutable QVector<int> m_relative2absolute;
+    // m_visible2absolute[visible line] = absolute line
+    mutable QVector<int> m_visible2absolute;
+    // m_absolute2visible[absolute line] = { visible line | INVALID_INDEX }
+    mutable QVector<int> m_absolute2visible;
+
+    // cache for line sizes
+    // m_visibleLinesSizes[line] - start position of the visible line
+    // m_visibleLinesSizes[visibleLineCount] - end position of the last visible line
+    mutable QVector<int> m_visibleLinesSizes;
+
+    //
+    // lines visibility stuff
+    //
+    QVector<QSharedPointer<LinesVisibility>> m_linesVisibility;
+};
+
+// interface for handle line visible state
+class QI_EXPORT LinesVisibility: public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LinesVisibility)
+
+public:
+    virtual ~LinesVisibility() {}
+
+    virtual bool isLineVisible(int line) const = 0;
+
+signals:
+    void visibilityChanged(const LinesVisibility* visibility);
+
+protected:
+    LinesVisibility() {}
+};
+
+class QI_EXPORT LinesVisibilityCallback: public LinesVisibility
+{
+public:
+    LinesVisibilityCallback(std::function<bool(int)> callback = nullptr)
+        : isLineVisibleCallback(callback)
+    {}
+
+    std::function<bool(int)> isLineVisibleCallback;
+
+    bool isLineVisible(int line) const override { return isLineVisibleCallback(line); }
 };
 
 } // end namespace Qi 
