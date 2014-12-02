@@ -4,12 +4,12 @@
 namespace Qi
 {
 
-ViewText::ViewText(const QSharedPointer<ModelText>& model, bool autoController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+ViewText::ViewText(const QSharedPointer<ModelText>& model, bool useDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewModeled<ModelText>(model),
       m_alignment(alignment),
       m_textElideMode(textElideMode)
 {
-    if (autoController)
+    if (useDefaultController)
     {
  //       setController(QSharedPointer<ControllerMouseText>::create(model));
     }

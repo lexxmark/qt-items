@@ -5,7 +5,7 @@
 namespace Qi
 {
 
-QSharedPointer<Range> CreateCellRangeRect(const SpaceGrid& grid, const ItemID& displayCorner1, const ItemID& displayCorner2)
+QSharedPointer<Range> createItemRangeRect(const SpaceGrid& grid, const ItemID& displayCorner1, const ItemID& displayCorner2)
 {
     if (grid.isEmptyVisible())
         return QSharedPointer<Range>();
@@ -303,6 +303,9 @@ QSize SpaceGrid::size() const
 
 QRect SpaceGrid::itemRect(const ItemID& visibleItem) const
 {
+    Q_ASSERT(visibleItem.isValid());
+    Q_ASSERT(checkVisibleItem(visibleItem));
+
     QRect rect(0, 0, 0, 0);
     rect.setTop(m_rows->startPos(visibleItem.row));
     rect.setLeft(m_columns->startPos(visibleItem.column));

@@ -43,7 +43,9 @@ SOURCES += QiAPI.cpp \
     items/checkbox/Check.cpp \
     items/radiobutton/Radio.cpp \
     items/text/Text.cpp \
-    widgets/SpaceWidget_p.cpp
+    widgets/SpaceWidget_p.cpp \
+    items/selection/Selection.cpp \
+    core/ControllerKeyboard.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -87,7 +89,10 @@ HEADERS +=  QiAPI.h \
     items/checkbox/Check.h \
     items/radiobutton/Radio.h \
     items/text/Text.h \
-    widgets/SpaceWidget_p.h
+    widgets/SpaceWidget_p.h \
+    items/selection/Selection.h \
+    core/ControllerKeyboard.h \
+    widgets/WidgetDriver.h
 
 win32 {
     TARGET_EXT = .dll

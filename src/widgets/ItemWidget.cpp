@@ -12,7 +12,7 @@ ItemWidget::ItemWidget(QWidget* parent)
 {
     m_space = QSharedPointer<SpaceItem>::create(ItemID(0, 0));
     auto cacheSpace = QSharedPointer<CacheSpaceItem>::create(m_space);
-    m_impl.reset(new SpaceWidgetPrivate(this, cacheSpace));
+    m_impl.reset(new SpaceWidgetPrivate(this, this, cacheSpace));
 
     connect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
 
@@ -100,6 +100,20 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
         // notify system to recalculate layout
         updateGeometry();
     }
+}
+
+void ItemWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
+{
+    Q_ASSERT(visibleItem == m_space->item());
+    Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);
+    // not applicable
+}
+
+bool ItemWidget::doEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent* event)
+{
+    Q_ASSERT(visibleItem == m_space->item());
+    Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);
+    return m_impl->doEdit(*cacheSpace, visibleItem, event);
 }
 
 } // end namespace Qi

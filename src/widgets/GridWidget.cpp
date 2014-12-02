@@ -1,5 +1,6 @@
 #include "GridWidget.h"
 #include "cache/space/CacheSpaceGrid.h"
+#include "cache/CacheItem.h"
 #include "items/cache/ViewCacheSpace.h"
 #include "core/ext/Ranges.h"
 #include "core/ext/Layouts.h"
@@ -17,7 +18,7 @@ GridWidget::GridWidget(QWidget* parent)
     m_mainGrid = QSharedPointer<SpaceGrid>::create();
     m_mainGrid->setDimensions(3, 3);
     auto cacheSpace = QSharedPointer<CacheSpaceGrid>::create(m_mainGrid);
-    m_impl.reset(new SpaceWidgetPrivate(viewport(), cacheSpace));
+    m_impl.reset(new SpaceWidgetPrivate(viewport(), this, cacheSpace));
     connect(cacheSpace.data(), &CacheSpace::cacheChanged, this, &GridWidget::onCacheSpaceChanged);
 
     //initialize sub rows and columns
@@ -56,19 +57,126 @@ GridWidget::~GridWidget()
 {
 }
 
-const SpaceGrid& GridWidget::subGrid(const ItemID& subGridID) const
+const QSharedPointer<SpaceGrid>& GridWidget::subGrid(const ItemID& subGridID) const
 {
-    return *m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
-}
-
-SpaceGrid& GridWidget::subGrid(const ItemID& subGridID)
-{
-    return *m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
+    return m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
 }
 
 CacheSpaceGrid& GridWidget::cacheSubGrid(const ItemID& subGridID)
 {
     return *m_cacheSubGrids[subGridID.row][subGridID.column];
+}
+
+const QSharedPointer<ControllerKeyboard>& GridWidget::controllerKeyboard() const
+{
+    return m_impl->controllerKeyboard();
+}
+
+void GridWidget::setControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard)
+{
+    m_impl->setControllerKeyboard(controllerKeyboard);
+}
+
+void GridWidget::addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard)
+{
+    Q_ASSERT(false);
+}
+
+void GridWidget::ensureVisible(const ItemID& visibleItem, const ItemID& subGridID, bool validateItem)
+{
+    const auto& gridSpace = subGrid(subGridID);
+    Q_ASSERT(gridSpace);
+    if (!gridSpace)
+        return;
+
+    if (!gridSpace->checkVisibleItem(visibleItem))
+        return;
+
+    // calculate scroll size and position if needed
+    validateSubGridsLayout();
+
+    QRect clientGridRect = m_mainGrid->itemRect(clientID);
+    if (clientGridRect.isEmpty())
+        return;
+
+    QPoint scrollPos(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    QRect itemRect = gridSpace->itemRect(visibleItem);
+
+    // if client columns -> correct scroll position horizontally
+    if (subGridID.column == 1)
+    {
+        if ((itemRect.width() >= clientGridRect.width()) || (itemRect.left() < scrollPos.x()))
+            scrollPos.rx() = itemRect.left();
+        else if (itemRect.right() > (scrollPos.x() + clientGridRect.width()))
+            scrollPos.rx() = itemRect.right() - clientGridRect.width();
+    }
+
+    // if client rows -> correct scroll position vertically
+    if (subGridID.row == 1)
+    {
+        if ((itemRect.height() >= clientGridRect.height()) || (itemRect.top() < scrollPos.y()))
+            scrollPos.ry() = itemRect.top();
+        else if (itemRect.bottom() > (scrollPos.y() + clientGridRect.height()))
+            scrollPos.ry() = itemRect.bottom() - clientGridRect.height();
+    }
+
+    // scroll to new position
+    horizontalScrollBar()->setValue(scrollPos.x());
+    verticalScrollBar()->setValue(scrollPos.y());
+
+    if (validateItem)
+    {
+        validateSubGridsLayout();
+
+        const auto& cacheGrid = cacheSubGrid(subGridID);
+
+        // validate cache views
+        CacheItem* cacheItem = const_cast<CacheItem*>(cacheGrid.cacheItem(visibleItem));
+        if (!cacheItem)
+            return;
+
+        if (!cacheItem->isCacheViewValid())
+        {
+            cacheItem->initializeCacheView(GuiContext(viewport()), &cacheGrid.window());
+        }
+    }
+}
+
+
+void GridWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace* cacheSpace, bool validateItem)
+{
+    for (ItemID subGridID(0, 0); subGridID.row < 3; ++subGridID.row)
+    {
+        for (subGridID.column = 0; subGridID.column < 3; ++subGridID.column)
+        {
+            if (cacheSpace == &cacheSubGrid(subGridID))
+            {
+                ensureVisible(visibleItem, subGridID, validateItem);
+                return;
+            }
+        }
+    }
+
+    // space is out of sub grids
+    Q_ASSERT(false);
+}
+
+bool GridWidget::doEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent *event)
+{
+    for (ItemID subGridID(0, 0); subGridID.row < 3; ++subGridID.row)
+    {
+        for (subGridID.column = 0; subGridID.column < 3; ++subGridID.column)
+        {
+            if (cacheSpace == &cacheSubGrid(subGridID))
+            {
+                return m_impl->doEdit(cacheSubGrid(subGridID), visibleItem, event);
+            }
+        }
+    }
+
+    // space is out of sub grids
+    Q_ASSERT(false);
+    return false;
 }
 
 bool GridWidget::viewportEvent(QEvent* event)
@@ -94,6 +202,12 @@ bool GridWidget::viewportEvent(QEvent* event)
     return result;
 }
 
+void GridWidget::keyPressEvent(QKeyEvent *event)
+{
+    //don't let QAbstractScrollArea to handle keyboard events
+    m_impl->ownerEvent(event);
+}
+
 void GridWidget::scrollContentsBy(int dx, int dy)
 {
     QAbstractScrollArea::scrollContentsBy(dx, dy);
@@ -103,7 +217,7 @@ void GridWidget::scrollContentsBy(int dx, int dy)
 QSize GridWidget::viewportSizeHint() const
 {
     // return sum size of all sub-grids
-    return subGrid(topLeftID).size() + subGrid(clientID).size() + subGrid(bottomRightID).size();
+    return subGrid(topLeftID)->size() + subGrid(clientID)->size() + subGrid(bottomRightID)->size();
 }
 
 void GridWidget::onSubGridChanged(const Space* space, ChangeReason reason)
@@ -120,13 +234,13 @@ void GridWidget::onSubGridChanged(const Space* space, ChangeReason reason)
 void GridWidget::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason)
 {
     // request to repaint widget
-    update();
+    viewport()->update();
 }
 
 void GridWidget::updateScrollbars()
 {
     // client visible area only
-    QSize scrollableSize = viewport()->size() - subGrid(topLeftID).size() - subGrid(bottomRightID).size();
+    QSize scrollableSize = viewport()->size() - subGrid(topLeftID)->size() - subGrid(bottomRightID)->size();
 
     // no space for client grid
     if (scrollableSize.width() <= 0 || scrollableSize.height() <= 0)
@@ -141,7 +255,7 @@ void GridWidget::updateScrollbars()
     }
     else
     {
-        QSize virtualSize = subGrid(clientID).size();
+        QSize virtualSize = subGrid(clientID)->size();
         // update vertical scrollbar
         verticalScrollBar()->setSingleStep(scrollableSize.height() / 10);
         verticalScrollBar()->setPageStep(scrollableSize.height());
@@ -194,14 +308,14 @@ void GridWidget::validateSubGridsLayout()
     {
         QSize visibleSize = viewport()->size();
 
-        QSize topLeftSubGridSize = subGrid(topLeftID).size();
+        QSize topLeftSubGridSize = subGrid(topLeftID)->size();
         // adjust to visible size
         topLeftSubGridSize.rwidth() = qMin(topLeftSubGridSize.width(), visibleSize.width());
         topLeftSubGridSize.rheight() = qMin(topLeftSubGridSize.height(), visibleSize.height());
         // decrease visible size
         visibleSize = visibleSize - topLeftSubGridSize;
 
-        QSize bottomRightSubGridSize = subGrid(bottomRightID).size();
+        QSize bottomRightSubGridSize = subGrid(bottomRightID)->size();
         // adjust to visible size
         bottomRightSubGridSize.rwidth() = qMin(bottomRightSubGridSize.width(), visibleSize.width());
         bottomRightSubGridSize.rheight() = qMin(bottomRightSubGridSize.height(), visibleSize.height());

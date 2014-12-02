@@ -68,7 +68,7 @@ class QI_EXPORT ViewRadio: public ViewModeled<ModelRadio>
     Q_DISABLE_COPY(ViewRadio)
 
 public:
-    ViewRadio(const QSharedPointer<ModelRadio>& model, bool autoController = true);
+    ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultController = true);
 
 protected:
     QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
@@ -82,6 +82,9 @@ private:
 
 class QI_EXPORT ControllerMouseRadio: public ControllerMousePushable
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(ControllerMouseRadio)
+
 public:
     ControllerMouseRadio(const QSharedPointer<ModelRadio>& model);
 

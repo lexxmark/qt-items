@@ -2,6 +2,7 @@
 #define QI_ITEM_WIDGET_H
 
 #include "cache/space/CacheSpaceItem.h"
+#include "WidgetDriver.h"
 #include <QWidget>
 
 namespace Qi
@@ -9,7 +10,7 @@ namespace Qi
 
 class SpaceWidgetPrivate;
 
-class QI_EXPORT ItemWidget: public QWidget
+class QI_EXPORT ItemWidget: public QWidget, private WidgetDriver
 {
     Q_OBJECT
     Q_DISABLE_COPY(ItemWidget)
@@ -32,6 +33,10 @@ protected:
     bool event(QEvent* e) override;
 
 private:
+    // WidgetDriver implementation
+    void ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
+    bool doEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent *event) override;
+
     void onSpaceChanged(const Space* space, ChangeReason reason);
 
     QSharedPointer<SpaceItem> m_space;

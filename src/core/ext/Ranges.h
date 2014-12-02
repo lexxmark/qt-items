@@ -20,9 +20,13 @@ public:
     }
 
     std::function<bool(const ItemID&)> hasItemCallback;
+    std::function<bool(int)> hasRowCallback;
+    std::function<bool(int)> hasColumnCallback;
 
 protected:
-    bool hasItemImpl(const ItemID &item) const override { return hasItemCallback(item); }
+    bool hasItemImpl(const ItemID &item) const override { return hasItemCallback ? hasItemCallback(item) : Range::hasItemImpl(item); }
+    bool hasRowImpl(int row) const override { return hasRowCallback ? hasRowCallback(row) : false; }
+    bool hasColumnImpl(int column) const override { return hasColumnCallback ? hasColumnCallback(column) : false; }
 };
 
 class QI_EXPORT RangeSelection: public Range
@@ -41,6 +45,8 @@ public:
 
 protected:
     bool hasItemImpl(const ItemID &item) const override;
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
 
 private:
     struct RangeInfo
@@ -61,6 +67,8 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
 };
 QI_EXPORT QSharedPointer<RangeNone> makeRangeNone();
 
@@ -73,6 +81,8 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
 };
 QI_EXPORT QSharedPointer<RangeAll> makeRangeAll();
 
@@ -88,7 +98,9 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
-    
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
+
 private:
     int m_column;
 };
@@ -107,7 +119,9 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
-    
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
+
 private:
     QSet<int> m_columns;
 };
@@ -126,7 +140,9 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
-    
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
+
 private:
     int m_row;
 };
@@ -145,7 +161,9 @@ public:
     
 protected:
     bool hasItemImpl(const ItemID &item) const override;
-    
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
+
 private:
     QSet<int> m_rows;
 };
@@ -168,6 +186,8 @@ public:
 
 protected:
     bool hasItemImpl(const ItemID &item) const override;
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
 
 private:
     QSet<int> m_rows;
@@ -175,6 +195,26 @@ private:
 };
 QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(const QSet<int>& rows, const QSet<int>& columns);
 QI_EXPORT QSharedPointer<RangeRect> makeRangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd);
+
+class QI_EXPORT RangeItem: public Range
+{
+    Q_OBJECT
+
+public:
+    explicit RangeItem(const ItemID& item);
+
+    const ItemID& item() const { return m_item; }
+    void setItem(const ItemID& item);
+
+protected:
+    bool hasItemImpl(const ItemID &item) const override;
+    bool hasRowImpl(int row) const override;
+    bool hasColumnImpl(int column) const override;
+
+private:
+    ItemID m_item;
+};
+QI_EXPORT QSharedPointer<RangeItem> makeRangeItem(const ItemID& item);
 
 } // end namespace Qi
 

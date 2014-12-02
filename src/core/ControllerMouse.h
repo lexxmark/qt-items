@@ -15,6 +15,7 @@ class QWidget;
 namespace Qi
 {
 
+class WidgetDriver;
 class ControllerMouse;
 class CacheContext;
 class CacheSpace;
@@ -29,17 +30,22 @@ enum ControllerMousePriority
 class QI_EXPORT ControllerContext
 {
 public:
-    ControllerContext(QWidget* widget)
-        : widget(widget), point(0, 0)
-    {}
-
-    virtual ~ControllerContext() {}
-
     QWidget* widget;
+    WidgetDriver* widgetDriver;
     QPoint point;
 
     virtual void notifyStartCapturing(ControllerMouse& controller) = 0;
     virtual void notifyStopCapturing(ControllerMouse& controller) = 0;
+
+protected:
+    // constructor/destructor are accessible from
+    // derived classes only
+    ControllerContext(QWidget* widget, WidgetDriver* widgetDriver)
+        : widget(widget), widgetDriver(widgetDriver), point(0, 0)
+    {}
+
+    ~ControllerContext()
+    {}
 };
 
 class QI_EXPORT ControllerMouse: public QObject
@@ -65,7 +71,6 @@ public:
     virtual bool processLButtonDown(QMouseEvent* event) { return false; }
     virtual bool processLButtonUp(QMouseEvent* event) { return false; }
     virtual bool processLButtonDblClick(QMouseEvent* event) { return false; }
-//    virtual bool processRButtonUp(QMouseEvent* event) { return false; }
     virtual bool processMouseMove(QMouseEvent* event) { return false; }
     virtual bool processContextMenu(QContextMenuEvent* event) { return false; }
 
@@ -105,10 +110,10 @@ protected:
         explicit ActivationState(const ActivationInfo& info);
 
         const QPoint& point() const { return context.point; }
+        ItemID visibleItem() const;
 
         const ControllerContext& context;
         const ItemID item;
-//        const CellID visibleCellID;
         const CacheSpace& cacheSpace;
 
         // these members can be out of sync

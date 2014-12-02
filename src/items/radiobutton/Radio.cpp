@@ -54,11 +54,11 @@ bool ModelRadioStorage::setRadioItemImpl(const ItemID& item)
     return true;
 }
 
-ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool autoController)
+ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultController)
     : ViewModeled<ModelRadio>(model),
       m_pushableTracker(this)
 {
-    if (autoController)
+    if (useDefaultController)
     {
         setController(QSharedPointer<ControllerMouseRadio>::create(model));
     }
@@ -66,19 +66,24 @@ ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool autoControlle
 
 QSize ViewRadio::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
 {
-    QStyleOptionButton styleOption;
-    styleOption.initFrom(ctx.widget);
-    styleOption.state = styleState(item);
-    return ctx.widget->style()->sizeFromContents(QStyle::CT_RadioButton, &styleOption, QSize(0, 0), ctx.widget);
+    auto style = ctx.style();
+    return QSize(style->pixelMetric(QStyle::PM_ExclusiveIndicatorWidth),
+                 style->pixelMetric(QStyle::PM_ExclusiveIndicatorHeight));
 }
 
 void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
+    auto style = ctx.style();
+
     QStyleOptionButton styleOption;
     styleOption.initFrom(ctx.widget);
-    styleOption.rect = cache.cacheView.rect();
     styleOption.state = styleState(cache.item);
-    ctx.widget->style()->drawControl(QStyle::CE_RadioButton, &styleOption, painter, ctx.widget);
+    styleOption.rect = cache.cacheView.rect();
+    // correct rect
+    styleOption.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &styleOption, ctx.widget);
+
+    // draw radio button image
+    style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &styleOption, painter, ctx.widget);
 }
 
 QStyle::State ViewRadio::styleState(const ItemID& item) const

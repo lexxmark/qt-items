@@ -1,14 +1,15 @@
 #include "CacheControllerMouse.h"
 #include "cache/CacheItemIterator.h"
 #include "cache/space/CacheSpace.h"
+#include "widgets/WidgetDriver.h"
 #include "utils/auto_value.h"
 #include <QDebug>
 
 namespace Qi
 {
 
-CacheControllerMouse::CacheControllerMouse(QWidget* owner, const QSharedPointer<CacheSpace> &cacheSpace)
-    : ControllerContext(owner),
+CacheControllerMouse::CacheControllerMouse(QWidget* owner, WidgetDriver* driver, const QSharedPointer<CacheSpace> &cacheSpace)
+    : ControllerContext(owner, driver),
       m_cacheSpaces(1, cacheSpace),
       m_capturingController(nullptr),
       m_isStopped(false),
@@ -58,13 +59,10 @@ void CacheControllerMouse::clear()
     Q_ASSERT(!m_capturingController);
 }
 
-bool CacheControllerMouse::doEdit(CacheSpace& cacheSpace, const ItemID& visibleItem, const std::function<void()>& ensureVisibleCallback, const QKeyEvent* keyEvent, const View* view)
+bool CacheControllerMouse::doEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view)
 {
-    Q_ASSERT(ensureVisibleCallback);
-
     bool needEnsureVisible = false;
 
-    Q_ASSERT(false);
     QScopedPointer<CacheItemIterator> itemIt;
     // look up cacheItem in existing cache grid
     CacheItem* cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
@@ -72,7 +70,7 @@ bool CacheControllerMouse::doEdit(CacheSpace& cacheSpace, const ItemID& visibleI
     {
         // create temporary cache item
         needEnsureVisible = true;
-        itemIt.reset(new CacheItemIterator(cacheSpace.space(), cacheSpace.viewApplicationMask()));
+        itemIt.reset(new CacheItemIterator(*cacheSpace.space(), cacheSpace.viewApplicationMask()));
         cacheItem = &itemIt->moveTo(visibleItem);
     }
 
@@ -93,7 +91,7 @@ bool CacheControllerMouse::doEdit(CacheSpace& cacheSpace, const ItemID& visibleI
 
             if (needEnsureVisible)
             {
-                ensureVisibleCallback();
+                widgetDriver->ensureVisible(visibleItem, &cacheSpace, true);
                 // get cache item from existing cache grid
                 cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
                 Q_ASSERT(cacheItem);

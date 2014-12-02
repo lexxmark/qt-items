@@ -4,11 +4,11 @@
 namespace Qi
 {
 
-ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool autoController)
+ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultController)
     : ViewModeled<ModelCheck>(model),
       m_pushableTracker(this)
 {
-    if (autoController)
+    if (useDefaultController)
     {
         setController(QSharedPointer<ControllerMouseCheck>::create(model));
     }
@@ -16,19 +16,24 @@ ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool autoControlle
 
 QSize ViewCheck::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
 {
-    QStyleOptionButton styleOption;
-    styleOption.initFrom(ctx.widget);
-    styleOption.state = styleState(item);
-    return ctx.widget->style()->sizeFromContents(QStyle::CT_CheckBox, &styleOption, QSize(0, 0), ctx.widget);
+    auto style = ctx.style();
+    return QSize(style->pixelMetric(QStyle::PM_IndicatorWidth),
+                 style->pixelMetric(QStyle::PM_IndicatorHeight));
 }
 
 void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
+    auto style = ctx.style();
+
     QStyleOptionButton styleOption;
     styleOption.initFrom(ctx.widget);
-    styleOption.rect = cache.cacheView.rect();
     styleOption.state = styleState(cache.item);
-    ctx.widget->style()->drawControl(QStyle::CE_CheckBox, &styleOption, painter, ctx.widget);
+    styleOption.rect = cache.cacheView.rect();
+    // correct rect
+    styleOption.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &styleOption, ctx.widget);
+
+    // draw check box image
+    style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &styleOption, painter, ctx.widget);
 }
 
 QStyle::State ViewCheck::styleState(const ItemID& item) const

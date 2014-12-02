@@ -19,7 +19,7 @@ class QI_EXPORT CacheSpace: public QObject
 public:
     ~CacheSpace();
 
-    const Space& space() const { return *m_space; }
+    const Space* space() const { return m_space.data(); }
 
     ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }
     void setViewApplicationMask(ViewApplicationMask viewApplicationMask);

@@ -4,6 +4,8 @@
 #include "QiAPI.h"
 #include <QWidget>
 
+class QStyle;
+
 namespace Qi
 {
 
@@ -15,7 +17,10 @@ public:
     GuiContext(const QWidget *widget)
         : widget(widget)
     {
+        Q_ASSERT(widget);
     }
+
+    QStyle* style() const { return widget->style(); }
 };
 
 } // end namespace Qi

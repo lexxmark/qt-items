@@ -20,7 +20,7 @@ class QI_EXPORT ViewText: public ViewModeled<ModelText>
     Q_DISABLE_COPY(ViewText)
 
 public:
-    ViewText(const QSharedPointer<ModelText>& model, bool autoController = false, Qt::Alignment alignment = Qt::AlignLeft, Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewText(const QSharedPointer<ModelText>& model, bool useDefaultController = false, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     Qt::Alignment alignment(const ItemID& item) const { return alignmentImpl(item); }
     void setAlignment(Qt::Alignment alignment);

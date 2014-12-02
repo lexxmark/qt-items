@@ -6,6 +6,7 @@
 namespace Qi
 {
 
+class WidgetDriver;
 class CacheSpace;
 class View;
 struct TooltipInfo;
@@ -13,7 +14,7 @@ struct TooltipInfo;
 class QI_EXPORT CacheControllerMouse: public ControllerContext
 {
 public:
-    CacheControllerMouse(QWidget* owner, const QSharedPointer<CacheSpace>& cacheSpace);
+    CacheControllerMouse(QWidget* owner, WidgetDriver* driver, const QSharedPointer<CacheSpace>& cacheSpace);
     virtual ~CacheControllerMouse();
 
     void addCacheSpace(const QSharedPointer<CacheSpace>& cacheSpace);
@@ -40,7 +41,7 @@ public:
     bool processMouseMove(QMouseEvent* event);
     bool processContextMenu(QContextMenuEvent* event);
 
-    bool doEdit(CacheSpace& cacheSpace, const ItemID& visibleItem, const std::function<void()>& ensureVisibleCallback, const QKeyEvent* keyEvent, const View* view);
+    bool doEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view);
 
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
 

@@ -12,14 +12,17 @@ class ModelComparable;
 
 class QI_EXPORT SpaceGrid: public Space
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(SpaceGrid)
+
 public:
     SpaceGrid(SpaceHints hints = SpaceHintNone);
     SpaceGrid(const QSharedPointer<Lines>& rows, const QSharedPointer<Lines>& columns, SpaceHints hints = SpaceHintNone);
     ~SpaceGrid();
 
     QSize size() const override;
-    ItemID toAbsolute(const ItemID& visibleItem) const override { return ItemID(m_rows->toAbsolute(visibleItem.row), m_columns->toAbsolute(visibleItem.column)); }
-    ItemID toVisible(const ItemID& absoluteItem) const override { return ItemID(m_rows->toVisible(absoluteItem.row), m_columns->toVisible(absoluteItem.column)); }
+    ItemID toAbsolute(const ItemID& visibleItem) const override { return ItemID(m_rows->toAbsoluteSafe(visibleItem.row), m_columns->toAbsoluteSafe(visibleItem.column)); }
+    ItemID toVisible(const ItemID& absoluteItem) const override { return ItemID(m_rows->toVisibleSafe(absoluteItem.row), m_columns->toVisibleSafe(absoluteItem.column)); }
     QRect itemRect(const ItemID& visibleItem) const override;
 
     bool isEmpty() const { return m_rows->isEmpty() || m_columns->isEmpty(); }

@@ -2,7 +2,7 @@
 #include "core/Layout.h"
 #include "core/View.h"
 
-#define DEBUG_RECTS
+//#define DEBUG_RECTS
 
 namespace Qi
 {

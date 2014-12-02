@@ -1,5 +1,6 @@
 #include "ControllerMouse.h"
 #include "cache/CacheView.h"
+#include "cache/space/CacheSpace.h"
 #include <QDebug>
 
 namespace Qi
@@ -20,12 +21,16 @@ const ItemID& ControllerMouse::ActivationInfo::item() const
 ControllerMouse::ActivationState::ActivationState(const ControllerMouse::ActivationInfo& info)
     : context(info.context),
       item(info.cache.item),
-      //visibleCellID(info.cache.cell.visibleID),
       cacheSpace(info.cacheSpace),
       itemRect(info.cache.itemRect),
       viewRect(info.cache.cacheView.rect()),
       visibleRect(info.cache.visibleRect)
 {
+}
+
+ItemID ControllerMouse::ActivationState::visibleItem() const
+{
+    return cacheSpace.space()->toVisible(item);
 }
 
 ControllerMouse::ControllerMouse(ControllerMousePriority priority)

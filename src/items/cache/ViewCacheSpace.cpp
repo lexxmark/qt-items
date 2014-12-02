@@ -40,7 +40,7 @@ QSize ViewCacheSpace::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSi
     const auto& cacheSpace = m_model->value(item);
 
     if (cacheSpace)
-        return cacheSpace->space().size();
+        return cacheSpace->space()->size();
     else
         return QSize(0, 0);
 }

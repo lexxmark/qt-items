@@ -38,11 +38,49 @@ bool RangeSelection::hasItemImpl(const ItemID &item) const
     return !excluded;
 }
 
+bool RangeSelection::hasRowImpl(int row) const
+{
+    bool excluded = true;
+    for (const auto& range: m_ranges)
+    {
+        if (range.range->hasRow(row))
+        {
+            excluded = range.exclude;
+        }
+    }
+
+    return !excluded;
+}
+
+bool RangeSelection::hasColumnImpl(int column) const
+{
+    bool excluded = true;
+    for (const auto& range: m_ranges)
+    {
+        if (range.range->hasColumn(column))
+        {
+            excluded = range.exclude;
+        }
+    }
+
+    return !excluded;
+}
+
 RangeNone::RangeNone()
 {
 }
 
 bool RangeNone::hasItemImpl(const ItemID& item) const
+{
+    return false;
+}
+
+bool RangeNone::hasRowImpl(int row) const
+{
+    return false;
+}
+
+bool RangeNone::hasColumnImpl(int column) const
 {
     return false;
 }
@@ -57,6 +95,16 @@ RangeAll::RangeAll()
 }
 
 bool RangeAll::hasItemImpl(const ItemID& item) const
+{
+    return true;
+}
+
+bool RangeAll::hasRowImpl(int row) const
+{
+    return true;
+}
+
+bool RangeAll::hasColumnImpl(int column) const
 {
     return true;
 }
@@ -82,7 +130,17 @@ void RangeColumn::setColumn(int column)
 
 bool RangeColumn::hasItemImpl(const ItemID& item) const
 {
-    return item.column == m_column;
+    return RangeColumn::hasColumnImpl(item.column);
+}
+
+bool RangeColumn::hasRowImpl(int row) const
+{
+    return false;
+}
+
+bool RangeColumn::hasColumnImpl(int column) const
+{
+    return column == m_column;
 }
 
 QSharedPointer<RangeColumn> makeRangeColumn(int column)
@@ -113,7 +171,17 @@ void RangeColumns::setColumns(const QSet<int>& columns)
 
 bool RangeColumns::hasItemImpl(const ItemID& item) const
 {
-    return m_columns.contains(item.column);
+    return RangeColumns::hasColumnImpl(item.column);
+}
+
+bool RangeColumns::hasRowImpl(int row) const
+{
+    return false;
+}
+
+bool RangeColumns::hasColumnImpl(int column) const
+{
+    return m_columns.contains(column);
 }
 
 QSharedPointer<RangeColumns> makeRangeColumns(const QSet<int>& columns)
@@ -142,7 +210,17 @@ void RangeRow::setRow(int row)
 
 bool RangeRow::hasItemImpl(const ItemID& item) const
 {
-    return item.row == m_row;
+    return RangeRow::hasRow(item.row);
+}
+
+bool RangeRow::hasRowImpl(int row) const
+{
+    return row == m_row;
+}
+
+bool RangeRow::hasColumnImpl(int column) const
+{
+    return false;
 }
 
 QSharedPointer<RangeRow> makeRangeRow(int row)
@@ -173,7 +251,17 @@ void RangeRows::setRows(const QSet<int>& rows)
 
 bool RangeRows::hasItemImpl(const ItemID& item) const
 {
-    return m_rows.contains(item.row);
+    return RangeRows::hasRow(item.row);
+}
+
+bool RangeRows::hasRowImpl(int row) const
+{
+    return m_rows.contains(row);
+}
+
+bool RangeRows::hasColumnImpl(int column) const
+{
+    return false;
 }
 
 QSharedPointer<RangeRows> makeRangeRows(const QSet<int>& rows)
@@ -224,7 +312,17 @@ void RangeRect::setColumns(const QSet<int>& columns)
 
 bool RangeRect::hasItemImpl(const ItemID& item) const
 {
-    return m_rows.contains(item.row) && m_columns.contains(item.column);
+    return RangeRect::hasRowImpl(item.row) && RangeRect::hasColumnImpl(item.column);
+}
+
+bool RangeRect::hasRowImpl(int row) const
+{
+    return m_rows.contains(row);
+}
+
+bool RangeRect::hasColumnImpl(int column) const
+{
+    return m_columns.contains(column);
 }
 
 QSharedPointer<RangeRect> makeRangeRect(const QSet<int>& rows, const QSet<int>& columns)
@@ -235,6 +333,40 @@ QSharedPointer<RangeRect> makeRangeRect(const QSet<int>& rows, const QSet<int>& 
 QSharedPointer<RangeRect> makeRangeRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd)
 {
     return QSharedPointer<RangeRect>::create(rowBegin, rowEnd, columnBegin, columnEnd);
+}
+
+RangeItem::RangeItem(const ItemID& item)
+    : m_item(item)
+{
+}
+
+void RangeItem::setItem(const ItemID& item)
+{
+    if (m_item != item)
+    {
+        m_item = item;
+        emit rangeChanged(this, ChangeReasonRange);
+    }
+}
+
+bool RangeItem::hasItemImpl(const ItemID &item) const
+{
+    return m_item == item;
+}
+
+bool RangeItem::hasRowImpl(int row) const
+{
+    return m_item.row == row;
+}
+
+bool RangeItem::hasColumnImpl(int column) const
+{
+    return m_item.column == column;
+}
+
+QSharedPointer<RangeItem> makeRangeItem(const ItemID& item)
+{
+    return QSharedPointer<RangeItem>::create(item);
 }
 
 } // end namespace Qi
