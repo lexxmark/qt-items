@@ -46,6 +46,8 @@ void SpaceWidgetPrivate::setControllerKeyboard(const QSharedPointer<ControllerKe
 
 bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
 {
+    bool processed = true;
+
     switch (event->type())
     {
     case QEvent::Resize:
@@ -75,16 +77,20 @@ bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
             QToolTip::hideText();
     } break;
 
-    case QEvent::FocusAboutToChange:
+    case QEvent::FocusIn:
     {
         if (m_controllerKeyboard)
-        {
-            QFocusEvent* focusEvent = static_cast<QFocusEvent*>(event);
-            if (!focusEvent->lostFocus())
-                m_controllerKeyboard->startCapturing();
-            else
-                m_controllerKeyboard->stopCapturing();
-        }
+            m_controllerKeyboard->startCapturing();
+        // repaint owner
+        m_owner->update();
+    } break;
+
+    case QEvent::FocusOut:
+    {
+        if (m_controllerKeyboard)
+            m_controllerKeyboard->stopCapturing();
+        // repaint owner
+        m_owner->update();
     } break;
 
     case QEvent::KeyPress:
@@ -100,11 +106,12 @@ bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
     } break;
 
     default:
+        processed = false;
         break;
     }
 
     // process event by controllers
-    return m_cacheControllers->processEvent(event);
+    return m_cacheControllers->processEvent(event) || processed;
 }
 
 bool SpaceWidgetPrivate::doEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent)

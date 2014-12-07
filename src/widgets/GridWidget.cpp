@@ -51,6 +51,8 @@ GridWidget::GridWidget(QWidget* parent)
 
     // enable tracking mouse moves
     viewport()->setMouseTracking(true);
+    // enable focus
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 GridWidget::~GridWidget()
@@ -205,6 +207,24 @@ bool GridWidget::viewportEvent(QEvent* event)
 void GridWidget::keyPressEvent(QKeyEvent *event)
 {
     //don't let QAbstractScrollArea to handle keyboard events
+    m_impl->ownerEvent(event);
+}
+
+void GridWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    //don't let QAbstractScrollArea to handle keyboard events
+    m_impl->ownerEvent(event);
+}
+
+void GridWidget::focusInEvent(QFocusEvent * event)
+{
+    QAbstractScrollArea::focusInEvent(event);
+    m_impl->ownerEvent(event);
+}
+
+void GridWidget::focusOutEvent(QFocusEvent * event)
+{
+    QAbstractScrollArea::focusOutEvent(event);
     m_impl->ownerEvent(event);
 }
 

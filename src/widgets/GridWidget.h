@@ -58,6 +58,9 @@ public:
 protected:
     bool viewportEvent(QEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void focusInEvent(QFocusEvent * event) override;
+    void focusOutEvent(QFocusEvent * event) override;
     void scrollContentsBy(int dx, int dy) override;
     QSize viewportSizeHint() const override;
 

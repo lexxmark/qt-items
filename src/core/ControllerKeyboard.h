@@ -4,6 +4,7 @@
 #include "QiAPI.h"
 #include <QObject>
 #include <QMouseEvent>
+#include <functional>
 
 namespace Qi
 {

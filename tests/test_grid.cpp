@@ -1,7 +1,7 @@
 #include "test_grid.h"
 #include "test_item_id.h"
 #include "space/SpaceGrid.h"
-#include <SignalSpy.h>
+#include "SignalSpy.h"
 #include <QtTest/QtTest>
 
 using namespace Qi;

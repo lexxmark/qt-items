@@ -5,6 +5,7 @@
 #include <QSet>
 #include <QVector>
 #include <QSharedPointer>
+#include <functional>
 
 namespace Qi
 {

@@ -4,6 +4,7 @@
 #include "QiAPI.h"
 #include <QObject>
 #include <QVector>
+#include <functional>
 
 namespace Qi
 {
