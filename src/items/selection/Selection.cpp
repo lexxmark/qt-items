@@ -148,33 +148,9 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
 
     auto style = ctx.style();
 
-    // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) in QWindowsVistaStyle class
-    if (!style->inherits("QWindowsVistaStyle"))
+    if (style->inherits("QWindowsVistaStyle"))
     {
-        QStyleOptionViewItem option;
-        option.initFrom(ctx.widget);
-        option.rect = cache.cacheView.rect();
-        option.widget = ctx.widget;
-
-        if (theModel()->isItemSelected(cache.item))
-        {
-            option.state |= QStyle::State_Selected;
-            painter->setPen(ctx.widget->palette().highlightedText().color());
-        }
-
-        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, ctx.widget);
-
-        // draw focus rect for active item
-        if (theModel()->activeItem() == cache.item)
-        {
-            QStyleOptionFocusRect focusOption;
-            focusOption.QStyleOption::operator=(option);
-            focusOption.state |= QStyle::State_KeyboardFocusChange;
-            style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOption, painter, ctx.widget);
-        }
-    }
-    else
-    {
+        // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) in QWindowsVistaStyle class
         QPalette::ColorGroup cg = QPalette::Active;
         if (!ctx.widget->isEnabled())
             cg = QPalette::Disabled;
@@ -196,6 +172,30 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
             focusOption.rect = cache.cacheView.rect();
             style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOption, painter, ctx.widget);
         }
+
+        return;
+    }
+
+    QStyleOptionViewItem option;
+    option.initFrom(ctx.widget);
+    option.rect = cache.cacheView.rect();
+    option.widget = ctx.widget;
+
+    if (theModel()->isItemSelected(cache.item))
+    {
+        option.state |= QStyle::State_Selected;
+        painter->setPen(ctx.widget->palette().highlightedText().color());
+    }
+
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, ctx.widget);
+
+    // draw focus rect for active item
+    if (theModel()->activeItem() == cache.item)
+    {
+        QStyleOptionFocusRect focusOption;
+        focusOption.QStyleOption::operator=(option);
+        focusOption.state |= QStyle::State_KeyboardFocusChange;
+        style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOption, painter, ctx.widget);
     }
 }
 
