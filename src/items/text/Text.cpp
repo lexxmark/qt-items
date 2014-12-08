@@ -33,7 +33,7 @@ void ViewText::setTextElideMode(Qt::TextElideMode textElideMode)
     emit viewChanged(this, ChangeReasonViewContent);
 }
 
-QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode /*sizeMode*/) const
 {
     /*
     QStyleOptionViewItem option;
@@ -50,7 +50,7 @@ QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode
     return QSize(fontMetrics.width(text), fontMetrics.height());
 }
 
-void ViewText::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewText::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* showTooltip) const
 {
     /*
      * cannot use this stuff because textElideMode is not working

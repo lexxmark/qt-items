@@ -142,15 +142,15 @@ ViewSelectionClient::~ViewSelectionClient()
 {
 }
 
-void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     m_pen = painter->pen();
 
     auto style = ctx.style();
 
+    // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) in QWindowsVistaStyle class
     if (style->inherits("QWindowsVistaStyle"))
     {
-        // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) in QWindowsVistaStyle class
         QPalette::ColorGroup cg = QPalette::Active;
         if (!ctx.widget->isEnabled())
             cg = QPalette::Disabled;
@@ -199,7 +199,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     }
 }
 
-void ViewSelectionClient::cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const
+void ViewSelectionClient::cleanupDrawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const
 {
     painter->setPen(m_pen);
 }
@@ -217,7 +217,7 @@ ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& m
     }
 }
 
-void ViewSelectionHeader::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewSelectionHeader::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     QStyleOptionHeader option;
     option.initFrom(ctx.widget);
@@ -349,7 +349,7 @@ bool ControllerMouseSelectionClient::processMouseMove(QMouseEvent* event)
     return true;
 }
 
-bool ControllerMouseSelectionClient::processContextMenu(QContextMenuEvent* event)
+bool ControllerMouseSelectionClient::processContextMenu(QContextMenuEvent* /*event*/)
 {
     if (isCapturing())
         return false;
@@ -449,7 +449,7 @@ bool ControllerMouseSelectionHeader::processLButtonDown(QMouseEvent* event)
     return true;
 }
 
-bool ControllerMouseSelectionHeader::processMouseMove(QMouseEvent* event)
+bool ControllerMouseSelectionHeader::processMouseMove(QMouseEvent* /*event*/)
 {
     if (isCapturing() && m_type != SelectionCornerHeader)
     {

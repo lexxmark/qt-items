@@ -72,7 +72,7 @@ QSize ViewComposite::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSiz
                  size.height() + m_margins.top() + m_margins.bottom());
 }
 
-void ViewComposite::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewComposite::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     for (const auto& subCacheView: cache.cacheView.subViews())
     {
@@ -124,7 +124,7 @@ void ViewComposite::disconnectSubViews()
     }
 }
 
-void ViewComposite::onSubViewChanged(const View* view, ChangeReason reason)
+void ViewComposite::onSubViewChanged(const View* /*view*/, ChangeReason reason)
 {
     emit viewChanged(this, reason);
 }

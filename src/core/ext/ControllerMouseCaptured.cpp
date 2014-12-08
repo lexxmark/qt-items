@@ -22,13 +22,13 @@ void ControllerMouseCaptured::stopCapturingImpl()
     ControllerMouse::stopCapturingImpl();
 }
 
-void ControllerMouseCaptured::processKillFocus(QFocusEvent* event)
+void ControllerMouseCaptured::processKillFocus(QFocusEvent* /*event*/)
 {
     if (isCapturing())
         stopCapturing();
 }
 
-bool ControllerMouseCaptured::processLButtonDown(QMouseEvent* event)
+bool ControllerMouseCaptured::processLButtonDown(QMouseEvent* /*event*/)
 {
     Q_ASSERT(!isCapturing());
     if (!isCapturing())
@@ -37,7 +37,7 @@ bool ControllerMouseCaptured::processLButtonDown(QMouseEvent* event)
     return true;
 }
 
-bool ControllerMouseCaptured::processLButtonUp(QMouseEvent* event)
+bool ControllerMouseCaptured::processLButtonUp(QMouseEvent* /*event*/)
 {
     if (isCapturing())
     {
@@ -52,7 +52,7 @@ bool ControllerMouseCaptured::processLButtonUp(QMouseEvent* event)
     return false;
 }
 
-bool ControllerMouseCaptured::processLButtonDblClick(QMouseEvent* event)
+bool ControllerMouseCaptured::processLButtonDblClick(QMouseEvent* /*event*/)
 {
     if (!m_processDblClick)
         return false;

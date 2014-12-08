@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     schema.layout = makeLayoutClient();
     schema.view = QSharedPointer<ViewText>::create(modelText, false, Qt::AlignLeft, Qt::ElideRight);
     schema.view->setController(controller);
-    schema.view->tooltipTextCallback = [](const ItemID& item, QString& text)->bool {
+    schema.view->tooltipTextCallback = [](const ItemID& /*item*/, QString& text)->bool {
         text = "Click me";
         return true;
     };

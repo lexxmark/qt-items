@@ -62,7 +62,7 @@ bool View::tooltipText(const ItemID& item, QString& text) const
     return tooltipTextImpl(item, text);
 }
 
-void View::addViewImpl(const ItemID& item, QVector<const View*>& views) const
+void View::addViewImpl(const ItemID& /*item*/, QVector<const View*>& views) const
 {
     views.append(this);
 }
@@ -80,7 +80,7 @@ CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, c
 
 void View::setTooltipText(const QString& text)
 {
-    tooltipTextCallback = [text] (const ItemID& item, QString& itemText) {
+    tooltipTextCallback = [text] (const ItemID& /*item*/, QString& itemText) {
         itemText = text;
         return true;
     };

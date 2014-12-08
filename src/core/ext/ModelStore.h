@@ -87,12 +87,12 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueImpl(const ItemID& /*item*/) const override
     {
         return m_value;
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueImpl(const ItemID& /*item*/, T value) override
     {
         if (m_value != value)
         {

@@ -29,8 +29,8 @@ public:
     void setTextElideMode(Qt::TextElideMode textElideMode);
 
 protected:
-    virtual Qt::Alignment alignmentImpl(const ItemID& item) const { return m_alignment; }
-    virtual Qt::TextElideMode textElideModeImpl(const ItemID& item) const { return m_textElideMode; }
+    virtual Qt::Alignment alignmentImpl(const ItemID& /*item*/) const { return m_alignment; }
+    virtual Qt::TextElideMode textElideModeImpl(const ItemID& /*item*/) const { return m_textElideMode; }
 
     QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;

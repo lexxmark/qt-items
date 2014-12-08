@@ -109,7 +109,7 @@ void LayoutVer::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
     size.rheight() += (viewSize.height()+1);
 }
 
-bool LayoutClient::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
+bool LayoutClient::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
 {
     info.viewRect = info.itemRect;
     if (!isTransparent())

@@ -14,14 +14,14 @@ ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultCon
     }
 }
 
-QSize ViewCheck::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewCheck::sizeImpl(const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
 {
     auto style = ctx.style();
     return QSize(style->pixelMetric(QStyle::PM_IndicatorWidth),
                  style->pixelMetric(QStyle::PM_IndicatorHeight));
 }
 
-void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     auto style = ctx.style();
 
@@ -69,7 +69,7 @@ void ControllerMouseCheck::applyImpl()
     toggleCheck();
 }
 
-bool ControllerMouseCheck::acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
+bool ControllerMouseCheck::acceptEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
 {
     return keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
 }

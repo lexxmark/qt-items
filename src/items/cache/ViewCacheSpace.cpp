@@ -35,7 +35,7 @@ CacheView* ViewCacheSpace::addCacheViewImpl(const Layout& layout, const GuiConte
     return result;
 }
 
-QSize ViewCacheSpace::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewCacheSpace::sizeImpl(const GuiContext& /*ctx*/, const ItemID& item, ViewSizeMode /*sizeMode*/) const
 {
     const auto& cacheSpace = m_model->value(item);
 
@@ -45,7 +45,7 @@ QSize ViewCacheSpace::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSi
         return QSize(0, 0);
 }
 
-void ViewCacheSpace::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewCacheSpace::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     const auto& cacheSpace = m_model->value(cache.item);
 

@@ -32,12 +32,12 @@ protected:
 public:
     virtual ~ModelComparable();
 
-    int compare(const ItemID &left, const ItemID &right) const { return compareImpl(left, right); }
-    bool isAscendingDefault(const ItemID &item) const { return isAscendingDefaultImpl(item); }
+    int compare(const ItemID& left, const ItemID& right) const { return compareImpl(left, right); }
+    bool isAscendingDefault(const ItemID& item) const { return isAscendingDefaultImpl(item); }
 
 protected:
-    virtual int compareImpl(const ItemID &left, const ItemID &right) const = 0;
-    virtual bool isAscendingDefaultImpl(const ItemID &item) const { return true; }
+    virtual int compareImpl(const ItemID& left, const ItemID& right) const = 0;
+    virtual bool isAscendingDefaultImpl(const ItemID& /*item*/) const { return true; }
 };
 
 } // end namespace Qi

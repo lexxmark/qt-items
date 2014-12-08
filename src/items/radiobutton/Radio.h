@@ -21,8 +21,8 @@ public:
 protected:
     ModelRadio() {}
 
-    int compareImpl(const ItemID &left, const ItemID &right) const override;
-    bool isAscendingDefaultImpl(const ItemID &item) const override { return false; }
+    int compareImpl(const ItemID& left, const ItemID& right) const override;
+    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return false; }
 
     virtual bool isRadioItemImpl(const ItemID& item) const = 0;
     virtual bool setRadioItemImpl(const ItemID& item) = 0;
@@ -89,7 +89,7 @@ public:
     ControllerMouseRadio(const QSharedPointer<ModelRadio>& model);
 
     // disable redundant set radio by double click
-    bool processLButtonDblClick(QMouseEvent* event) override { return false; }
+    bool processLButtonDblClick(QMouseEvent* /*event*/) override { return false; }
 
 protected:
     void applyImpl() override;

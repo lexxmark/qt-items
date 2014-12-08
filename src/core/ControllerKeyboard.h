@@ -17,8 +17,8 @@ class QI_EXPORT ControllerKeyboard: public QObject
 public:
     virtual ~ControllerKeyboard() {}
 
-    virtual bool processKeyPress(QKeyEvent* event) { return false; }
-    virtual bool processKeyRelease(QKeyEvent* event) { return false; }
+    virtual bool processKeyPress(QKeyEvent* /*event*/) { return false; }
+    virtual bool processKeyRelease(QKeyEvent* /*event*/) { return false; }
 
     virtual void startCapturing() {}
     virtual void stopCapturing() {}

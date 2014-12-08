@@ -151,17 +151,17 @@ void Space::disconnectSchema(const ItemSchema& schema)
     disconnect(schema.view.data(), &View::viewChanged, this, &Space::onViewChanged);
 }
 
-void Space::onRangeChanged(const Range* range, ChangeReason reason)
+void Space::onRangeChanged(const Range* /*range*/, ChangeReason reason)
 {
     emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
 }
 
-void Space::onLayoutChanged(const Layout* layout, ChangeReason reason)
+void Space::onLayoutChanged(const Layout* /*layout*/, ChangeReason reason)
 {
     emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
 }
 
-void Space::onViewChanged(const View* view, ChangeReason reason)
+void Space::onViewChanged(const View* /*view*/, ChangeReason reason)
 {
     emit spaceChanged(this, reason | ChangeReasonSpaceItemsContent);
 }

@@ -149,17 +149,17 @@ void TestSignal::testConnectDisconnect()
 
 static int static_sum = 0;
 
-static void OnSignal(const std::string& str, float val, MyObj& obj)
+static void OnSignal(const std::string& /*str*/, float /*val*/, MyObj& obj)
 {
     static_sum += obj.value;
 }
 
-void MyObj::onSignal(const std::string& str, float val, MyObj& obj) const
+void MyObj::onSignal(const std::string& /*str*/, float /*val*/, MyObj& obj) const
 {
     static_sum += obj.value;
 }
 
-void MyQObject::mySlot(const std::string& str, float val, MyObj& obj)
+void MyQObject::mySlot(const std::string& /*str*/, float /*val*/, MyObj& obj)
 {
     static_sum += obj.value;
 }

@@ -79,7 +79,7 @@ void GridWidget::setControllerKeyboard(const QSharedPointer<ControllerKeyboard>&
     m_impl->setControllerKeyboard(controllerKeyboard);
 }
 
-void GridWidget::addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard)
+void GridWidget::addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& /*controllerKeyboard*/)
 {
     Q_ASSERT(false);
 }
@@ -240,7 +240,7 @@ QSize GridWidget::viewportSizeHint() const
     return subGrid(topLeftID)->size() + subGrid(clientID)->size() + subGrid(bottomRightID)->size();
 }
 
-void GridWidget::onSubGridChanged(const Space* space, ChangeReason reason)
+void GridWidget::onSubGridChanged(const Space* /*space*/, ChangeReason reason)
 {
     if (reason & ChangeReasonSpaceStructure)
     {
@@ -251,7 +251,7 @@ void GridWidget::onSubGridChanged(const Space* space, ChangeReason reason)
     }
 }
 
-void GridWidget::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason)
+void GridWidget::onCacheSpaceChanged(const CacheSpace* /*cache*/, ChangeReason /*reason*/)
 {
     // request to repaint widget
     viewport()->update();

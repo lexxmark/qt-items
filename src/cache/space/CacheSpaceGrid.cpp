@@ -132,7 +132,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
         ItemID intersectionEnd(qMin(m_itemEnd.row, newItemEnd.row), qMin(m_itemEnd.column, newItemEnd.column));
 
         // copy intersected cache items
-        size_t oldItemColumns = m_itemEnd.column - m_itemStart.column + 1;
+        int oldItemColumns = m_itemEnd.column - m_itemStart.column + 1;
         for (ItemID item = intersectionStart; item.column <= intersectionEnd.column; ++item.column)
             for (item.row = intersectionStart.row; item.row <= intersectionEnd.row; ++item.row)
             {
@@ -235,7 +235,7 @@ const CacheItem* CacheSpaceGrid::cacheItemImpl(const ItemID& visibleItem) const
     if (!isItemInFrame(visibleItem))
         return nullptr;
 
-    size_t itemColumns = m_itemEnd.column - m_itemStart.column + 1;
+    int itemColumns = m_itemEnd.column - m_itemStart.column + 1;
     auto item = visibleItem - m_itemStart;
     return m_items[item.row * itemColumns + item.column].data();
 }

@@ -64,14 +64,14 @@ ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultCon
     }
 }
 
-QSize ViewRadio::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewRadio::sizeImpl(const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
 {
     auto style = ctx.style();
     return QSize(style->pixelMetric(QStyle::PM_ExclusiveIndicatorWidth),
                  style->pixelMetric(QStyle::PM_ExclusiveIndicatorHeight));
 }
 
-void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     auto style = ctx.style();
 
@@ -107,7 +107,7 @@ void ControllerMouseRadio::applyImpl()
     m_model->setRadioItem(activeItem());
 }
 
-bool ControllerMouseRadio::acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
+bool ControllerMouseRadio::acceptEditImpl(const ItemID& item, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
 {
     return !m_model->isRadioItem(item) && keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
 }

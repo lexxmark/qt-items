@@ -70,17 +70,17 @@ RangeNone::RangeNone()
 {
 }
 
-bool RangeNone::hasItemImpl(const ItemID& item) const
+bool RangeNone::hasItemImpl(const ItemID& /*item*/) const
 {
     return false;
 }
 
-bool RangeNone::hasRowImpl(int row) const
+bool RangeNone::hasRowImpl(int /*row*/) const
 {
     return false;
 }
 
-bool RangeNone::hasColumnImpl(int column) const
+bool RangeNone::hasColumnImpl(int /*column*/) const
 {
     return false;
 }
@@ -94,17 +94,17 @@ RangeAll::RangeAll()
 {
 }
 
-bool RangeAll::hasItemImpl(const ItemID& item) const
+bool RangeAll::hasItemImpl(const ItemID& /*item*/) const
 {
     return true;
 }
 
-bool RangeAll::hasRowImpl(int row) const
+bool RangeAll::hasRowImpl(int /*row*/) const
 {
     return true;
 }
 
-bool RangeAll::hasColumnImpl(int column) const
+bool RangeAll::hasColumnImpl(int /*column*/) const
 {
     return true;
 }
@@ -133,7 +133,7 @@ bool RangeColumn::hasItemImpl(const ItemID& item) const
     return RangeColumn::hasColumnImpl(item.column);
 }
 
-bool RangeColumn::hasRowImpl(int row) const
+bool RangeColumn::hasRowImpl(int /*row*/) const
 {
     return false;
 }
@@ -174,7 +174,7 @@ bool RangeColumns::hasItemImpl(const ItemID& item) const
     return RangeColumns::hasColumnImpl(item.column);
 }
 
-bool RangeColumns::hasRowImpl(int row) const
+bool RangeColumns::hasRowImpl(int /*row*/) const
 {
     return false;
 }
@@ -218,7 +218,7 @@ bool RangeRow::hasRowImpl(int row) const
     return row == m_row;
 }
 
-bool RangeRow::hasColumnImpl(int column) const
+bool RangeRow::hasColumnImpl(int /*column*/) const
 {
     return false;
 }
@@ -259,7 +259,7 @@ bool RangeRows::hasRowImpl(int row) const
     return m_rows.contains(row);
 }
 
-bool RangeRows::hasColumnImpl(int column) const
+bool RangeRows::hasColumnImpl(int /*column*/) const
 {
     return false;
 }

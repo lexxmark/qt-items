@@ -68,11 +68,11 @@ public:
     CompareFunction_t compareFunction;
 
 protected:
-    int compareImpl(const ItemID &left, const ItemID &right) const override
+    int compareImpl(const ItemID& left, const ItemID& right) const override
     {
         return compareFunction(left, right);
     }
-    bool isAscendingDefaultImpl(const ItemID &item) const override
+    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override
     {
         return m_ascendingDefault;
     }

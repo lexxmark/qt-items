@@ -65,14 +65,14 @@ public:
     void deactivate();
     void stopCapturing();
 
-    virtual void processPaint(QPaintEvent* event) {}
-    virtual void processKillFocus(QFocusEvent* event) {}
+    virtual void processPaint(QPaintEvent* /*event*/) {}
+    virtual void processKillFocus(QFocusEvent* /*event*/) {}
     virtual bool processSetCursor() { return false; }
-    virtual bool processLButtonDown(QMouseEvent* event) { return false; }
-    virtual bool processLButtonUp(QMouseEvent* event) { return false; }
-    virtual bool processLButtonDblClick(QMouseEvent* event) { return false; }
-    virtual bool processMouseMove(QMouseEvent* event) { return false; }
-    virtual bool processContextMenu(QContextMenuEvent* event) { return false; }
+    virtual bool processLButtonDown(QMouseEvent* /*event*/) { return false; }
+    virtual bool processLButtonUp(QMouseEvent* /*event*/) { return false; }
+    virtual bool processLButtonDblClick(QMouseEvent* /*event*/) { return false; }
+    virtual bool processMouseMove(QMouseEvent* /*event*/) { return false; }
+    virtual bool processContextMenu(QContextMenuEvent* /*event*/) { return false; }
 
     bool acceptEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr) const;
     void doEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr);
@@ -128,15 +128,15 @@ protected:
     const ActivationState& activationState() const;
 
     virtual void tryActivateImpl(QVector<ControllerMouse*>& activatedControllers, const ActivationInfo& activationInfo);
-    virtual bool acceptImpl(const ActivationInfo& activationInfo) const { return true; }
+    virtual bool acceptImpl(const ActivationInfo& /*activationInfo*/) const { return true; }
     virtual void activateImpl(const ActivationInfo& activationInfo);
     virtual bool needDeactivateImpl(const ActivationInfo& activationInfo) const;
     virtual void deactivateImpl();
     virtual void startCapturingImpl();
     virtual void stopCapturingImpl();
 
-    virtual bool acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const { return false; }
-    virtual void doEditImpl(const QKeyEvent* keyEvent) {}
+    virtual bool acceptEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const { return false; }
+    virtual void doEditImpl(const QKeyEvent* /*keyEvent*/) {}
 
 private:
     void activate(const ActivationInfo& activationInfo);

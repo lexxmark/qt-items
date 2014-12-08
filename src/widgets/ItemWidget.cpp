@@ -102,7 +102,7 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
     }
 }
 
-void ItemWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
+void ItemWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool /*validateItem*/)
 {
     Q_ASSERT(visibleItem == m_space->item());
     Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);

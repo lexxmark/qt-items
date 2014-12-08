@@ -444,7 +444,7 @@ void SpaceGrid::sortRowByRangedModel(int row, const QSharedPointer<ModelComparab
         m_columns->sort(stable, DescendingRowComparatorByRangedModel(row, model, range, outOfRangeIsSmall));
 }
 
-void SpaceGrid::onLinesChanged(const Lines* lines, ChangeReason reason)
+void SpaceGrid::onLinesChanged(const Lines* /*lines*/, ChangeReason reason)
 {
     if (reason & (ChangeReasonLinesCount|ChangeReasonLinesVisibility|ChangeReasonLinesSize|ChangeReasonLinesOrder))
     {

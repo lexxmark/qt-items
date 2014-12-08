@@ -56,8 +56,8 @@ public:
     }
 
 protected:
-    int compareImpl(const ItemID &left, const ItemID &right) const override { return Private::compareValues(value(left), value(right)); }
-    bool isAscendingDefaultImpl(const ItemID &item) const override { return m_ascendingDefault; }
+    int compareImpl(const ItemID& left, const ItemID& right) const override { return Private::compareValues(value(left), value(right)); }
+    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return m_ascendingDefault; }
 
     virtual ValueType_t valueImpl(const ItemID& item) const = 0;
     virtual bool setValueImpl(const ItemID& item, ValueType_t value) = 0;

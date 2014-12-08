@@ -99,18 +99,18 @@ protected:
     // adds CacheView
     virtual CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
     // returns size of the view
-    virtual QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const { return QSize(0, 0); }
+    virtual QSize sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const { return QSize(0, 0); }
     // draws view content
-    virtual void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const { }
+    virtual void drawImpl(QPainter* /*painter*/, const GuiContext& /*ctx*/, const CacheContext& /*cache*/, bool* /*showTooltip*/) const { }
     // cleanups drawing attributes
-    virtual void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const { }
+    virtual void cleanupDrawImpl(QPainter* /*painter*/, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const { }
 
     // returns text representation of the view
-    virtual bool textImpl(const ItemID& item, QString& txt) const { return false; }
+    virtual bool textImpl(const ItemID& /*item*/, QString& /*txt*/) const { return false; }
     // returns tooltip text of the view
     virtual bool tooltipTextImpl(const ItemID& item, QString& txt) const { return text(item, txt); }
     // returns tooltip under the point
-    virtual bool tooltipByPointImpl(const QPoint& point, const ItemID& item, TooltipInfo& tooltipInfo) const { return false; }
+    virtual bool tooltipByPointImpl(const QPoint& /*point*/, const ItemID& /*item*/, TooltipInfo& /*tooltipInfo*/) const { return false; }
 
     // returns represented model
     virtual Model* modelImpl() { return nullptr; }
