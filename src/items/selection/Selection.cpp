@@ -148,7 +148,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
 
     auto style = ctx.style();
 
-    // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) in QWindowsVistaStyle class
+    // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) from QWindowsVistaStyle class
     if (style->inherits("QWindowsVistaStyle"))
     {
         QPalette::ColorGroup cg = QPalette::Active;

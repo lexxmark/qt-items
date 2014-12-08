@@ -76,7 +76,12 @@ void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
     auto style = ctx.style();
 
     QStyleOptionButton styleOption;
-    styleOption.initFrom(ctx.widget);
+
+    // dont initialize style from widget for QWindowsVistaStyle
+    // this disables buggous animations
+    if (!style->inherits("QWindowsVistaStyle"))
+        styleOption.initFrom(ctx.widget);
+
     styleOption.state = styleState(cache.item);
     styleOption.rect = cache.cacheView.rect();
     // correct rect
