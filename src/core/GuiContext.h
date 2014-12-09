@@ -3,6 +3,7 @@
 
 #include "QiAPI.h"
 #include <QWidget>
+#include <QStyleOption>
 
 class QStyle;
 
@@ -21,6 +22,12 @@ public:
     }
 
     QStyle* style() const { return widget->style(); }
+    void initStyleOption(QStyleOption& option) const
+    {
+        option.initFrom(widget);
+        // State_MouseOver should be set explicitly
+        option.state &= ~QStyle::State_MouseOver;
+    }
 };
 
 } // end namespace Qi

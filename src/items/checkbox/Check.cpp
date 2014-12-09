@@ -25,20 +25,21 @@ void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
 {
     auto style = ctx.style();
 
-    QStyleOptionButton styleOption;
+    QStyleOptionButton option;
+    ctx.initStyleOption(option);
 
-    // dont initialize style from widget for QWindowsVistaStyle
+    // dont initialize styleObject from widget for QWindowsVistaStyle
     // this disables buggous animations
-    if (!style->inherits("QWindowsVistaStyle"))
-        styleOption.initFrom(ctx.widget);
+    if (style->inherits("QWindowsVistaStyle"))
+        option.styleObject = nullptr;
 
-    styleOption.state = styleState(cache.item);
-    styleOption.rect = cache.cacheView.rect();
+    option.state |= styleState(cache.item);
+    option.rect = cache.cacheView.rect();
     // correct rect
-    styleOption.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &styleOption, ctx.widget);
+    option.rect = style->subElementRect(QStyle::SE_CheckBoxIndicator, &option, ctx.widget);
 
     // draw check box image
-    style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &styleOption, painter, ctx.widget);
+    style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &option, painter, ctx.widget);
 }
 
 QStyle::State ViewCheck::styleState(const ItemID& item) const

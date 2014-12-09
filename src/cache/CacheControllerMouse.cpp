@@ -214,11 +214,10 @@ bool CacheControllerMouse::processEvent(QEvent* event)
             break;
         }
 
-        case QEvent::FocusAboutToChange:
+        case QEvent::FocusOut:
         {
             QFocusEvent* focusEvent = static_cast<QFocusEvent*>(event);
-            if (focusEvent->lostFocus())
-                processKillFocus(focusEvent);
+            processKillFocus(focusEvent);
             break;
         }
 

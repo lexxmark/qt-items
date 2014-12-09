@@ -3,7 +3,7 @@
 
 #include "core/ext/Ranges.h"
 #include "core/ext/ViewModeled.h"
-#include "core/ext/ControllerMouseCaptured.h"
+#include "core/ext/ControllerMousePushable.h"
 #include "core/ControllerKeyboard.h"
 
 namespace Qi
@@ -152,6 +152,7 @@ protected:
 
 private:
     SelectionHeaderType m_type;
+    PushableTracker m_pushableTracker;
 };
 
 class QI_EXPORT ControllerMouseSelectionClient: public ControllerMouseCaptured

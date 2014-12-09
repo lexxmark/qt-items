@@ -75,20 +75,21 @@ void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
 {
     auto style = ctx.style();
 
-    QStyleOptionButton styleOption;
+    QStyleOptionButton option;
+    ctx.initStyleOption(option);
 
-    // dont initialize style from widget for QWindowsVistaStyle
+    // dont initialize styleObject from widget for QWindowsVistaStyle
     // this disables buggous animations
-    if (!style->inherits("QWindowsVistaStyle"))
-        styleOption.initFrom(ctx.widget);
+    if (style->inherits("QWindowsVistaStyle"))
+        option.styleObject = nullptr;
 
-    styleOption.state = styleState(cache.item);
-    styleOption.rect = cache.cacheView.rect();
+    option.state |= styleState(cache.item);
+    option.rect = cache.cacheView.rect();
     // correct rect
-    styleOption.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &styleOption, ctx.widget);
+    option.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &option, ctx.widget);
 
     // draw radio button image
-    style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &styleOption, painter, ctx.widget);
+    style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &option, painter, ctx.widget);
 }
 
 QStyle::State ViewRadio::styleState(const ItemID& item) const

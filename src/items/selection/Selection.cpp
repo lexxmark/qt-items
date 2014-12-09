@@ -167,7 +167,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
         if ((cg == QPalette::Active) && (theModel()->activeItem() == cache.item))
         {
             QStyleOptionFocusRect focusOption;
-            focusOption.initFrom(ctx.widget);
+            ctx.initStyleOption(focusOption);
             focusOption.state |= QStyle::State_KeyboardFocusChange;
             focusOption.rect = cache.cacheView.rect();
             style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOption, painter, ctx.widget);
@@ -177,7 +177,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     }
 
     QStyleOptionViewItem option;
-    option.initFrom(ctx.widget);
+    ctx.initStyleOption(option);
     option.rect = cache.cacheView.rect();
     option.widget = ctx.widget;
 
@@ -206,7 +206,8 @@ void ViewSelectionClient::cleanupDrawImpl(QPainter* painter, const GuiContext& /
 
 ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type, bool useDefaultController)
     : ViewModeled<ModelSelection>(model),
-      m_type(type)
+      m_type(type),
+      m_pushableTracker(this)
 {
     // don't use this view in copy operations by default
     setExcludeApplicationMask(ViewApplicationCopy);
@@ -220,7 +221,8 @@ ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& m
 void ViewSelectionHeader::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     QStyleOptionHeader option;
-    option.initFrom(ctx.widget);
+    ctx.initStyleOption(option);
+    option.state |= m_pushableTracker.styleStateByItem(cache.item);
     option.rect = cache.cacheView.rect();
 
     ItemID activeItem = theModel()->activeItem();
