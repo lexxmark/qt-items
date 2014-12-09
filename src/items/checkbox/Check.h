@@ -30,24 +30,7 @@ private:
     PushableTracker m_pushableTracker;
 };
 
-class QI_EXPORT ControllerMouseCheck: public ControllerMousePushable
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ControllerMouseCheck)
-
-public:
-    ControllerMouseCheck(const QSharedPointer<ModelCheck>& model);
-
-protected:
-    void applyImpl() override;
-    bool acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
-    void doEditImpl(const QKeyEvent* keyEvent) override;
-
-private:
-    void toggleCheck();
-
-    QSharedPointer<ModelCheck> m_model;
-};
+QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseCheck(const QSharedPointer<ModelCheck>& model);
 
 } // end namespace Qi
 

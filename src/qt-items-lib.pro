@@ -45,7 +45,8 @@ SOURCES += QiAPI.cpp \
     items/text/Text.cpp \
     widgets/SpaceWidget_p.cpp \
     items/selection/Selection.cpp \
-    core/ControllerKeyboard.cpp
+    core/ControllerKeyboard.cpp \
+    items/misc/ControllerMousePushableCallback.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -92,7 +93,8 @@ HEADERS +=  QiAPI.h \
     widgets/SpaceWidget_p.h \
     items/selection/Selection.h \
     core/ControllerKeyboard.h \
-    widgets/WidgetDriver.h
+    widgets/WidgetDriver.h \
+    items/misc/ControllerMousePushableCallback.h
 
 win32 {
     TARGET_EXT = .dll

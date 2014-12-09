@@ -1,4 +1,5 @@
 #include "Check.h"
+#include "items/misc/ControllerMousePushableCallback.h"
 #include <QStyleOptionButton>
 
 namespace Qi
@@ -10,7 +11,7 @@ ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultCon
 {
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseCheck>::create(model));
+        setController(createControllerMouseCheck(model));
     }
 }
 
@@ -64,37 +65,15 @@ QStyle::State ViewCheck::styleState(const ItemID& item) const
     return state;
 }
 
-ControllerMouseCheck::ControllerMouseCheck(const QSharedPointer<ModelCheck>& model)
-    : m_model(model)
+QSharedPointer<ControllerMousePushable> createControllerMouseCheck(const QSharedPointer<ModelCheck>& model)
 {
-    Q_ASSERT(m_model);
-}
-
-void ControllerMouseCheck::applyImpl()
-{
-    toggleCheck();
-}
-
-bool ControllerMouseCheck::acceptEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
-{
-    return keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
-}
-
-void ControllerMouseCheck::doEditImpl(const QKeyEvent* keyEvent)
-{
-    Q_ASSERT(keyEvent);
-    Q_ASSERT(keyEvent->type() == QEvent::KeyPress);
-    Q_ASSERT(keyEvent->key() == Qt::Key_Space);
-
-    toggleCheck();
-}
-
-void ControllerMouseCheck::toggleCheck()
-{
-    ItemID item = activeItem();
-    Q_ASSERT(item.isValid());
-    Qt::CheckState check = m_model->value(item);
-    m_model->setValue(item, (check != Qt::Unchecked) ? Qt::Unchecked : Qt::Checked);
+    auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+    controller->onApply = [model] (const ItemID& item, const ControllerContext& /*context*/) {
+        Q_ASSERT(item.isValid());
+        Qt::CheckState check = model->value(item);
+        model->setValue(item, (check != Qt::Unchecked) ? Qt::Unchecked : Qt::Checked);
+    };
+    return controller;
 }
 
 } // end namespace Qi

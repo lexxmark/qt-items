@@ -1,4 +1,5 @@
 #include "Radio.h"
+#include "items/misc/ControllerMousePushableCallback.h"
 #include <QStyleOptionButton>
 
 namespace Qi
@@ -60,7 +61,7 @@ ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultCon
 {
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseRadio>::create(model));
+        setController(createControllerMouseRadio(model));
     }
 }
 
@@ -97,35 +98,19 @@ QStyle::State ViewRadio::styleState(const ItemID& item) const
     bool isRadioItem = theModel()->isRadioItem(item);
 
     QStyle::State state = QStyle::State_Enabled | m_pushableTracker.styleStateByItem(item);
-    state |= isRadioItem ? QStyle::State_On : QStyle::State_Off;
+    state |= (isRadioItem ? QStyle::State_On : QStyle::State_Off);
 
     return state;
 }
 
-ControllerMouseRadio::ControllerMouseRadio(const QSharedPointer<ModelRadio>& model)
-    : m_model(model)
+QSharedPointer<ControllerMousePushable> createControllerMouseRadio(const QSharedPointer<ModelRadio>& model)
 {
-    Q_ASSERT(m_model);
-}
-
-void ControllerMouseRadio::applyImpl()
-{
-    m_model->setRadioItem(activeItem());
-}
-
-bool ControllerMouseRadio::acceptEditImpl(const ItemID& item, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
-{
-    return !m_model->isRadioItem(item) && keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
-}
-
-void ControllerMouseRadio::doEditImpl(const QKeyEvent* keyEvent)
-{
-    Q_ASSERT(!m_model->isRadioItem(activeItem()));
-    Q_ASSERT(keyEvent);
-    Q_ASSERT(keyEvent->type() == QEvent::KeyPress);
-    Q_ASSERT(keyEvent->key() == Qt::Key_Space);
-
-    m_model->setRadioItem(activeItem());
+    auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+    controller->onApply = [model] (const ItemID& item, const ControllerContext& /*context*/) {
+        Q_ASSERT(item.isValid());
+        model->setRadioItem(item);
+    };
+    return controller;
 }
 
 } // end namespace Qi

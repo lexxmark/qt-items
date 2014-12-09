@@ -80,25 +80,7 @@ private:
     PushableTracker m_pushableTracker;
 };
 
-class QI_EXPORT ControllerMouseRadio: public ControllerMousePushable
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ControllerMouseRadio)
-
-public:
-    ControllerMouseRadio(const QSharedPointer<ModelRadio>& model);
-
-    // disable redundant set radio by double click
-    bool processLButtonDblClick(QMouseEvent* /*event*/) override { return false; }
-
-protected:
-    void applyImpl() override;
-    bool acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
-    void doEditImpl(const QKeyEvent* keyEvent) override;
-
-private:
-    QSharedPointer<ModelRadio> m_model;
-};
+QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseRadio(const QSharedPointer<ModelRadio>& model);
 
 } // end namespace Qi
 
