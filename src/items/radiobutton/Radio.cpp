@@ -97,7 +97,7 @@ QStyle::State ViewRadio::styleState(const ItemID& item) const
 {
     bool isRadioItem = theModel()->isRadioItem(item);
 
-    QStyle::State state = QStyle::State_Enabled | m_pushableTracker.styleStateByItem(item);
+    QStyle::State state = m_pushableTracker.styleStateByItem(item);
     state |= (isRadioItem ? QStyle::State_On : QStyle::State_Off);
 
     return state;

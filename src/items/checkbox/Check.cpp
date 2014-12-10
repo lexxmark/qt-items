@@ -47,7 +47,7 @@ QStyle::State ViewCheck::styleState(const ItemID& item) const
 {
     Qt::CheckState check = theModel()->value(item);
 
-    QStyle::State state = QStyle::State_Enabled | m_pushableTracker.styleStateByItem(item);
+    QStyle::State state = m_pushableTracker.styleStateByItem(item);
 
     switch (check)
     {

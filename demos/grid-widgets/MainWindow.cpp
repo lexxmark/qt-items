@@ -5,10 +5,13 @@
 #include "core/ext/ModelStore.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
+#include "items/button/Button.h"
 #include "items/text/Text.h"
 #include "items/selection/Selection.h"
 
 #include "cache/space/CacheSpaceGrid.h"
+
+#include <QMessageBox>
 
 using namespace Qi;
 
@@ -69,6 +72,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     modelRadio = QSharedPointer<ModelRadioStorage>::create(ItemID(0, 5));
     leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
+
+    auto modelBttnText = QSharedPointer<ModelStorageValue<QString>>::create(" ... ");
+    auto viewBttnText  = QSharedPointer<ViewText>::create(modelBttnText);
+    auto viewBttn = QSharedPointer<ViewButton>::create(viewBttnText);
+    viewBttn->bttnAction = [](const ItemID& item,  const ControllerContext& context, const ViewButton*) {
+        QMessageBox::information(context.widget, "Bttn clicked", QString("Bttn[%1, %2]").arg(item.row).arg(item.column));
+    };
+    viewBttn->setTooltipText("Click me");
+
+    clientGrid->addSchema(makeRangeColumn(2), viewBttn, makeLayoutRight());
 }
 
 MainWindow::~MainWindow()

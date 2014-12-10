@@ -144,18 +144,14 @@ ViewSelectionClient::~ViewSelectionClient()
 
 void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    m_pen = painter->pen();
+    m_painterState.save(painter);
 
     auto style = ctx.style();
 
     // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) from QWindowsVistaStyle class
     if (style->inherits("QWindowsVistaStyle"))
     {
-        QPalette::ColorGroup cg = QPalette::Active;
-        if (!ctx.widget->isEnabled())
-            cg = QPalette::Disabled;
-        else if (!ctx.widget->hasFocus())
-            cg = QPalette::Inactive;
+        QPalette::ColorGroup cg = ctx.colorGroup();
 
         if (theModel()->isItemSelected(cache.item))
         {
@@ -201,7 +197,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
 
 void ViewSelectionClient::cleanupDrawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const
 {
-    painter->setPen(m_pen);
+    m_painterState.restore(painter);
 }
 
 ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type, bool useDefaultController)

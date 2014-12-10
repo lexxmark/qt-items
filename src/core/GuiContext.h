@@ -28,6 +28,16 @@ public:
         // State_MouseOver should be set explicitly
         option.state &= ~QStyle::State_MouseOver;
     }
+
+    QPalette::ColorGroup colorGroup() const
+    {
+        if (!widget->isEnabled())
+            return QPalette::Disabled;
+        else if (!widget->hasFocus())
+            return QPalette::Inactive;
+        else
+            return QPalette::Active;
+    }
 };
 
 } // end namespace Qi

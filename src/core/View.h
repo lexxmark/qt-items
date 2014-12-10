@@ -115,6 +115,28 @@ protected:
     // returns represented model
     virtual Model* modelImpl() { return nullptr; }
 
+    class PainterState
+    {
+    public:
+        QPen pen;
+        QBrush background;
+        QBrush brush;
+
+        void save(QPainter* painter)
+        {
+            pen = painter->pen();
+            background = painter->background();
+            brush = painter->brush();
+        }
+
+        void restore(QPainter* painter)
+        {
+            painter->setPen(pen);
+            painter->setBackground(background);
+            painter->setBrush(brush);
+        }
+    };
+
 private:
     QSharedPointer<ControllerMouse> m_controller;
     ViewApplicationMask m_excludeApplicationMask;

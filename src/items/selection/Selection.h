@@ -129,7 +129,7 @@ protected:
     void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;
 
 private:
-    mutable QPen m_pen;
+    mutable PainterState m_painterState;
 };
 
 enum SelectionHeaderType
