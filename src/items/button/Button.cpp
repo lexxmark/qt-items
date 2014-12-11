@@ -5,9 +5,8 @@
 namespace Qi
 {
 
-ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, bool useDefaultController, quintptr id)
+ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, bool useDefaultController)
     : ViewComposite(bttnContent, QMargins(1, 1, 1, 1)),
-      m_id(id),
       m_pushableTracker(this)
 {
     if (useDefaultController)
@@ -15,8 +14,8 @@ ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, bool useDefaultC
         auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
         controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
             Q_ASSERT(item.isValid());
-            if (bttnAction)
-                bttnAction(item, context, this);
+            if (action)
+                action(item, context, this);
         };
         setController(controller);
     }
@@ -24,7 +23,8 @@ ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, bool useDefaultC
 
 void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
-    m_painterState.save(painter);
+    PainterState painterState;
+    painterState.save(painter);
 
     auto style = ctx.style();
 
@@ -38,9 +38,14 @@ void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheC
 
     option.state |= m_pushableTracker.styleStateByItem(cache.item);
     option.rect = cache.cacheView.rect();
+
+    if (tuneBttnState)
+        tuneBttnState(cache.item, option.state);
+
     // draw button
     style->drawControl(QStyle::CE_PushButtonBevel, &option, painter, ctx.widget);
 
+    // setup standard palette
     auto cg = ctx.colorGroup();
     painter->setPen(ctx.widget->palette().color(cg, QPalette::ButtonText));
     painter->setBackground(ctx.widget->palette().brush(cg, QPalette::Button));
@@ -59,12 +64,8 @@ void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheC
     }
 
     ViewComposite::drawImpl(painter, ctx, cache, showTooltip);
-}
 
-void ViewButton::cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const
-{
-    ViewComposite::cleanupDrawImpl(painter, ctx, cache);
-    m_painterState.restore(painter);
+    painterState.restore(painter);
 }
 
 } // end namespace Qi

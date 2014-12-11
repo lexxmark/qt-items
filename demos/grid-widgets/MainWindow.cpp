@@ -8,6 +8,7 @@
 #include "items/button/Button.h"
 #include "items/text/Text.h"
 #include "items/selection/Selection.h"
+#include "items/image/StyleStandardPixmap.h"
 
 #include "cache/space/CacheSpaceGrid.h"
 
@@ -76,12 +77,21 @@ MainWindow::MainWindow(QWidget *parent) :
     auto modelBttnText = QSharedPointer<ModelStorageValue<QString>>::create(" ... ");
     auto viewBttnText  = QSharedPointer<ViewText>::create(modelBttnText);
     auto viewBttn = QSharedPointer<ViewButton>::create(viewBttnText);
-    viewBttn->bttnAction = [](const ItemID& item,  const ControllerContext& context, const ViewButton*) {
-        QMessageBox::information(context.widget, "Bttn clicked", QString("Bttn[%1, %2]").arg(item.row).arg(item.column));
+    viewBttn->tuneBttnState = [](const ItemID& item, QStyle::State& bttnState) {
+        if (item.row % 2 == 0)
+            bttnState |= QStyle::State_Sunken;
+    };
+    viewBttn->action = [](const ItemID& item,  const ControllerContext& context, const ViewButton*) {
+        QMessageBox::information(context.widget, "ViewButton clicked", QString("item[%1, %2]").arg(item.row).arg(item.column));
     };
     viewBttn->setTooltipText("Click me");
-
     clientGrid->addSchema(makeRangeColumn(2), viewBttn, makeLayoutRight());
+
+    auto viewStdIcon = QSharedPointer<ViewStyleStandardPixmap>::create(QStyle::SP_DialogOkButton);
+    viewStdIcon->action = [](const ItemID& item, const ControllerContext& context, const ViewStyleStandardPixmap*) {
+        QMessageBox::information(context.widget, "ViewStyleStandardPixmap clicked", QString("item[%1, %2]").arg(item.row).arg(item.column));
+    };
+    clientGrid->addSchema(makeRangeColumn(3), viewStdIcon, makeLayoutRight());
 }
 
 MainWindow::~MainWindow()
