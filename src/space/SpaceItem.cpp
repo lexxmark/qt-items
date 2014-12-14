@@ -13,6 +13,13 @@ SpaceItem::~SpaceItem()
 {
 }
 
+QRect SpaceItem::itemRect(const ItemID& visibleItem) const
+{
+    Q_UNUSED(visibleItem);
+    Q_ASSERT(m_item == visibleItem);
+    return QRect(QPoint(0, 0), m_size);
+}
+
 void SpaceItem::setSize(const QSize& size)
 {
     if (m_size == size)

@@ -123,6 +123,7 @@ void PushableTracker::onViewChanged(const View* view, ChangeReason changeReason)
 
 void PushableTracker::onPushStateChanged(const ControllerMousePushable* controllerPushable)
 {
+    Q_UNUSED(controllerPushable);
     Q_ASSERT(controllerPushable == m_controller.data());
     emit m_owner->viewChanged(m_owner.data(), ChangeReasonViewContent);
 }

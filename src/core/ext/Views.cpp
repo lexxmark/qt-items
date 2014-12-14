@@ -45,6 +45,7 @@ ViewVisible::~ViewVisible()
 
 void ViewVisible::onSourceViewChanged(const View* view, ChangeReason reason)
 {
+    Q_UNUSED(view);
     Q_ASSERT(view == m_sourceView.data());
     emit viewChanged(this, reason);
 }

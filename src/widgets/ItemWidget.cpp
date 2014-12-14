@@ -79,6 +79,7 @@ bool ItemWidget::event(QEvent* e)
 
 void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
 {
+    Q_UNUSED(space);
     Q_ASSERT(m_space.data() == space);
 
     if (reason & ChangeReasonSpaceItemsStructure)
@@ -104,6 +105,8 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
 
 void ItemWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool /*validateItem*/)
 {
+    Q_UNUSED(visibleItem);
+    Q_UNUSED(cacheSpace);
     Q_ASSERT(visibleItem == m_space->item());
     Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);
     // not applicable

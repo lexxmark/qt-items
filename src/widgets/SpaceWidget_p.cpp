@@ -131,6 +131,7 @@ void SpaceWidgetPrivate::resumeControllers()
 
 void SpaceWidgetPrivate::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason /*reason*/)
 {
+    Q_UNUSED(cache);
     Q_ASSERT(m_cacheSpace.data() == cache);
     // repaint owner widget
     m_owner->update();

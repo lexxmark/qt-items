@@ -18,7 +18,7 @@ public:
     QSize size() const override { return m_size; }
     ItemID toAbsolute(const ItemID& visibleItem) const override { return visibleItem; }
     ItemID toVisible(const ItemID& absoluteItem) const override { return absoluteItem; }
-    QRect itemRect(const ItemID& visibleItem) const override { Q_ASSERT(m_item == visibleItem); return QRect(QPoint(0, 0), m_size); }
+    QRect itemRect(const ItemID& visibleItem) const override;
 
     void setSize(const QSize& size);
 

@@ -20,6 +20,7 @@ bool ControllerMousePushableCallback::acceptEditImpl(const ItemID& /*item*/, con
 
 void ControllerMousePushableCallback::doEditImpl(const QKeyEvent* keyEvent)
 {
+    Q_UNUSED(keyEvent);
     Q_ASSERT(keyEvent);
     Q_ASSERT(keyEvent->type() == QEvent::KeyPress);
     Q_ASSERT(keyEvent->key() == Qt::Key_Space);

@@ -26,6 +26,7 @@ CacheSpace::~CacheSpace()
 
 void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
 {
+    Q_UNUSED(space);
     Q_ASSERT(space == m_space.data());
 
     if (reason & ChangeReasonSpaceStructure)

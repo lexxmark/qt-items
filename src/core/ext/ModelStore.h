@@ -55,6 +55,7 @@ protected:
 private slots:
     void onSpaceChanged(const Space* space, ChangeReason reason)
     {
+        Q_UNUSED(space);
         if ((reason & ChangeReasonSpaceStructure) &&
             (reason & ChangeReasonLinesCount))
         {

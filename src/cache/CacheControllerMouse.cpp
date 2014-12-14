@@ -195,6 +195,7 @@ void CacheControllerMouse::notifyStartCapturing(ControllerMouse& controller)
 
 void CacheControllerMouse::notifyStopCapturing(ControllerMouse& controller)
 {
+    Q_UNUSED(controller);
     Q_ASSERT(m_capturingController == &controller);
     Q_ASSERT(!controller.isCapturing());
 
