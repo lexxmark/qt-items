@@ -176,6 +176,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     ctx.initStyleOption(option);
     option.rect = cache.cacheView.rect();
     option.widget = ctx.widget;
+    option.showDecorationSelected = true;
 
     if (theModel()->isItemSelected(cache.item))
     {
