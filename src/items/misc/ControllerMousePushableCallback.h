@@ -2,6 +2,7 @@
 #define QI_CONTROLLER_MOUSE_PUSHABLE_CALLBACK_H
 
 #include "core/ext/ControllerMousePushable.h"
+#include <functional>
 
 namespace Qi
 {

@@ -32,7 +32,7 @@ QSize ViewStyleStandardPixmap::sizeImpl(const GuiContext& ctx, const ItemID& /*i
     return sizes.front();
 }
 
-void ViewStyleStandardPixmap::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+void ViewStyleStandardPixmap::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     auto style = ctx.style();
 
