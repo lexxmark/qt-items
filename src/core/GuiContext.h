@@ -29,6 +29,7 @@ public:
         option.state &= ~QStyle::State_MouseOver;
     }
 
+    const QPalette& palette() const { return widget->palette(); }
     QPalette::ColorGroup colorGroup() const
     {
         if (!widget->isEnabled())

@@ -16,6 +16,8 @@ namespace Qi
 
 class QI_EXPORT ItemsIterator
 {
+    Q_DISABLE_COPY(ItemsIterator)
+
 public:
     virtual ~ItemsIterator() {}
 
@@ -27,7 +29,6 @@ public:
 
 protected:
     ItemsIterator() {}
-    ItemsIterator& operator=(const ItemsIterator&);
 
     virtual ItemID itemImpl() const = 0;
     virtual bool atFirstImpl() = 0;

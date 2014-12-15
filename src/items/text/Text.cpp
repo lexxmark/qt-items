@@ -79,9 +79,7 @@ void ViewText::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cach
     else
     {
         if (showTooltip)
-        {
             *showTooltip = (painter->fontMetrics().width(text) > rect.width());
-        }
     }
 
     painter->drawText(rect, alignment(cache.item), text);

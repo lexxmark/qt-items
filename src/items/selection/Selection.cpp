@@ -367,6 +367,9 @@ void ControllerMouseSelectionClient::applySelection(bool makeStartItemAsActive)
     // this should be more abstract
     auto spaceGrid = qobject_cast<const SpaceGrid*>(m_model->space());
     Q_ASSERT(spaceGrid);
+    if (!spaceGrid)
+        return;
+
     auto range = createItemRangeRect(*spaceGrid, m_startItem, m_trackItem);
     if (range)
     {

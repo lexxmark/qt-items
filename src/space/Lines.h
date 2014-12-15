@@ -52,8 +52,8 @@ public:
     int moveVisibleLines(int oldLine, int newLine, int linesCount = 1);
     int insertVisibleLines(int lineBefore, int linesCount = 1);
 
-    int toAbsolute(int visibleLine) const { validateVisibles(); Q_ASSERT(visibleLine < m_visible2absolute.size()); return m_visible2absolute[visibleLine]; }
-    int toVisible(int absoluteLine) const { validateVisibles(); Q_ASSERT(absoluteLine < m_absolute2visible.size()); return m_absolute2visible[absoluteLine]; }
+    int toAbsolute(int visibleLine) const { validateVisibles(); Q_ASSERT(visibleLine >= 0 && visibleLine < m_visible2absolute.size()); return m_visible2absolute[visibleLine]; }
+    int toVisible(int absoluteLine) const { validateVisibles(); Q_ASSERT(absoluteLine >= 0 && absoluteLine < m_absolute2visible.size()); return m_absolute2visible[absoluteLine]; }
 
     int toAbsoluteSafe(int visibleLine) const { validateVisibles(); return (visibleLine < m_visible2absolute.size()) ? m_visible2absolute[visibleLine] : InvalidIndex; }
     int toVisibleSafe(int absoluteLine) const { validateVisibles(); return (absoluteLine < m_absolute2visible.size()) ? m_absolute2visible[absoluteLine] : InvalidIndex; }

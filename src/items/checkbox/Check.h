@@ -4,7 +4,6 @@
 #include "core/ext/ViewModeled.h"
 #include "core/ext/ControllerMousePushable.h"
 #include "core/ext/ModelCallback.h"
-#include "core/ext/ModelStore.h"
 
 namespace Qi
 {

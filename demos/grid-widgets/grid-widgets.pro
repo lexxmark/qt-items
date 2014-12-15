@@ -20,3 +20,6 @@ LIBS += -L$$DESTDIR -lqt-items
 #} else:unix {
 #    QMAKE_LFLAGS += -Wl,-rpath,$$BIN_DIR
 #}
+
+RESOURCES += \
+    grid-widgets.qrc
