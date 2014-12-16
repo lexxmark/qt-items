@@ -52,7 +52,8 @@ SOURCES += QiAPI.cpp \
     items/selection/SelectionIterators.cpp \
     items/image/Pixmap.cpp \
     items/image/Image.cpp \
-    items/link/Link.cpp
+    items/link/Link.cpp \
+    items/progressbar/Progress.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -106,7 +107,8 @@ HEADERS +=  QiAPI.h \
     items/selection/SelectionIterators.h \
     items/image/Pixmap.h \
     items/image/Image.h \
-    items/link/Link.h
+    items/link/Link.h \
+    items/progressbar/Progress.h
 
 win32 {
     TARGET_EXT = .dll

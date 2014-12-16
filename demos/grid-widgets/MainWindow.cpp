@@ -12,6 +12,7 @@
 #include "items/image/Image.h"
 #include "items/image/Pixmap.h"
 #include "items/link/Link.h"
+#include "items/progressbar/Progress.h"
 
 #include "cache/space/CacheSpaceGrid.h"
 
@@ -60,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
             return QString("Item [%1, %2]").arg(item.row).arg(item.column);
         };
         auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column != 5;
+            return item.column != 5 && item.column != 6;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewText>::create(modelText));
     }
@@ -147,6 +148,22 @@ MainWindow::MainWindow(QWidget *parent) :
         };
 
         clientGrid->addSchema(makeRangeColumn(5), viewLink, makeLayoutLeft());
+    }
+
+    // progressbar example
+    {
+        auto modelProgress = QSharedPointer<ModelProgressCallback>::create();
+        modelProgress->getValueFunction = [](const ItemID& item)->float {
+            return float((item.row)%101)/100.f;
+        };
+        auto viewProgress = QSharedPointer<ViewProgressContents>::create(modelProgress);
+        clientGrid->addSchema(makeRangeColumn(6), viewProgress, makeLayoutBackground());
+
+        auto viewProgressLabel = QSharedPointer<ViewProgressLabel>::create(modelProgress, ProgressLabelModePercent);
+        clientGrid->addSchema(makeRangeColumn(6), viewProgressLabel, makeLayoutClient());
+
+        auto viewProgressBox = QSharedPointer<ViewProgressBox>::create(modelProgress);
+        clientGrid->addSchema(makeRangeColumn(7), viewProgressBox, makeLayoutBackground());
     }
 }
 
