@@ -210,7 +210,7 @@ public:
     ModelStorageColumn(const QSharedPointer<Lines>& rows)
         : m_rows(rows)
     {
-        connect(rows.data(), &Lines::linesChanged, this, &ModelStorageColumn::onRowsChanged);
+        QObject::connect(rows.data(), &Lines::linesChanged, this, &ModelStorageColumn::onRowsChanged);
         resize();
     }
 
@@ -218,7 +218,7 @@ public:
     {
         auto rows = m_rows.toStrongRef();
         if (rows)
-            disconnect(rows.data(), &Lines::linesChanged, this, &ModelStorageColumn::onRowsChanged);
+            QObject::disconnect(rows.data(), &Lines::linesChanged, this, &ModelStorageColumn::onRowsChanged);
     }
 
     int size() const { return m_values.size(); }
@@ -260,7 +260,7 @@ protected:
     }
 
 private:
-    void onRowsChanged(const Lines* rows, ChangeReason reason)
+    void onRowsChanged(const Lines* /*rows*/, ChangeReason reason)
     {
         if (reason & ChangeReasonLinesCount)
             resize();

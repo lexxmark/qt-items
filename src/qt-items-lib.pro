@@ -53,7 +53,9 @@ SOURCES += QiAPI.cpp \
     items/image/Pixmap.cpp \
     items/image/Image.cpp \
     items/link/Link.cpp \
-    items/progressbar/Progress.cpp
+    items/progressbar/Progress.cpp \
+    items/color/Color.cpp \
+    core/ext/LayoutsAux.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -108,7 +110,9 @@ HEADERS +=  QiAPI.h \
     items/image/Pixmap.h \
     items/image/Image.h \
     items/link/Link.h \
-    items/progressbar/Progress.h
+    items/progressbar/Progress.h \
+    items/color/Color.h \
+    core/ext/LayoutsAux.h
 
 win32 {
     TARGET_EXT = .dll

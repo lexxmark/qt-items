@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "core/ItemID.h"
+#include "items/color/Color.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,6 +29,7 @@ private:
     Ui::MainWindow *ui;
     QImage m_images[3];
     QPixmap m_pixmaps[3];
+    QSharedPointer<Qi::ModelColor> m_colors;
 };
 
 #endif // MAINWINDOW_H

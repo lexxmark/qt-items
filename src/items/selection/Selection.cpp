@@ -182,9 +182,9 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     {
         option.state |= QStyle::State_Selected;
         painter->setPen(ctx.widget->palette().highlightedText().color());
-    }
 
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, ctx.widget);
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, ctx.widget);
+    }
 
     // draw focus rect for active item
     if (theModel()->activeItem() == cache.item)

@@ -3,6 +3,7 @@
 
 #include "Space.h"
 #include "Lines.h"
+#include "core/ItemsIterator.h"
 #include <QPoint>
 
 namespace Qi
@@ -75,6 +76,37 @@ private:
 };
 
 QI_EXPORT QSharedPointer<Range> createItemRangeRect(const SpaceGrid& grid, const ItemID& displayCorner1, const ItemID& displayCorner2);
+
+class QI_EXPORT ItemsIteratorGrid: public ItemsIterator
+{
+public:
+    explicit ItemsIteratorGrid(const SpaceGrid& spaceGrid);
+
+protected:
+    ItemID itemImpl() const override { return m_currentItem; }
+    bool atFirstImpl() override;
+    bool toNextImpl() override;
+
+private:
+    const SpaceGrid& m_spaceGrid;
+    ItemID m_currentItem;
+};
+
+class QI_EXPORT ItemsIteratorGridByColumn: public ItemsIterator
+{
+public:
+    explicit ItemsIteratorGridByColumn(const SpaceGrid& spaceGrid, int column = 0);
+
+protected:
+    ItemID itemImpl() const override { return m_currentItem; }
+    bool atFirstImpl() override;
+    bool toNextImpl() override;
+
+private:
+    const Lines& m_rows;
+    ItemID m_currentItem;
+};
+
 
 } // end namespace Qi 
 

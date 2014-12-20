@@ -65,6 +65,50 @@ QSharedPointer<Layout> makeLayoutBottom(LayoutBehaviorMask behavior)
     return QSharedPointer<LayoutBottom>::create(behavior);
 }
 
+QSharedPointer<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior)
+{
+    if (behavior == LayoutBehaviorNone)
+    {
+        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareLeft>::create(LayoutBehaviorNone);
+        return layout;
+    }
+
+    return QSharedPointer<LayoutSquareLeft>::create(behavior);
+}
+
+QSharedPointer<Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior)
+{
+    if (behavior == LayoutBehaviorNone)
+    {
+        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareRight>::create(LayoutBehaviorNone);
+        return layout;
+    }
+
+    return QSharedPointer<LayoutSquareRight>::create(behavior);
+}
+
+QSharedPointer<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior)
+{
+    if (behavior == LayoutBehaviorNone)
+    {
+        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareTop>::create(LayoutBehaviorNone);
+        return layout;
+    }
+
+    return QSharedPointer<LayoutSquareTop>::create(behavior);
+}
+
+QSharedPointer<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior)
+{
+    if (behavior == LayoutBehaviorNone)
+    {
+        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareBottom>::create(LayoutBehaviorNone);
+        return layout;
+    }
+
+    return QSharedPointer<LayoutSquareBottom>::create(behavior);
+}
+
 bool LayoutCenter::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
 {
     info.viewRect = info.itemRect;
@@ -93,20 +137,6 @@ void LayoutCenter::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
     QSize viewSize = viewInfo.size();
     size.rwidth() = qMax(size.width(), viewSize.width());
     size.rheight() = qMax(size.height(), viewSize.height());
-}
-
-void LayoutHor::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
-{
-    QSize viewSize = viewInfo.size();
-    size.rwidth() += (viewSize.width()+1);
-    size.rheight() = qMax(size.height(), viewSize.height());
-}
-
-void LayoutVer::expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const
-{
-    QSize viewSize = viewInfo.size();
-    size.rwidth() = qMax(size.width(), viewSize.width());
-    size.rheight() += (viewSize.height()+1);
 }
 
 bool LayoutClient::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
@@ -164,6 +194,54 @@ bool LayoutTop::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
 bool LayoutBottom::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
 {
     QSize viewSize = viewInfo.size();
+
+    info.viewRect = info.itemRect;
+    info.viewRect.setTop(qMax(info.viewRect.top(), info.viewRect.bottom() - viewSize.height()));
+    if (!isTransparent())
+        info.itemRect.setBottom(info.viewRect.top()-1);
+
+    return true;
+}
+
+bool LayoutSquareLeft::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    QSize viewSize = QSize(info.itemRect.height(), info.itemRect.height());
+
+    info.viewRect = info.itemRect;
+    info.viewRect.setRight(qMin(info.viewRect.right(), info.viewRect.left() + viewSize.width()));
+    if (!isTransparent())
+        info.itemRect.setLeft(info.viewRect.right()+1);
+
+    return true;
+}
+
+bool LayoutSquareRight::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    QSize viewSize = QSize(info.itemRect.height(), info.itemRect.height());
+
+    info.viewRect = info.itemRect;
+    info.viewRect.setLeft(qMax(info.viewRect.left(), info.viewRect.right() - viewSize.width()));
+    if (!isTransparent())
+        info.itemRect.setRight(info.viewRect.left()-1);
+
+    return true;
+}
+
+bool LayoutSquareTop::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    QSize viewSize = QSize(info.itemRect.width(), info.itemRect.width());
+
+    info.viewRect = info.itemRect;
+    info.viewRect.setBottom(qMin(info.viewRect.bottom(), info.viewRect.top() + viewSize.height()));
+    if (!isTransparent())
+        info.itemRect.setTop(info.viewRect.bottom()+1);
+
+    return true;
+}
+
+bool LayoutSquareBottom::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    QSize viewSize = QSize(info.itemRect.width(), info.itemRect.width());
 
     info.viewRect = info.itemRect;
     info.viewRect.setTop(qMax(info.viewRect.top(), info.viewRect.bottom() - viewSize.height()));

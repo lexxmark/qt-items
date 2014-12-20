@@ -1,7 +1,7 @@
 #ifndef QI_LAYOUTS_H
 #define QI_LAYOUTS_H
 
-#include "core/Layout.h"
+#include "LayoutsAux.h"
 
 namespace Qi
 {
@@ -16,30 +16,6 @@ public:
 
 protected:
     bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
-    void expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const override;
-};
-
-class QI_EXPORT LayoutHor : public Layout
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(LayoutHor)
-
-public:
-    LayoutHor(LayoutBehaviorMask behavior = LayoutBehaviorNone) : Layout(behavior) {}
-
-protected:
-    void expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const override;
-};
-
-class QI_EXPORT LayoutVer : public Layout
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(LayoutVer)
-
-public:
-    LayoutVer(LayoutBehaviorMask behavior = LayoutBehaviorNone) : Layout(behavior) {}
-
-protected:
     void expandSizeImpl(const ViewInfo& viewInfo, QSize& size) const override;
 };
 
@@ -100,6 +76,54 @@ class QI_EXPORT LayoutBottom : public LayoutVer
 
 public:
     LayoutBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutVer(behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutSquareLeft : public LayoutSquareHor
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutSquareLeft)
+
+public:
+    LayoutSquareLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutSquareHor(behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutSquareRight : public LayoutSquareHor
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutSquareRight)
+
+public:
+    LayoutSquareRight(LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutSquareHor(behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutSquareTop : public LayoutSquareVer
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutSquareTop)
+
+public:
+    LayoutSquareTop(LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutSquareVer(behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutSquareBottom : public LayoutSquareVer
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutSquareBottom)
+
+public:
+    LayoutSquareBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutSquareVer(behavior) {}
 
 protected:
     bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;

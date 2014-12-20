@@ -31,6 +31,75 @@ QSharedPointer<Range> createItemRangeRect(const SpaceGrid& grid, const ItemID& d
     return makeRangeRect(rows, columns);
 }
 
+ItemsIteratorGrid::ItemsIteratorGrid(const SpaceGrid& spaceGrid)
+    : m_spaceGrid(spaceGrid)
+{
+    atFirst();
+}
+
+bool ItemsIteratorGrid::atFirstImpl()
+{
+    if (m_spaceGrid.isEmpty())
+    {
+        m_currentItem = ItemID();
+        return false;
+    }
+
+    m_currentItem = ItemID(0, 0);
+    return true;
+}
+
+bool ItemsIteratorGrid::toNextImpl()
+{
+    if (!m_currentItem.isValid())
+        return false;
+
+    ++m_currentItem.column;
+
+    for (;m_currentItem.row < m_spaceGrid.rowsCount(); ++m_currentItem.row, m_currentItem.column = 0)
+    {
+        if (m_currentItem.column < m_spaceGrid.columnsCount())
+            return true;
+    }
+
+    m_currentItem = ItemID();
+    return false;
+}
+
+ItemsIteratorGridByColumn::ItemsIteratorGridByColumn(const SpaceGrid& spaceGrid, int column)
+    : m_rows(*spaceGrid.rows()),
+      m_currentItem(InvalidIndex, column)
+{
+    Q_ASSERT(column >= 0 && column < spaceGrid.columnsCount());
+    atFirst();
+}
+
+bool ItemsIteratorGridByColumn::atFirstImpl()
+{
+    if (m_rows.isEmpty())
+    {
+        m_currentItem.row = InvalidIndex;
+        return false;
+    }
+
+    m_currentItem.row = 0;
+    return true;
+}
+
+bool ItemsIteratorGridByColumn::toNextImpl()
+{
+    if (!m_currentItem.isValid())
+        return false;
+
+    ++m_currentItem.row;
+
+    if (m_currentItem.row < m_rows.count())
+        return true;
+
+    m_currentItem.row = InvalidIndex;
+    return false;
+}
+
 class AscendingColumnComparatorByModel
 {
 public:

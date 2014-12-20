@@ -90,6 +90,10 @@ QI_EXPORT QSharedPointer<Layout> makeLayoutLeft(LayoutBehaviorMask behavior = La
 QI_EXPORT QSharedPointer<Layout> makeLayoutRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
 QI_EXPORT QSharedPointer<Layout> makeLayoutTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
 QI_EXPORT QSharedPointer<Layout> makeLayoutBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT QSharedPointer<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT QSharedPointer<Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT QSharedPointer<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT QSharedPointer<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
 
 } // end namespace Qi
 

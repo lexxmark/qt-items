@@ -17,7 +17,10 @@
 #include "cache/space/CacheSpaceGrid.h"
 
 #include <QMessageBox>
+
 #include <functional>
+#include <cstdlib>
+#include <time.h>
 
 using namespace Qi;
 
@@ -26,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     using namespace std::placeholders;
+
+     srand(time(nullptr));
 
     ui->setupUi(this);
 
@@ -164,6 +169,31 @@ MainWindow::MainWindow(QWidget *parent) :
 
         auto viewProgressBox = QSharedPointer<ViewProgressBox>::create(modelProgress);
         clientGrid->addSchema(makeRangeColumn(7), viewProgressBox, makeLayoutBackground());
+    }
+
+    // color example
+    {
+        // fill random colors
+        m_colors = QSharedPointer<ModelStorageColumn<QColor>>::create(clientGrid->rows());
+        for (ItemsIteratorGridByColumn it(*clientGrid, 8); it.isValid(); it.toNext())
+        {
+            m_colors->setValue(it.item(), QColor(Qt::GlobalColor(rand()%20)));
+        }
+
+        auto viewColor = QSharedPointer<ViewColor>::create(m_colors);
+        clientGrid->addSchema(makeRangeColumn(8), viewColor, makeLayoutSquareLeft());
+    }
+
+    // color background color
+    {
+        auto modelColor = QSharedPointer<ModelColorCallback>::create();
+        modelColor->getValueFunction = [](const ItemID& item)->QColor {
+            int gradient = (99 - item.row) * 255 / 99;
+            return QColor(255, gradient, gradient);
+        };
+
+        auto viewColor = QSharedPointer<ViewColor>::create(modelColor, false, false);
+        clientGrid->insertSchema(0, makeRangeColumn(9), viewColor, makeLayoutBackground());
     }
 }
 
