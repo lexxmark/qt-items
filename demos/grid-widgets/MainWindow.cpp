@@ -3,6 +3,8 @@
 #include "core/Layout.h"
 #include "core/ext/Ranges.h"
 #include "core/ext/ModelStore.h"
+#include "items/misc/ViewItemBorder.h"
+#include "items/misc/ViewAlternateBackground.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
 #include "items/button/Button.h"
@@ -53,11 +55,32 @@ MainWindow::MainWindow(QWidget *parent) :
     selection->setActiveItem(ItemID(1, 1));
     selection->setSelection(QSharedPointer<RangeColumn>::create(3));
 
-    clientGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionClient>::create(selection), makeLayoutBackground());
-    topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionRowsHeader), makeLayoutBackground());
-    leftGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionColumnsHeader), makeLayoutBackground());
-    fixedGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionCornerHeader), makeLayoutBackground());
-    ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
+    // setup items borders
+    {
+        auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
+            return item.column < 5;
+        });
+        clientGrid->addSchema(range, QSharedPointer<ViewRowBorder>::create(), makeLayoutBottom(LayoutBehaviorTransparent));
+        clientGrid->addSchema(range, QSharedPointer<ViewColumnBorder>::create(), makeLayoutRight(LayoutBehaviorTransparent));
+    }
+
+    // setup alternate background
+    {
+        auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
+            return item.column >= 5;
+        });
+        clientGrid->addSchema(range, QSharedPointer<ViewAlternateBackground>::create(), makeLayoutBackground());
+    }
+
+    int selectionViewIndex = 0;
+    // setup selection
+    {
+        selectionViewIndex = clientGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionClient>::create(selection), makeLayoutBackground());
+        topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionRowsHeader), makeLayoutBackground());
+        leftGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionColumnsHeader), makeLayoutBackground());
+        fixedGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionCornerHeader), makeLayoutBackground());
+        ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
+    }
 
     // text in all cells except column 5
     {
@@ -188,12 +211,13 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         auto modelColor = QSharedPointer<ModelColorCallback>::create();
         modelColor->getValueFunction = [](const ItemID& item)->QColor {
-            int gradient = (99 - item.row) * 255 / 99;
-            return QColor(255, gradient, gradient);
+            int gradient = item.row * 255 / 99;
+            return QColor(255, 0, 0, gradient);
         };
 
         auto viewColor = QSharedPointer<ViewColor>::create(modelColor, false, false);
-        clientGrid->insertSchema(0, makeRangeColumn(9), viewColor, makeLayoutBackground());
+        // insert view before selection
+        clientGrid->insertSchema(selectionViewIndex, makeRangeColumn(9), viewColor, makeLayoutBackground());
     }
 }
 

@@ -82,7 +82,7 @@ int Space::addSchema(const ItemSchema& schema)
 
     emit spaceChanged(this, ChangeReasonSpaceItemsStructure);
 
-    return m_schemas.size();
+    return m_schemas.size() - 1;
 }
 
 int Space::insertSchema(int index, const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)

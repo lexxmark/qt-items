@@ -42,6 +42,7 @@ void ViewProgressContents::drawImpl(QPainter* painter, const GuiContext& ctx, co
         option.styleObject = nullptr;
 
     option.rect = cache.cacheView.rect();
+    option.rect.adjust(2, 2, -2, -2);
 
     // draw progress
     style->drawControl(QStyle::CE_ProgressBarContents, &option, painter, ctx.widget);
@@ -97,6 +98,7 @@ void ViewProgressLabel::drawImpl(QPainter* painter, const GuiContext& ctx, const
         option.styleObject = nullptr;
 
     option.rect = cache.cacheView.rect();
+    option.rect.adjust(2, 2, -2, -2);
 
     // draw progress
     style->drawControl(QStyle::CE_ProgressBarLabel, &option, painter, ctx.widget);
