@@ -166,8 +166,8 @@ void CacheControllerMouse::updateActiveControllers()
     });
 
     // deactivate previously activated controllers
-    for (auto controller: m_activeControllers)
-        controller->deactivate();
+    for (int i = m_activeControllers.size() - 1; i >= 0; --i)
+        m_activeControllers[i]->deactivate();
 
     m_activeControllers.swap(activatedControllers);
 }
@@ -302,11 +302,6 @@ void CacheControllerMouse::processKillFocus(QFocusEvent* event)
             controller->processKillFocus(event);
         }
     }
-}
-
-bool CacheControllerMouse::processSetCursor()
-{
-    return processFunc(&ControllerMouse::processSetCursor);
 }
 
 bool CacheControllerMouse::processLButtonDown(QMouseEvent* event)

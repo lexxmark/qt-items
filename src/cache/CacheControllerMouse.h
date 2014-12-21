@@ -34,7 +34,6 @@ public:
     bool processEvent(QEvent* event);
     void processPaint(QPaintEvent* event);
     void processKillFocus(QFocusEvent* event);
-    bool processSetCursor();
     bool processLButtonDown(QMouseEvent* event);
     bool processLButtonUp(QMouseEvent* event);
     bool processLButtonDblClick(QMouseEvent* event);

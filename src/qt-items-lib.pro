@@ -57,7 +57,8 @@ SOURCES += QiAPI.cpp \
     items/color/Color.cpp \
     core/ext/LayoutsAux.cpp \
     items/misc/ViewItemBorder.cpp \
-    items/misc/ViewAlternateBackground.cpp
+    items/misc/ViewAlternateBackground.cpp \
+    items/misc/ControllerMouseLinesResizer.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -116,7 +117,8 @@ HEADERS +=  QiAPI.h \
     items/color/Color.h \
     core/ext/LayoutsAux.h \
     items/misc/ViewItemBorder.h \
-    items/misc/ViewAlternateBackground.h
+    items/misc/ViewAlternateBackground.h \
+    items/misc/ControllerMouseLinesResizer.h
 
 win32 {
     TARGET_EXT = .dll

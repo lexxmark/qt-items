@@ -5,6 +5,7 @@
 #include "core/ext/ModelStore.h"
 #include "items/misc/ViewItemBorder.h"
 #include "items/misc/ViewAlternateBackground.h"
+#include "items/misc/ControllerMouseLinesResizer.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
 #include "items/button/Button.h"
@@ -70,6 +71,26 @@ MainWindow::MainWindow(QWidget *parent) :
             return item.column >= 5;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewAlternateBackground>::create(), makeLayoutBackground());
+    }
+
+    // setup controllers to resize columns and rows
+    {
+        auto view = QSharedPointer<View>::create();
+        QSharedPointer<ControllerMouse> controller = QSharedPointer<ControllerMouseColumnsResizer>::create(topGrid->columns());
+        view->addController(controller);
+        topGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
+
+        view = QSharedPointer<View>::create();
+        controller = QSharedPointer<ControllerMouseRowsResizer>::create(leftGrid->rows());
+        view->addController(controller);
+        leftGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
+
+        view = QSharedPointer<View>::create();
+        controller = QSharedPointer<ControllerMouseColumnsResizer>::create(fixedGrid->columns());
+        view->addController(controller);
+        controller = QSharedPointer<ControllerMouseRowsResizer>::create(fixedGrid->rows());
+        view->addController(controller);
+        fixedGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
     }
 
     int selectionViewIndex = 0;

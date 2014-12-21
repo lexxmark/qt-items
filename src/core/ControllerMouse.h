@@ -67,7 +67,6 @@ public:
 
     virtual void processPaint(QPaintEvent* /*event*/) {}
     virtual void processKillFocus(QFocusEvent* /*event*/) {}
-    virtual bool processSetCursor() { return false; }
     virtual bool processLButtonDown(QMouseEvent* /*event*/) { return false; }
     virtual bool processLButtonUp(QMouseEvent* /*event*/) { return false; }
     virtual bool processLButtonDblClick(QMouseEvent* /*event*/) { return false; }
