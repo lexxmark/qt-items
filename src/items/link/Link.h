@@ -36,9 +36,6 @@ public:
 protected:
     void activateImpl(const ActivationInfo& activationInfo) override;
     void deactivateImpl() override;
-
-private:
-    QCursor m_cursor;
 };
 
 } // end namespace Qi

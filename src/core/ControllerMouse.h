@@ -1,6 +1,7 @@
 #ifndef QI_CONTROLLER_MOUSE_H
 #define QI_CONTROLLER_MOUSE_H
 
+#include "core/misc/ControllerMouseAuxiliary.h"
 #include "ItemID.h"
 #include <QObject>
 
@@ -10,43 +11,11 @@
 #include <QContextMenuEvent>
 #include <QFocusEvent>
 
-class QWidget;
-
 namespace Qi
 {
 
-class WidgetDriver;
-class ControllerMouse;
 class CacheContext;
 class CacheSpace;
-
-enum ControllerMousePriority
-{
-    ControllerMousePriorityNormal = 1, // normal priority
-    ControllerMousePriorityBackground = 0, // low priority
-    ControllerMousePriorityOverlay = 2 // high priority
-};
-
-class QI_EXPORT ControllerContext
-{
-public:
-    QWidget* widget;
-    WidgetDriver* widgetDriver;
-    QPoint point;
-
-    virtual void notifyStartCapturing(ControllerMouse& controller) = 0;
-    virtual void notifyStopCapturing(ControllerMouse& controller) = 0;
-
-protected:
-    // constructor/destructor are accessible from
-    // derived classes only
-    ControllerContext(QWidget* widget, WidgetDriver* widgetDriver)
-        : widget(widget), widgetDriver(widgetDriver), point(0, 0)
-    {}
-
-    ~ControllerContext()
-    {}
-};
 
 class QI_EXPORT ControllerMouse: public QObject
 {

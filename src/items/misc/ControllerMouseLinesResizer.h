@@ -17,7 +17,7 @@ class QI_EXPORT ControllerMouseColumnsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseColumnsResizer)
 
 public:
-    ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority = ControllerMousePriorityNormal);
+    ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority = ControllerMousePriorityOverlay);
 
     bool processMouseMove(QMouseEvent* event) override;
 
@@ -39,7 +39,6 @@ private:
     int m_trackPosition;
     int m_columnIndex;
     QRubberBand* m_rubberBand;
-    QCursor m_oldCursor;
 };
 
 class QI_EXPORT ControllerMouseRowsResizer: public ControllerMouseCaptured
@@ -48,7 +47,7 @@ class QI_EXPORT ControllerMouseRowsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseRowsResizer)
 
 public:
-    ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority = ControllerMousePriorityNormal);
+    ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority = ControllerMousePriorityOverlay);
 
     bool processMouseMove(QMouseEvent* event) override;
 
@@ -70,7 +69,6 @@ private:
     int m_trackPosition;
     int m_rowIndex;
     QRubberBand* m_rubberBand;
-    QCursor m_oldCursor;
 };
 
 } // end namespace Qi

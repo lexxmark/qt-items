@@ -58,7 +58,8 @@ SOURCES += QiAPI.cpp \
     core/ext/LayoutsAux.cpp \
     items/misc/ViewItemBorder.cpp \
     items/misc/ViewAlternateBackground.cpp \
-    items/misc/ControllerMouseLinesResizer.cpp
+    items/misc/ControllerMouseLinesResizer.cpp \
+    core/misc/ControllerMouseAuxiliary.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -79,7 +80,6 @@ HEADERS +=  QiAPI.h \
     widgets/GridWidget.h \
     widgets/ListWidget.h \
     cache/CacheItem.h \
-    core/GuiContext.h \
     cache/CacheView.h \
     space/SpaceItem.h \
     cache/space/CacheSpace.h \
@@ -118,7 +118,9 @@ HEADERS +=  QiAPI.h \
     core/ext/LayoutsAux.h \
     items/misc/ViewItemBorder.h \
     items/misc/ViewAlternateBackground.h \
-    items/misc/ControllerMouseLinesResizer.h
+    items/misc/ControllerMouseLinesResizer.h \
+    core/misc/ViewAuxiliary.h \
+    core/misc/ControllerMouseAuxiliary.h
 
 win32 {
     TARGET_EXT = .dll

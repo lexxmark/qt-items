@@ -54,7 +54,6 @@ enum ViewSizeMode
     ViewSizeModeFastMax = 2
 };
 
-
 }
 
 #endif // QI_API_H

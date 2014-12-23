@@ -72,13 +72,12 @@ void ControllerMouseLink::activateImpl(const ActivationInfo& activationInfo)
 {
     ControllerMousePushableCallback::activateImpl(activationInfo);
 
-    m_cursor = activationInfo.context.widget->cursor();
-    activationInfo.context.widget->setCursor(Qt::PointingHandCursor);
+    activationInfo.context.pushCursor(Qt::PointingHandCursor, this);
 }
 
 void ControllerMouseLink::deactivateImpl()
 {
-    activationState().context.widget->setCursor(m_cursor);
+    activationState().context.popCursor(this);
 
     ControllerMousePushableCallback::deactivateImpl();
 }

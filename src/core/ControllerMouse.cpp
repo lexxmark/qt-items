@@ -74,7 +74,6 @@ void ControllerMouse::tryActivateImpl(QVector<ControllerMouse*>& activatedContro
 
 void ControllerMouse::activate(const ActivationInfo& activationInfo)
 {
-    //qDebug() << "ControllerMouse::activate   " << this << " with state " << m_state;
     switch (m_state)
     {
         case ControllerMouseStateInactive:
@@ -111,8 +110,6 @@ void ControllerMouse::activateImpl(const ActivationInfo& activationInfo)
 
 void ControllerMouse::deactivate()
 {
-    //qDebug() << "ControllerMouse::deactivate " << this << " with state " << m_state;
-
     switch (m_state)
     {
         case ControllerMouseStateActive:
@@ -160,7 +157,7 @@ bool ControllerMouse::needDeactivateImpl(const ActivationInfo& activationInfo) c
     if (m_activationState->item != activationInfo.cache.item)
         return true;
 
-    // or view's rect has changed it's rect
+    // or view's rect has changed
     if (m_activationState->viewRect != activationInfo.cache.cacheView.rect())
         return true;
 

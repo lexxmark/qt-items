@@ -53,9 +53,7 @@ void ControllerMouseColumnsResizer::activateImpl(const ActivationInfo& activatio
     m_trackPosition = activationInfo.context.point.x();
     m_columnIndex = activationInfo.item().column;
 
-    m_oldCursor = activationState().context.widget->cursor();
-    activationState().context.widget->setCursor(Qt::SplitHCursor);
-    qDebug() << "ControllerMouseColumnsResizer::activateImpl" << m_oldCursor << QCursor(Qt::SplitHCursor);
+    activationState().context.pushCursor(Qt::SplitHCursor, this);
 }
 
 void ControllerMouseColumnsResizer::deactivateImpl()
@@ -63,8 +61,7 @@ void ControllerMouseColumnsResizer::deactivateImpl()
     m_position = 0;
     m_trackPosition = 0;
     m_columnIndex = InvalidIndex;
-    activationState().context.widget->setCursor(m_oldCursor);
-    qDebug() << "ControllerMouseColumnsResizer::deactivateImpl" << m_oldCursor;
+    activationState().context.popCursor(this);
 
     ControllerMouseCaptured::deactivateImpl();
 }
@@ -145,10 +142,7 @@ void ControllerMouseRowsResizer::activateImpl(const ActivationInfo& activationIn
     m_position = activationInfo.cache.itemRect.topLeft().y();
     m_trackPosition = activationInfo.context.point.y();
     m_rowIndex = activationInfo.item().row;
-
-    m_oldCursor = activationState().context.widget->cursor();
-    activationState().context.widget->setCursor(Qt::SplitVCursor);
-    qDebug() << "ControllerMouseRowsResizer::activateImpl" << m_oldCursor << QCursor(Qt::SplitVCursor);
+    activationState().context.pushCursor(Qt::SplitVCursor, this);
 }
 
 void ControllerMouseRowsResizer::deactivateImpl()
@@ -156,9 +150,7 @@ void ControllerMouseRowsResizer::deactivateImpl()
     m_position = 0;
     m_trackPosition = 0;
     m_rowIndex = InvalidIndex;
-    activationState().context.widget->setCursor(m_oldCursor);
-
-    qDebug() << "ControllerMouseRowsResizer::deactivateImpl" << m_oldCursor;
+    activationState().context.popCursor(this);
 
     ControllerMouseCaptured::deactivateImpl();
 }

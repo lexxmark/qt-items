@@ -1,8 +1,8 @@
 #ifndef QI_VIEW_H
 #define QI_VIEW_H
 
+#include "core/misc/ViewAuxiliary.h"
 #include "cache/CacheView.h"
-#include "GuiContext.h"
 #include <QPainter>
 #include <functional>
 
@@ -12,34 +12,6 @@ namespace Qi
 class Model;
 class ControllerMouse;
 class Layout;
-
-// struct to hold tooltip information
-struct QI_EXPORT TooltipInfo
-{
-    QString text;
-    QRect rect;
-};
-
-// constants for intended view application
-enum ViewApplication
-{
-    ViewApplicationNone = 0x0000,
-    // view intended to be drawn on the screen
-    ViewApplicationDraw = 0x0001,
-    // view intended to be drawn for copy
-    ViewApplicationCopyDraw = 0x0002,
-    // view intended to make text copy
-    ViewApplicationCopyText = 0x0004,
-
-    // view intended for user defined operations
-    ViewApplicationUser = 0x0100,
-
-    ViewApplicationCopy = ViewApplicationCopyDraw | ViewApplicationCopyText,
-    ViewApplicationAll = 0xFFFF,
-};
-
-typedef quint16 ViewApplicationMask;
-
 
 class QI_EXPORT View: public QObject
 {
