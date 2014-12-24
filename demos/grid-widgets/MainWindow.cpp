@@ -10,6 +10,7 @@
 #include "items/radiobutton/Radio.h"
 #include "items/button/Button.h"
 #include "items/text/Text.h"
+#include "items/numeric/Numeric.h"
 #include "items/selection/Selection.h"
 #include "items/image/StyleStandardPixmap.h"
 #include "items/image/Image.h"
@@ -103,14 +104,39 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
     }
 
-    // text in all cells except column 5
+    // setup top fixed sub-grid
+    {
+        auto modelText = QSharedPointer<ModelTextCallback>::create();
+        modelText->getValueFunction = [](const ItemID& item)->QString {
+            return QString("Top Item [%1, %2]").arg(item.row).arg(item.column);
+        };
+        topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewText>::create(modelText));
+    }
+
+    // setup left fixed sub-grid
+    {
+        auto modelRowNum = QSharedPointer<ModelRowNumber>::create();
+        auto modelRowText = QSharedPointer<ModelNumericText<int>>::create(modelRowNum);
+        leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewText>::create(modelRowText, false, Qt::AlignRight | Qt::AlignVCenter));
+
+        auto modelText = QSharedPointer<ModelTextCallback>::create();
+        modelText->getValueFunction = [](const ItemID& item)->QString {
+            return QString("Left Item [%1, %2]").arg(item.row).arg(item.column);
+        };
+        leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewText>::create(modelText));
+
+        auto modelRadio = QSharedPointer<ModelRadioStorage>::create(ItemID(0, 5));
+        leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutRight());
+    }
+
+    // text in all items except column 5, 6 and 10
     {
         auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
             return QString("Item [%1, %2]").arg(item.row).arg(item.column);
         };
         auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column != 5 && item.column != 6;
+            return item.column != 5 && item.column != 6 && item.column != 10;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewText>::create(modelText));
     }
@@ -120,21 +146,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
     clientGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
-
-    auto modelText = QSharedPointer<ModelTextCallback>::create();
-    modelText->getValueFunction = [](const ItemID& item)->QString {
-        return QString("Top Item [%1, %2]").arg(item.row).arg(item.column);
-    };
-    topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewText>::create(modelText));
-
-    modelText = QSharedPointer<ModelTextCallback>::create();
-    modelText->getValueFunction = [](const ItemID& item)->QString {
-        return QString("Left Item [%1, %2]").arg(item.row).arg(item.column);
-    };
-    leftGrid->addSchema(makeRangeAll(), QSharedPointer<ViewText>::create(modelText));
-
-    modelRadio = QSharedPointer<ModelRadioStorage>::create(ItemID(0, 5));
-    leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
 
     // Button with text example
     {
@@ -239,6 +250,18 @@ MainWindow::MainWindow(QWidget *parent) :
         auto viewColor = QSharedPointer<ViewColor>::create(modelColor, false, false);
         // insert view before selection
         clientGrid->insertSchema(selectionViewIndex, makeRangeColumn(9), viewColor, makeLayoutBackground());
+    }
+
+    // numeric example
+    {
+        auto modelNumeric = QSharedPointer<ModelCallback<double>>::create();
+        modelNumeric->getValueFunction = [](const ItemID& item)->double {
+            return sin((double)item.row);
+        };
+
+        auto viewText = QSharedPointer<ViewText>::create(QSharedPointer<ModelNumericText<double>>::create(modelNumeric));
+        // insert view before selection
+        clientGrid->addSchema(makeRangeColumn(10), viewText);
     }
 }
 

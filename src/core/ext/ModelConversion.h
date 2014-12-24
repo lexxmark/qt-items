@@ -11,8 +11,9 @@ template <typename Source_t, typename Target_t>
 class ModelConversion: public ModelTyped<Target_t>
 {
 public:
-    ModelConversion(const QSharedPointer<ModelTyped<Source_t>>& sourceModel)
-        : m_sourceModel(sourceModel)
+    ModelConversion(const QSharedPointer<ModelTyped<Source_t>>& sourceModel, bool compareBySource = true)
+        : m_sourceModel(sourceModel),
+          m_compareBySource(compareBySource)
     {
         Q_ASSERT(m_sourceModel);
     }
@@ -21,11 +22,24 @@ public:
     std::function<Source_t(Target_t)> t2sFunction;
 
 protected:
+    int compareImpl(const ItemID& left, const ItemID& right) const override
+    {
+        if (m_compareBySource)
+            return m_sourceModel->compare(left, right);
+        else
+            return ModelTyped<Target_t>::compareImpl(left, right);
+    }
+
+    bool isAscendingDefaultImpl(const ItemID& item) const override
+    {
+        if (m_compareBySource)
+            return m_sourceModel->isAscendingDefault(item);
+        else
+            return ModelTyped<Target_t>::isAscendingDefaultImpl(item);
+    }
+
     Target_t valueImpl(const ItemID& item) const override
     {
-        if (!s2tFunction)
-            throw std::logic_error("Conversion delegate is not set");
-
         return s2tFunction(m_sourceModel->value(item));
     }
 
@@ -47,6 +61,7 @@ protected:
 
 private:
     QSharedPointer<ModelTyped<Source_t>> m_sourceModel;
+    bool m_compareBySource;
 };
 
 } // end namespace Qi
