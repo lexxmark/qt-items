@@ -60,7 +60,8 @@ SOURCES += QiAPI.cpp \
     items/misc/ViewAlternateBackground.cpp \
     items/misc/ControllerMouseLinesResizer.cpp \
     core/misc/ControllerMouseAuxiliary.cpp \
-    items/numeric/Numeric.cpp
+    items/numeric/Numeric.cpp \
+    items/enum/Enum.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -122,7 +123,8 @@ HEADERS +=  QiAPI.h \
     items/misc/ControllerMouseLinesResizer.h \
     core/misc/ViewAuxiliary.h \
     core/misc/ControllerMouseAuxiliary.h \
-    items/numeric/Numeric.h
+    items/numeric/Numeric.h \
+    items/enum/Enum.h
 
 win32 {
     TARGET_EXT = .dll

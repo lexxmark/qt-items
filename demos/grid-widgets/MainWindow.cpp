@@ -17,6 +17,7 @@
 #include "items/image/Pixmap.h"
 #include "items/link/Link.h"
 #include "items/progressbar/Progress.h"
+#include "items/enum/Enum.h"
 
 #include "cache/space/CacheSpaceGrid.h"
 
@@ -27,6 +28,34 @@
 #include <time.h>
 
 using namespace Qi;
+
+enum COLORS
+{
+    RED = 0,
+    BLUE,
+    WHITE
+};
+
+class ColorEnumTraits: public EnumTraits<COLORS>
+{
+protected:
+    QVector<COLORS> uniqueValuesImpl() const override
+    {
+        QVector<COLORS> colors;
+        colors << RED << BLUE << WHITE;
+        return colors;
+    }
+    QString valueTextImpl(COLORS value) const override
+    {
+        switch (value)
+        {
+        case RED: return "Red";
+        case BLUE: return "Blue";
+        case WHITE: return "White";
+        default: return "<NA>";
+        }
+    }
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -129,14 +158,14 @@ MainWindow::MainWindow(QWidget *parent) :
         leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutRight());
     }
 
-    // text in all items except column 5, 6 and 10
+    // text in all items except column 5, 6, 10 and 11
     {
         auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
             return QString("Item [%1, %2]").arg(item.row).arg(item.column);
         };
         auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column != 5 && item.column != 6 && item.column != 10;
+            return item.column != 5 && item.column != 6 && item.column != 10 && item.column != 11;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewText>::create(modelText));
     }
@@ -260,8 +289,19 @@ MainWindow::MainWindow(QWidget *parent) :
         };
 
         auto viewText = QSharedPointer<ViewText>::create(QSharedPointer<ModelNumericText<double>>::create(modelNumeric));
-        // insert view before selection
         clientGrid->addSchema(makeRangeColumn(10), viewText);
+    }
+
+    // enum example
+    {
+        auto traits = QSharedPointer<ColorEnumTraits>::create();
+        auto modelEnumValues= QSharedPointer<ModelCallback<COLORS>>::create();
+        modelEnumValues->getValueFunction = [](const ItemID& item)->COLORS {
+            return COLORS(item.row%3);
+        };
+        auto modelEnum = QSharedPointer<ModelEnum<COLORS>>::create(traits, modelEnumValues);
+        auto viewEnum = QSharedPointer<ViewEnumText<COLORS>>::create(modelEnum);
+        clientGrid->addSchema(makeRangeColumn(11), viewEnum);
     }
 }
 
