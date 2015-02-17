@@ -120,7 +120,7 @@ void ViewComposite::disconnectSubViews()
 {
     for (const auto& view: m_subViews)
     {
-        connect(view.view.data(), &View::viewChanged, this, &ViewComposite::onSubViewChanged);
+        disconnect(view.view.data(), &View::viewChanged, this, &ViewComposite::onSubViewChanged);
     }
 }
 

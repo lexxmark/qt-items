@@ -6,6 +6,7 @@
 #include "items/misc/ViewItemBorder.h"
 #include "items/misc/ViewAlternateBackground.h"
 #include "items/misc/ControllerMouseLinesResizer.h"
+#include "items/sorting/Sorting.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
 #include "items/button/Button.h"
@@ -133,11 +134,17 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
     }
 
+    // setup sortings
+    auto modelSorting = QSharedPointer<ModelGridSorting>::create(clientGrid);
+    {
+        topGrid->addSchema(makeRangeGridSorter(modelSorting), QSharedPointer<ViewGridSorting>::create(modelSorting), makeLayoutSquareRight());
+    }
+
     // setup top fixed sub-grid
     {
         auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Top Item [%1, %2]").arg(item.row).arg(item.column);
+            return QString("Caption[%1, %2]").arg(item.row).arg(item.column);
         };
         topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewText>::create(modelText));
     }
@@ -150,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Left Item [%1, %2]").arg(item.row).arg(item.column);
+            return QString("Left[%1, %2]").arg(item.row).arg(item.column);
         };
         leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewText>::create(modelText));
 
@@ -168,6 +175,8 @@ MainWindow::MainWindow(QWidget *parent) :
             return item.column != 5 && item.column != 6 && item.column != 10 && item.column != 11;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewText>::create(modelText));
+
+        modelSorting->addSortingModel(0, modelText);
     }
 
     auto modelChecks = QSharedPointer<ModelStorageValue<Qt::CheckState>>::create(Qt::Checked);
@@ -175,6 +184,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
     clientGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
+    modelSorting->addSortingModel(1, modelRadio);
+
+    // sort column 2 by selection
+    modelSorting->addSortingModel(2, selection);
 
     // Button with text example
     {

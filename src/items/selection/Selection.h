@@ -54,6 +54,8 @@ signals:
 
 protected:
     int compareImpl(const ItemID &left, const ItemID &right) const override;
+    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return false; }
+
     virtual bool isItemSelectedImpl(const ItemID& item) const { return m_selection.hasItem(item); }
 
     void emitChangedSignals(ChangeReason changeReason);

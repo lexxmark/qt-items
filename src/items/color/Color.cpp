@@ -27,10 +27,17 @@ void ViewColor::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cac
     {
         rect.adjust(2, 2, -2, -2);
 
+        painter->fillRect(rect, Qt::black);
+        rect.adjust(1, 1, -1, -1);
+        painter->fillRect(rect, color);
+/*
+        rect.adjust(2, 2, -2, -2);
+
         QBrush oldBrush = painter->brush();
         painter->setBrush(color);
         painter->drawRect(rect);
         painter->setBrush(oldBrush);
+        */
     }
     else
     {

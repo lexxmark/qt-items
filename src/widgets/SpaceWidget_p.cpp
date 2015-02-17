@@ -61,6 +61,7 @@ bool SpaceWidgetPrivate::ownerEvent(QEvent* event)
     {
         QPainter painter(m_owner);
         painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
+        painter.setBackgroundMode(Qt::TransparentMode);
         // draw cache
         m_cacheSpace->draw(&painter, GuiContext(m_owner));
     } break;
