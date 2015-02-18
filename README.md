@@ -1,3 +1,3 @@
 qt-items
 ========
-![Demo_screenshot_linux](docs/demos.png)
+![Demo_screenshot_linux](docs/demo.png)
