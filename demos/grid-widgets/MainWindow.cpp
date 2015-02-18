@@ -6,6 +6,7 @@
 #include "items/misc/ViewItemBorder.h"
 #include "items/misc/ViewAlternateBackground.h"
 #include "items/misc/ControllerMouseLinesResizer.h"
+#include "items/visible/Visible.h"
 #include "items/sorting/Sorting.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
@@ -137,7 +138,17 @@ MainWindow::MainWindow(QWidget *parent) :
     // setup sortings
     auto modelSorting = QSharedPointer<ModelGridSorting>::create(clientGrid);
     {
-        topGrid->addSchema(makeRangeGridSorter(modelSorting), QSharedPointer<ViewGridSorting>::create(modelSorting), makeLayoutSquareRight());
+        auto viewSorting = QSharedPointer<ViewGridSorting>::create(modelSorting);
+        auto viewVisible = QSharedPointer<ViewVisible>::create(viewSorting);
+        viewVisible->isItemVisible = [modelSorting](const ItemID& item){
+            return modelSorting->activeSortingItem() == item;
+        };
+
+        auto view = QSharedPointer<View>::create();
+        view->setController(QSharedPointer<ControllerMouseVisible>::create(viewVisible));
+
+        topGrid->addSchema(makeRangeGridSorter(modelSorting), view, makeLayoutBackground());
+        topGrid->addSchema(makeRangeGridSorter(modelSorting), viewVisible, makeLayoutSquareRight());
     }
 
     // setup top fixed sub-grid

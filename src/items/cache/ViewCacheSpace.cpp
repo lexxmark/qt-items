@@ -67,7 +67,7 @@ bool ViewCacheSpace::tooltipByPointImpl(const QPoint& point, const ItemID& item,
 
 void ViewCacheSpace::onModelChanged(const Model*)
 {
-    emit viewChanged(this, ChangeReasonViewContent);
+    emitViewChanged(ChangeReasonViewContent);
 }
 
 ControllerMouseCacheSpace::ControllerMouseCacheSpace(const QSharedPointer<ModelCacheSpace>& model)

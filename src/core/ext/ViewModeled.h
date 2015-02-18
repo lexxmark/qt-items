@@ -28,7 +28,7 @@ protected:
     Model* modelImpl() override { return m_model.data(); }
 
 private slots:
-    void onModelChanged(const Model*) { emit viewChanged(this, ChangeReasonViewContent); }
+    void onModelChanged(const Model*) { emitViewChanged(ChangeReasonViewContent); }
 
 private:
     QSharedPointer<Model_t> m_model;

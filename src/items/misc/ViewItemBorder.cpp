@@ -3,7 +3,7 @@
 namespace Qi
 {
 
-void validateGridColor(QColor& gridColor, const GuiContext& ctx)
+static void validateGridColor(QColor& gridColor, const GuiContext& ctx)
 {
     if (gridColor.isValid())
         return;

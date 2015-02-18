@@ -62,6 +62,9 @@ public:
     // returns represented model
     Model* model() { return modelImpl(); }
 
+    // emits viewChanged signal
+    void emitViewChanged(ChangeReason reason);
+
 signals:
     void viewChanged(const View*, ChangeReason);
 
@@ -71,7 +74,7 @@ protected:
     // adds CacheView
     virtual CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
     // returns size of the view
-    virtual QSize sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const { return QSize(0, 0); }
+    virtual QSize sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const;
     // draws view content
     virtual void drawImpl(QPainter* /*painter*/, const GuiContext& /*ctx*/, const CacheContext& /*cache*/, bool* /*showTooltip*/) const { }
     // cleanups drawing attributes

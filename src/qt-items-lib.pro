@@ -62,7 +62,8 @@ SOURCES += QiAPI.cpp \
     core/misc/ControllerMouseAuxiliary.cpp \
     items/numeric/Numeric.cpp \
     items/enum/Enum.cpp \
-    items/sorting/Sorting.cpp
+    items/sorting/Sorting.cpp \
+    items/visible/Visible.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -126,7 +127,8 @@ HEADERS +=  QiAPI.h \
     core/misc/ControllerMouseAuxiliary.h \
     items/numeric/Numeric.h \
     items/enum/Enum.h \
-    items/sorting/Sorting.h
+    items/sorting/Sorting.h \
+    items/visible/Visible.h
 
 win32 {
     TARGET_EXT = .dll

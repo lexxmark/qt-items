@@ -38,6 +38,7 @@ private:
     void disconnectSubViews();
 
     QVector<ViewSchema> m_subViews;
+    // TODO: margins should be moved to Layout
     QMargins m_margins;
 };
 

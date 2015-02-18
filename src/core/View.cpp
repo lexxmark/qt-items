@@ -21,7 +21,7 @@ void View::setController(QSharedPointer<ControllerMouse> controller)
         return;
 
     m_controller = controller;
-    emit viewChanged(this, ChangeReasonViewController);
+    emitViewChanged(ChangeReasonViewController);
 }
 
 void View::addController(QSharedPointer<ControllerMouse> controller)
@@ -62,6 +62,11 @@ bool View::tooltipText(const ItemID& item, QString& text) const
     return tooltipTextImpl(item, text);
 }
 
+void View::emitViewChanged(ChangeReason reason)
+{
+    emit viewChanged(this, reason);
+}
+
 void View::addViewImpl(const ItemID& /*item*/, QVector<const View*>& views) const
 {
     views.append(this);
@@ -76,6 +81,12 @@ CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, c
     CacheView cacheView(&layout, this, viewRect);
     cacheViews.append(cacheView);
     return &cacheViews.back();
+}
+
+QSize View::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+{
+    // it should not be requested
+    return QSize(0, 0);
 }
 
 void View::setTooltipText(const QString& text)

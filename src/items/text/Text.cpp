@@ -21,7 +21,7 @@ void ViewText::setAlignment(Qt::Alignment alignment)
         return;
 
     m_alignment = alignment;
-    emit viewChanged(this, ChangeReasonViewContent);
+    emitViewChanged(ChangeReasonViewContent);
 }
 
 void ViewText::setTextElideMode(Qt::TextElideMode textElideMode)
@@ -30,7 +30,7 @@ void ViewText::setTextElideMode(Qt::TextElideMode textElideMode)
         return;
 
     m_textElideMode = textElideMode;
-    emit viewChanged(this, ChangeReasonViewContent);
+    emitViewChanged(ChangeReasonViewContent);
 }
 
 QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode /*sizeMode*/) const

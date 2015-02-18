@@ -28,7 +28,7 @@ void ViewComposite::setMargins(const QMargins& margins)
     if (m_margins != margins)
     {
         m_margins = margins;
-        emit viewChanged(this, ChangeReasonViewSize);
+        emitViewChanged(ChangeReasonViewSize);
     }
 }
 
@@ -126,7 +126,8 @@ void ViewComposite::disconnectSubViews()
 
 void ViewComposite::onSubViewChanged(const View* /*view*/, ChangeReason reason)
 {
-    emit viewChanged(this, reason);
+    // forward signal
+    emitViewChanged(reason);
 }
 
 } // end namespace Qi

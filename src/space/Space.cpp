@@ -163,7 +163,10 @@ void Space::onLayoutChanged(const Layout* /*layout*/, ChangeReason reason)
 
 void Space::onViewChanged(const View* /*view*/, ChangeReason reason)
 {
-    emit spaceChanged(this, reason | ChangeReasonSpaceItemsContent);
+    if (reason & ChangeReasonViewSize)
+        emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
+    else
+        emit spaceChanged(this, reason | ChangeReasonSpaceItemsContent);
 }
 
 } // end namespace Qi
