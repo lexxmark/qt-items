@@ -1,0 +1,135 @@
+#include "FilterText.h"
+
+namespace Qi
+{
+
+ItemsFilterByText::ItemsFilterByText(const QSharedPointer<Model>& modelToFilter)
+    : ItemsFilter(modelToFilter)
+{
+}
+
+bool ItemsFilterByText::setFilterText(const QString& filterText)
+{
+    m_filterText = filterText;
+    emit filterChanged(this);
+    return true;
+}
+
+RowsFilterByText::RowsFilterByText()
+    : m_isActive(true)
+{
+}
+
+RowsFilterByText::~RowsFilterByText()
+{
+    clearFilters();
+}
+
+QSharedPointer<ItemsFilterByText> RowsFilterByText::filterByColumn(int column) const
+{
+    if (m_filterByColumn.size() <= column)
+        return QSharedPointer<ItemsFilterByText>();
+
+    return m_filterByColumn[column];
+}
+
+bool RowsFilterByText::addFilterByColumn(int column, const QSharedPointer<ItemsFilterByText>& filter)
+{
+    Q_ASSERT(!filter.isNull());
+
+    if (m_filterByColumn.size() <= column)
+        m_filterByColumn.resize(column + 1);
+
+    if (!m_filterByColumn[column].isNull())
+        return false;
+
+    m_filterByColumn[column] = filter;
+    connect(filter.data(), &ItemsFilterByText::filterChanged, this, &RowsFilterByText::onFilterChanged);
+    return true;
+}
+
+void RowsFilterByText::clearFilters()
+{
+    for (const auto& filter: m_filterByColumn)
+    {
+        if (!filter.isNull())
+            disconnect(filter.data(), &ItemsFilterByText::filterChanged, this, &RowsFilterByText::onFilterChanged);
+    }
+}
+
+void RowsFilterByText::setActive(bool isActive)
+{
+    if (m_isActive == isActive)
+        return;
+
+    m_isActive = isActive;
+    emit visibilityChanged(this);
+}
+
+bool RowsFilterByText::isLineVisibleImpl(int row) const
+{
+    for (ItemID item(row, 0); item.column < m_filterByColumn.size(); ++item.column)
+    {
+        if (m_filterByColumn[item.column].isNull())
+            continue;
+
+        if (m_filterByColumn[item.column]->isItemFiltered(item))
+            return false;
+    }
+
+    return true;
+}
+
+void RowsFilterByText::onFilterChanged(const ItemsFilter*)
+{
+    emit visibilityChanged(this);
+}
+
+QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter)
+{
+    auto modelFilterText = QSharedPointer<ModelTextCallback>::create();
+    modelFilterText->getValueFunction = [filter](const ItemID& item)->QString {
+        auto subFilter = filter->filterByColumn(item.column);
+        return subFilter.isNull() ? QString() : subFilter->filterText();
+    };
+    modelFilterText->setValueFunction = [filter](const ItemID& item, QString value)->bool {
+        auto subFilter = filter->filterByColumn(item.column);
+        if (subFilter.isNull())
+            return false;
+
+        return subFilter->setFilterText(value);
+    };
+
+    auto view = QSharedPointer<ViewTextOrHint>::create(modelFilterText);
+    view->isItemHint = [filter](const ItemID& item, const ModelText* sourceText) {
+        if (filter->filterByColumn(item.column).isNull()) return false;
+        if (!sourceText) return false;
+        return sourceText->value(item).isEmpty();
+    };
+
+    view->itemHintText = [](const ItemID&, const ModelText*)->QString {
+        return "<filter>";
+    };
+
+    view->itemHintTooltipText = [](const ItemID&, const ModelText*, QString& text)->bool {
+        text = "Enter text to filter here";
+        return true;
+    };
+
+    return view;
+}
+
+ItemsFilterTextByText::ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText)
+    : ItemsFilterByText(modelText)
+{
+    Q_ASSERT(modelText);
+}
+
+bool ItemsFilterTextByText::isItemFilteredImpl(const ItemID& item) const
+{
+    QString textValue = m_modelText->value(item);
+    return textValue.contains(filterText());
+}
+
+
+} // end namespace Qi

@@ -139,13 +139,15 @@ class QI_EXPORT LinesVisibility: public QObject
 public:
     virtual ~LinesVisibility() {}
 
-    virtual bool isLineVisible(int line) const = 0;
+    bool isLineVisible(int line) const { return isLineVisibleImpl(line); }
 
 signals:
     void visibilityChanged(const LinesVisibility* visibility);
 
 protected:
     LinesVisibility() {}
+
+    virtual bool isLineVisibleImpl(int line) const = 0;
 };
 
 class QI_EXPORT LinesVisibilityCallback: public LinesVisibility
@@ -157,7 +159,8 @@ public:
 
     std::function<bool(int)> isLineVisibleCallback;
 
-    bool isLineVisible(int line) const override { return isLineVisibleCallback(line); }
+protected:
+    bool isLineVisibleImpl(int line) const override { return isLineVisibleCallback(line); }
 };
 
 } // end namespace Qi 

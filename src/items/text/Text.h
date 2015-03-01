@@ -36,9 +36,30 @@ protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
     bool textImpl(const ItemID& item, QString& txt) const override;
 
+    QSize sizeText(const QString& text, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const;
+    void drawText(const QString& text, QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const;
+
 private:
     Qt::Alignment m_alignment;
     Qt::TextElideMode m_textElideMode;
+};
+
+class QI_EXPORT ViewTextOrHint: public ViewText
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ViewTextOrHint)
+
+public:
+    ViewTextOrHint(const QSharedPointer<ModelText>& model, bool useDefaultController = false, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+
+    std::function<bool(const ItemID&, const ModelText*)> isItemHint;
+    std::function<QString(const ItemID&, const ModelText*)> itemHintText;
+    std::function<bool(const ItemID&, const ModelText*, QString&)> itemHintTooltipText;
+
+protected:
+    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
+    bool tooltipTextImpl(const ItemID& item, QString& txt) const override;
 };
 
 } // end namespace Qi

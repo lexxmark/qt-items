@@ -33,31 +33,46 @@ void ViewText::setTextElideMode(Qt::TextElideMode textElideMode)
     emitViewChanged(ChangeReasonViewContent);
 }
 
-QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode /*sizeMode*/) const
+QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+{
+    return sizeText(theModel()->value(item), ctx, item, sizeMode);
+}
+
+void ViewText::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+{
+    drawText(theModel()->value(cache.item), painter, ctx, cache, showTooltip);
+}
+
+bool ViewText::textImpl(const ItemID& item, QString& txt) const
+{
+    txt = theModel()->value(item);
+    return true;
+}
+
+QSize ViewText::sizeText(const QString& text, const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
 {
     /*
     QStyleOptionViewItem option;
     option.initFrom(ctx.widget);
-    option.text = theModel()->value(item);
+    option.text = text;
     option.displayAlignment = alignment(item);
     option.textElideMode = textElideMode(item);
     option.widget = ctx.widget;
 
     return ctx.widget->style()->sizeFromContents(QStyle::CT_ItemViewItem, &option, QSize(0, 0), ctx.widget) + QSize(5, 5);
     */
-    QString text = theModel()->value(item);
     QFontMetrics fontMetrics = ctx.widget->fontMetrics();
     return QSize(fontMetrics.width(text), fontMetrics.height());
 }
 
-void ViewText::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* showTooltip) const
+void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* showTooltip) const
 {
     /*
      * cannot use this stuff because textElideMode is not working
     QStyleOptionViewItem option;
     option.initFrom(ctx.widget);
     option.rect = cache.cacheView.rect();
-    option.text = theModel()->value(cache.item);
+    option.text = text;
     option.displayAlignment = alignment(cache.item);
     option.textElideMode = textElideMode(cache.item);
     option.widget = ctx.widget;
@@ -66,15 +81,15 @@ void ViewText::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cach
     */
 
     QRect rect = cache.cacheView.rect();
-    QString text = theModel()->value(cache.item);
+    QString textToDraw = text;
     Qt::TextElideMode elideMode = textElideMode(cache.item);
     if (elideMode != Qt::ElideNone)
     {
-        QString elidedText = painter->fontMetrics().elidedText(text, elideMode, rect.width());
+        QString elidedText = painter->fontMetrics().elidedText(textToDraw, elideMode, rect.width());
         if (showTooltip)
-            *showTooltip = (elidedText != text);
+            *showTooltip = (elidedText != textToDraw);
 
-        text = elidedText;
+        textToDraw = elidedText;
     }
     else
     {
@@ -82,13 +97,52 @@ void ViewText::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cach
             *showTooltip = (painter->fontMetrics().width(text) > rect.width());
     }
 
-    painter->drawText(rect, alignment(cache.item), text);
+    painter->drawText(rect, alignment(cache.item), textToDraw);
 }
 
-bool ViewText::textImpl(const ItemID& item, QString& txt) const
+
+ViewTextOrHint::ViewTextOrHint(const QSharedPointer<ModelText>& model, bool useDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+    : ViewText(model, useDefaultController, alignment, textElideMode)
 {
-    txt = theModel()->value(item);
-    return true;
 }
+
+QSize ViewTextOrHint::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+{
+    if (isItemHint && isItemHint(item, theModel().data()))
+    {
+        QString hintText = itemHintText ? itemHintText(item, theModel().data()) : QString();
+        return sizeText(hintText, ctx, item, sizeMode);
+    }
+    else
+        return ViewText::sizeImpl(ctx, item, sizeMode);
+}
+
+void ViewTextOrHint::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
+{
+    if (isItemHint && isItemHint(cache.item, theModel().data()))
+    {
+        QString hintText = itemHintText ? itemHintText(cache.item, theModel().data()) : QString();
+        QPen oldPen = painter->pen();
+        painter->setPen(ctx.widget->palette().color(QPalette::Disabled, QPalette::Text));
+        drawText(hintText, painter, ctx, cache, showTooltip);
+        painter->setPen(oldPen);
+    }
+    else
+        return ViewText::drawImpl(painter, ctx, cache, showTooltip);
+}
+
+bool ViewTextOrHint::tooltipTextImpl(const ItemID& item, QString& txt) const
+{
+    if (isItemHint && isItemHint(item, theModel().data()))
+    {
+        if (itemHintTooltipText)
+            return itemHintTooltipText(item, theModel().data(), txt);
+        else
+            return false;
+    }
+    else
+        return ViewText::tooltipTextImpl(item, txt);
+}
+
 
 } // end namespace Qi

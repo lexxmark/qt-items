@@ -63,7 +63,9 @@ SOURCES += QiAPI.cpp \
     items/numeric/Numeric.cpp \
     items/enum/Enum.cpp \
     items/sorting/Sorting.cpp \
-    items/visible/Visible.cpp
+    items/visible/Visible.cpp \
+    items/filter/Filter.cpp \
+    items/filter/FilterText.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -128,7 +130,9 @@ HEADERS +=  QiAPI.h \
     items/numeric/Numeric.h \
     items/enum/Enum.h \
     items/sorting/Sorting.h \
-    items/visible/Visible.h
+    items/visible/Visible.h \
+    items/filter/Filter.h \
+    items/filter/FilterText.h
 
 win32 {
     TARGET_EXT = .dll

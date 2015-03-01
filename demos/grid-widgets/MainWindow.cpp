@@ -8,6 +8,7 @@
 #include "items/misc/ControllerMouseLinesResizer.h"
 #include "items/visible/Visible.h"
 #include "items/sorting/Sorting.h"
+#include "items/filter/FilterText.h"
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
 #include "items/button/Button.h"
@@ -151,13 +152,20 @@ MainWindow::MainWindow(QWidget *parent) :
         topGrid->addSchema(makeRangeGridSorter(modelSorting), viewVisible, makeLayoutSquareRight());
     }
 
+    // setup filtering
+    auto filterByText = QSharedPointer<RowsFilterByText>::create();
+    {
+        auto view = makeViewRowsFilterByText(filterByText);
+        topGrid->addSchema(makeRangeRow(1), view, makeLayoutClient());
+    }
+
     // setup top fixed sub-grid
     {
         auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
             return QString("Caption[%1, %2]").arg(item.row).arg(item.column);
         };
-        topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewText>::create(modelText));
+        topGrid->addSchema(makeRangeRow(0), QSharedPointer<ViewText>::create(modelText));
     }
 
     // setup left fixed sub-grid
@@ -177,8 +185,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // text in all items except column 5, 6, 10 and 11
+    auto modelText = QSharedPointer<ModelTextCallback>::create();
     {
-        auto modelText = QSharedPointer<ModelTextCallback>::create();
         modelText->getValueFunction = [](const ItemID& item)->QString {
             return QString("Item [%1, %2]").arg(item.row).arg(item.column);
         };
@@ -190,12 +198,21 @@ MainWindow::MainWindow(QWidget *parent) :
         modelSorting->addSortingModel(0, modelText);
     }
 
-    auto modelChecks = QSharedPointer<ModelStorageValue<Qt::CheckState>>::create(Qt::Checked);
-    clientGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewCheck>::create(modelChecks), makeLayoutLeft());
+    // Checkbox example
+    {
+        auto modelChecks = QSharedPointer<ModelStorageValue<Qt::CheckState>>::create(Qt::Checked);
+        clientGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewCheck>::create(modelChecks), makeLayoutLeft());
 
-    auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
-    clientGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
-    modelSorting->addSortingModel(1, modelRadio);
+        auto filter = QSharedPointer<ItemsFilterTextByText>::create(modelText);
+        filterByText->addFilterByColumn(0, filter);
+    }
+
+    // radiobutton example
+    {
+        auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
+        clientGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
+        modelSorting->addSortingModel(1, modelRadio);
+    }
 
     // sort column 2 by selection
     modelSorting->addSortingModel(2, selection);
@@ -314,6 +331,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         auto viewText = QSharedPointer<ViewText>::create(QSharedPointer<ModelNumericText<double>>::create(modelNumeric));
         clientGrid->addSchema(makeRangeColumn(10), viewText);
+        modelSorting->addSortingModel(10, modelNumeric);
     }
 
     // enum example
