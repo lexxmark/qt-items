@@ -30,15 +30,16 @@ enum ChangeReasonFlag
     ChangeReasonRange = 0x0020,
     ChangeReasonLayout = 0x0040,
     ChangeReasonViewContent = 0x0080,
-    ChangeReasonViewController = 0x00F0,
-    ChangeReasonViewSize = 0x0100,
+    ChangeReasonViewController = 0x0100,
+    ChangeReasonViewSize = 0x0200,
 
-    ChangeReasonSpaceStructure = 0x0200,
-    ChangeReasonSpaceItemsStructure = 0x0400,
-    ChangeReasonSpaceItemsContent = 0x0800,
+    ChangeReasonSpaceStructure = 0x0400,
+    ChangeReasonSpaceHint = 0x0800,
+    ChangeReasonSpaceItemsStructure = 0x1000,
+    ChangeReasonSpaceItemsContent = 0x2000,
 
-    ChangeReasonCacheFrame = 0x1000,
-    ChangeReasonCacheContent = 0x2000,
+    ChangeReasonCacheFrame = 0x4000,
+    ChangeReasonCacheContent = 0x8000,
 };
 
 Q_DECLARE_FLAGS(ChangeReason, ChangeReasonFlag)

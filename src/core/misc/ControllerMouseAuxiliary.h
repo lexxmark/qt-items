@@ -7,7 +7,7 @@
 namespace Qi
 {
 
-class WidgetDriver;
+class SpaceWidgetCore;
 class ControllerMouse;
 
 enum ControllerMousePriority
@@ -21,7 +21,7 @@ class QI_EXPORT ControllerContext
 {
 public:
     QWidget* widget;
-    WidgetDriver* widgetDriver;
+    SpaceWidgetCore* widgetCore;
     QPoint point;
 
     void pushCursor(QCursor cursor, const ControllerMouse* controller) const;
@@ -33,7 +33,7 @@ public:
 protected:
     // constructor/destructor are accessible from
     // derived classes only
-    ControllerContext(QWidget* widget, WidgetDriver* widgetDriver);
+    ControllerContext(QWidget* widget, SpaceWidgetCore* widgetCore);
     virtual ~ControllerContext();
 
 private:

@@ -1,6 +1,6 @@
 #include "Selection.h"
 #include "cache/space/CacheSpaceGrid.h"
-#include "widgets/GridWidget.h"
+#include "widgets/SpaceWidgetCore.h"
 #include <QStyleOptionViewItem>
 
 namespace Qi
@@ -250,7 +250,7 @@ void ControllerMouseSelectionClient::startCapturingImpl()
     ControllerMouseCaptured::startCapturingImpl();
 
     // space of the selection model should be the same as controller's area
-    Q_ASSERT(activationState().cacheSpace.space() == m_model->space());
+    Q_ASSERT(&activationState().cacheSpace.space() == &m_model->space());
 
     m_model->startSelectionOperation();
 
@@ -334,7 +334,7 @@ bool ControllerMouseSelectionClient::processMouseMove(QMouseEvent* event)
         if (!cacheSpaceGrid->isItemInFrameStrict(itemUnderPoint))
         {
             // user moved mouse out of frame => try to scroll
-            activationState().context.widgetDriver->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
+            activationState().context.widgetCore->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
         }
 
         if (m_trackItem != itemUnderPoint)
@@ -365,7 +365,7 @@ bool ControllerMouseSelectionClient::processContextMenu(QContextMenuEvent* /*eve
 void ControllerMouseSelectionClient::applySelection(bool makeStartItemAsActive)
 {
     // this should be more abstract
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(m_model->space());
+    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_model->space());
     Q_ASSERT(spaceGrid);
     if (!spaceGrid)
         return;
@@ -461,7 +461,7 @@ bool ControllerMouseSelectionHeader::processMouseMove(QMouseEvent* /*event*/)
         if (!cacheSpaceGrid->isItemInFrameStrict(itemUnderPoint))
         {
             // user moved mouse out of frame => try to scroll
-            activationState().context.widgetDriver->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
+            activationState().context.widgetCore->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
         }
 
         int lineUnderPoint = lineIndexByHeaderType(itemUnderPoint, m_type);
@@ -484,7 +484,7 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
 
     RangeSelection selection = m_selection;
     ItemID activeItem = m_model->activeItem();
-    auto space = m_model->space();
+    const auto& space = m_model->space();
 
     switch (m_type)
     {
@@ -493,11 +493,11 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
         QSet<int> rows;
         for (ItemID item(std::min(m_startLine, m_trackLine), 0); item.row <= std::max(m_startLine, m_trackLine); ++item.row)
         {
-            rows.insert(space->toAbsolute(item).row);
+            rows.insert(space.toAbsolute(item).row);
         }
 
         selection.addRange(makeRangeRows(rows), false);
-        activeItem.row = space->toAbsolute(ItemID(m_startLine, 0)).row;
+        activeItem.row = space.toAbsolute(ItemID(m_startLine, 0)).row;
     }
         break;
 
@@ -506,11 +506,11 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
         QSet<int> columns;
         for (ItemID item(0, std::min(m_startLine, m_trackLine)); item.column <= std::max(m_startLine, m_trackLine); ++item.column)
         {
-            columns.insert(space->toAbsolute(item).column);
+            columns.insert(space.toAbsolute(item).column);
         }
 
         selection.addRange(makeRangeColumns(columns), false);
-        activeItem.column = space->toAbsolute(ItemID(0, m_startLine)).column;
+        activeItem.column = space.toAbsolute(ItemID(0, m_startLine)).column;
     }
         break;
 
@@ -545,15 +545,15 @@ bool ControllerMouseSelectionNonItems::processLButtonDown(QMouseEvent* event)
     return true;
 }
 
-ControllerKeyboardSelection::ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace *cacheSpace, WidgetDriver *widgetDriver)
+ControllerKeyboardSelection::ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace *cacheSpace, SpaceWidgetCore* widgetCore)
     : m_model(model),
       m_cacheSpace(cacheSpace),
-      m_widgetDriver(widgetDriver)
+      m_widgetCore(widgetCore)
 {
     Q_ASSERT(m_model);
     Q_ASSERT(m_cacheSpace);
-    Q_ASSERT(m_widgetDriver);
-    Q_ASSERT(m_cacheSpace->space() == m_model->space());
+    Q_ASSERT(m_widgetCore);
+    Q_ASSERT(&m_cacheSpace->space() == &m_model->space());
 
     m_trackItem = m_model->activeItem();
 
@@ -567,9 +567,11 @@ ControllerKeyboardSelection::~ControllerKeyboardSelection()
 
 bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
 {
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(m_model->space());
+    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_model->space());
     if (!spaceGrid)
         return false;
+
+    qDebug() << "ControllerKeyboardSelection::processKeyPress";
 
     if (m_pressedKeys.isEmpty())
         m_model->startSelectionOperation();
@@ -579,7 +581,7 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
 
     if (m_trackItem.isValid())
     {
-        trackVisibleItem = m_model->space()->toVisible(m_trackItem);
+        trackVisibleItem = m_model->space().toVisible(m_trackItem);
         // if invisible - let start from beginning
         if (!trackVisibleItem.isValid())
             trackVisibleItem = ItemID(0, 0);
@@ -689,7 +691,7 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
             m_model->setSelection(makeRangeItem(m_model->activeItem()));
         }
 
-        m_widgetDriver->ensureVisible(trackVisibleItem, m_cacheSpace, false);
+        m_widgetCore->ensureVisible(trackVisibleItem, m_cacheSpace, false);
 
         m_trackItem = spaceGrid->toAbsolute(trackVisibleItem);
 
@@ -701,7 +703,7 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
         if (activeVisibleItem.isValid())
         {
             // try to perform edit by keyboard on active cell
-            return m_widgetDriver->doEdit(activeVisibleItem, m_cacheSpace, event);
+            return m_widgetCore->doInplaceEdit(activeVisibleItem, m_cacheSpace, event);
         }
     }
 
@@ -710,6 +712,8 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
 
 bool ControllerKeyboardSelection::processKeyRelease(QKeyEvent* event)
 {
+    qDebug() << "ControllerKeyboardSelection::processKeyRelease";
+
     if (!m_pressedKeys.isEmpty())
     {
         m_pressedKeys.remove(event->key());
@@ -724,7 +728,7 @@ bool ControllerKeyboardSelection::processKeyRelease(QKeyEvent* event)
     if (activeVisibleItem.isValid())
     {
         // try to perform edit by keyboard on active cell
-        return m_widgetDriver->doEdit(activeVisibleItem, m_cacheSpace, event);
+        return m_widgetCore->doInplaceEdit(activeVisibleItem, m_cacheSpace, event);
     }
 
     return false;
@@ -732,6 +736,8 @@ bool ControllerKeyboardSelection::processKeyRelease(QKeyEvent* event)
 
 void ControllerKeyboardSelection::startCapturing()
 {
+    qDebug() << "ControllerKeyboardSelection::startCapturing";
+
     Q_ASSERT(m_pressedKeys.isEmpty());
 }
 
@@ -744,6 +750,8 @@ void ControllerKeyboardSelection::stopCapturing()
     }
 
     m_pressedKeys.clear();
+
+    qDebug() << "ControllerKeyboardSelection::stopCapturing";
 }
 
 void ControllerKeyboardSelection::onSelectionChanged(const ModelSelection*, ModelSelection::ChangeReason reason)

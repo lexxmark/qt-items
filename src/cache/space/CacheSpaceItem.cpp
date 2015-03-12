@@ -1,6 +1,7 @@
 #include "CacheSpaceItem.h"
 #include "core/ControllerMouse.h"
 #include "cache/CacheItem.h"
+#include "cache/CacheItemFactory.h"
 #include "utils/auto_value.h"
 
 namespace Qi
@@ -30,14 +31,8 @@ void CacheSpaceItem::validateItemsCacheImpl() const
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
-    QPoint origin = originPos();
-    QSize size = m_spaceItem->size();
-    QRect rect(origin.x(), origin.y(), origin.x() + size.width(), origin.y() + size.height());
-
-    m_item = QSharedPointer<CacheItem>::create();
-    m_item->item = m_spaceItem->item();
-    m_item->rect = rect;
-    m_item->schema = viewSchemaForItem(m_spaceItem->item(), m_viewApplicationMask | m_spaceItem->viewApplicationMask(), m_spaceItem->schemasOrdered());
+    m_item = QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(m_spaceItem->item()));
+    m_item->rect.translate(originPos());
 
     // mark item as valid
     m_itemsCacheInvalid = false;
@@ -47,6 +42,15 @@ void CacheSpaceItem::invalidateItemsCacheStructureImpl() const
 {
     if (m_item)
         m_item->invalidateCacheView();
+}
+
+void CacheSpaceItem::updateItemsCacheSchemaImpl() const
+{
+    if (!m_item)
+        return;
+
+    m_item->invalidateCacheView();
+    m_cacheItemsFactory->updateSchema(*m_item);
 }
 
 void CacheSpaceItem::drawImpl(QPainter* painter, const GuiContext& ctx) const

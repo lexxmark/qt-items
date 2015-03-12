@@ -10,16 +10,7 @@
 namespace Qi
 {
 
-// creates composite view for all views in the item
-QI_EXPORT ViewSchema viewSchemaForItem(const ItemID& item, ViewApplicationMask viewApplicationMask, const QVector<ItemSchema>& itemSchemas);
-
-enum SpaceHint
-{
-    SpaceHintNone = 0x0000,
-    SpaceHintSimilarViewsByColumns = 0x0001
-};
-
-typedef quint32 SpaceHints;
+class CacheItemFactory;
 
 class QI_EXPORT Space: public QObject
 {
@@ -27,13 +18,14 @@ class QI_EXPORT Space: public QObject
     Q_DISABLE_COPY(Space)
 
 public:
-    Space(SpaceHints hints = SpaceHintNone);
+    Space();
     virtual ~Space();
 
     virtual QSize size() const = 0;
     virtual ItemID toAbsolute(const ItemID& visibleItem) const = 0;
     virtual ItemID toVisible(const ItemID& absoluteItem) const = 0;
     virtual QRect itemRect(const ItemID& visibleItem) const = 0;
+    virtual QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask) const = 0;
 
     const QVector<ItemSchema>& schemas() const { return m_schemas; }
     int addSchema(const ItemSchema& schema);
@@ -41,9 +33,6 @@ public:
     int insertSchema(int index, const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout = makeLayoutClient());
     void removeSchema(const QSharedPointer<View>& view);
     void clearSchemas();
-
-    SpaceHints hints() const { return m_hints; }
-    void setHints(SpaceHints hints) { m_hints = hints; }
 
     ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }
     void setViewApplicationMask(ViewApplicationMask viewApplicationMask);
@@ -64,9 +53,6 @@ private:
 
     QVector<ItemSchema> m_schemas;
     mutable QVector<ItemSchema> m_schemasOrdered;
-
-    // hints
-    SpaceHints m_hints;
 
     // views filtering
     ViewApplicationMask m_viewApplicationMask;

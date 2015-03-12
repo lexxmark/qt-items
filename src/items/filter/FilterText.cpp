@@ -10,8 +10,12 @@ ItemsFilterByText::ItemsFilterByText(const QSharedPointer<Model>& modelToFilter)
 
 bool ItemsFilterByText::setFilterText(const QString& filterText)
 {
+    if (m_filterText == filterText)
+        return false;
+
     m_filterText = filterText;
     emit filterChanged(this);
+
     return true;
 }
 
@@ -73,7 +77,7 @@ bool RowsFilterByText::isLineVisibleImpl(int row) const
         if (m_filterByColumn[item.column].isNull())
             continue;
 
-        if (m_filterByColumn[item.column]->isItemFiltered(item))
+        if (!m_filterByColumn[item.column]->isItemPassFilter(item))
             return false;
     }
 
@@ -112,21 +116,30 @@ QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByT
     };
 
     view->itemHintTooltipText = [](const ItemID&, const ModelText*, QString& text)->bool {
-        text = "Enter text to filter here";
+        text = "Enter text to filter";
         return true;
     };
+
+    auto controller = QSharedPointer<ControllerMouseText>::create(modelFilterText);
+    controller->enableEditBySingleClick();
+    controller->enableLiveUpdate();
+    view->setController(controller);
 
     return view;
 }
 
 ItemsFilterTextByText::ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText)
-    : ItemsFilterByText(modelText)
+    : ItemsFilterByText(modelText),
+      m_modelText(modelText)
 {
     Q_ASSERT(modelText);
 }
 
-bool ItemsFilterTextByText::isItemFilteredImpl(const ItemID& item) const
+bool ItemsFilterTextByText::isItemPassFilterImpl(const ItemID& item) const
 {
+    if (isFilterTextEmpty())
+        return true;
+
     QString textValue = m_modelText->value(item);
     return textValue.contains(filterText());
 }

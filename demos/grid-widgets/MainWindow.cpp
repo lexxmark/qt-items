@@ -75,14 +75,14 @@ MainWindow::MainWindow(QWidget *parent) :
     auto clientGrid = ui->gridWidget->subGrid();
     clientGrid->setDimensions(100, 100);
     clientGrid->rows()->setLineSizeAll(25);
-    clientGrid->columns()->setLineSizeAll(100);
+    clientGrid->columns()->setLineSizeAll(150);
 
     auto topGrid = ui->gridWidget->subGrid(topID);
     topGrid->setRowsCount(2);
     topGrid->rows()->setLineSizeAll(25);
 
     auto leftGrid = ui->gridWidget->subGrid(leftID);
-    leftGrid->setColumnsCount(2);
+    leftGrid->setColumnsCount(1);
     leftGrid->columns()->setLineSizeAll(40);
 
     auto selection = QSharedPointer<ModelSelection>::create(clientGrid);
@@ -154,9 +154,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup filtering
     auto filterByText = QSharedPointer<RowsFilterByText>::create();
+    clientGrid->rows()->addLinesVisibility(filterByText);
     {
         auto view = makeViewRowsFilterByText(filterByText);
-        topGrid->addSchema(makeRangeRow(1), view, makeLayoutClient());
+        auto range = QSharedPointer<RangeCallback>::create();
+        range->hasItemCallback = [filterByText] (const ItemID& item)-> bool {
+            return item.row == 1 && !filterByText->filterByColumn(item.column).isNull();
+        };
+        topGrid->addSchema(range, view, makeLayoutClient());
     }
 
     // setup top fixed sub-grid
@@ -173,15 +178,6 @@ MainWindow::MainWindow(QWidget *parent) :
         auto modelRowNum = QSharedPointer<ModelRowNumber>::create();
         auto modelRowText = QSharedPointer<ModelNumericText<int>>::create(modelRowNum);
         leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewText>::create(modelRowText, false, Qt::AlignRight | Qt::AlignVCenter));
-
-        auto modelText = QSharedPointer<ModelTextCallback>::create();
-        modelText->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Left[%1, %2]").arg(item.row).arg(item.column);
-        };
-        leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewText>::create(modelText));
-
-        auto modelRadio = QSharedPointer<ModelRadioStorage>::create(ItemID(0, 5));
-        leftGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutRight());
     }
 
     // text in all items except column 5, 6, 10 and 11
@@ -200,7 +196,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Checkbox example
     {
-        auto modelChecks = QSharedPointer<ModelStorageValue<Qt::CheckState>>::create(Qt::Checked);
+        auto modelChecks = QSharedPointer<ModelStorageColumn<Qt::CheckState>>::create(clientGrid->rows());
         clientGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewCheck>::create(modelChecks), makeLayoutLeft());
 
         auto filter = QSharedPointer<ItemsFilterTextByText>::create(modelText);

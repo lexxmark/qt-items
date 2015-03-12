@@ -1,38 +1,10 @@
 #include "Space.h"
-#include "core/ext/Layouts.h"
-#include "core/ext/ViewComposite.h"
 
 namespace Qi
 {
 
-ViewSchema viewSchemaForItem(const ItemID& item, ViewApplicationMask viewApplicationMask, const QVector<ItemSchema>& itemSchemas)
-{
-    QVector<ViewSchema> viewSchemas;
-
-    for (const auto& schema : itemSchemas)
-    {
-        if (schema.range->hasItem(item) && schema.view->isApplicable(viewApplicationMask))
-        {
-            viewSchemas.append(ViewSchema(schema.layout, schema.view));
-        }
-    }
-
-    if (viewSchemas.empty())
-        return ViewSchema();
-    else if (viewSchemas.size() == 1)
-        return viewSchemas.front();
-    else
-    {
-        ViewSchema schema;
-        schema.layout = makeLayoutBackground();
-        schema.view = QSharedPointer<ViewComposite>::create(viewSchemas);
-        return schema;
-    }
-}
-
-Space::Space(SpaceHints hints)
-    : m_hints(hints),
-      m_viewApplicationMask(ViewApplicationNone)
+Space::Space()
+    : m_viewApplicationMask(ViewApplicationNone)
 {
 }
 

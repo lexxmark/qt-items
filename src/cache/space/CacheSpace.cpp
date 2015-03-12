@@ -17,6 +17,9 @@ CacheSpace::CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask v
       m_cacheIsInUse(false)
 {
     connect(m_space.data(), &Space::spaceChanged, this, &CacheSpace::onSpaceChanged);
+
+    m_cacheItemsFactory = m_space->createCacheItemFactory(m_viewApplicationMask);
+    Q_ASSERT(m_cacheItemsFactory);
 }
 
 CacheSpace::~CacheSpace()
@@ -34,10 +37,10 @@ void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
         // invalidate all items
         clear();
     }
-    else if (reason & ChangeReasonSpaceItemsStructure)
+    else if (reason & (ChangeReasonSpaceHint | ChangeReasonSpaceItemsStructure))
     {
-        // invalidate structure of items
-        invalidateItemsCacheStructureImpl();
+        // update items factory
+        updateCacheItemsFactory();
         emit cacheChanged(this, ChangeReasonCacheContent);
     }
     else if (reason & ChangeReasonSpaceItemsContent)
@@ -51,8 +54,7 @@ void CacheSpace::setViewApplicationMask(ViewApplicationMask viewApplicationMask)
 {
     if (m_viewApplicationMask != viewApplicationMask)
     {
-        // invalidate structure of items
-        invalidateItemsCacheStructureImpl();
+        updateCacheItemsFactory();
         emit cacheChanged(this, ChangeReasonCacheContent);
     }
 }
@@ -181,5 +183,14 @@ bool CacheSpace::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) c
 
     return cacheItem->tooltipByPoint(point, tooltipInfo);
 }
+
+void CacheSpace::updateCacheItemsFactory()
+{
+    m_cacheItemsFactory = m_space->createCacheItemFactory(m_viewApplicationMask);
+    Q_ASSERT(m_cacheItemsFactory);
+    // update schemas
+    updateItemsCacheSchemaImpl();
+}
+
 
 } // end namespace Qi

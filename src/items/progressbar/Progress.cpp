@@ -125,7 +125,7 @@ void ViewProgressBox::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, con
     value = qBound(0.f, value, 1.f);
 
     QRect rect = cache.cacheView.rect();
-    rect.adjust(2, 2, -2, -2);
+    rect.adjust(0, 2, 0, -2);
     rect.setRight(rect.left() + (int)(value * (float)rect.width()));
 
     if (rect.width() > 0)
@@ -133,9 +133,13 @@ void ViewProgressBox::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, con
         PainterState state;
         state.save(painter);
 
-        painter->setPen(boundsColor);
-        painter->setBrush(contentsColor);
-        painter->drawRect(rect);
+        painter->fillRect(rect, boundsColor);
+        rect.adjust(1, 1, -1, -1);
+        painter->fillRect(rect, contentsColor);
+
+//        painter->setPen(boundsColor);
+//        painter->setBrush(contentsColor);
+//        painter->drawRect(rect);
 
         state.restore(painter);
     }

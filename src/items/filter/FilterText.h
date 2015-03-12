@@ -19,6 +19,8 @@ public:
     const QString& filterText() const { return m_filterText; }
     bool setFilterText(const QString& filterText);
 
+    bool isFilterTextEmpty() const { return m_filterText.isEmpty(); }
+
 protected:
     ItemsFilterByText(const QSharedPointer<Model>& modelToFilter);
 
@@ -54,7 +56,6 @@ private:
 
 QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter);
 
-
 class QI_EXPORT ItemsFilterTextByText: public ItemsFilterByText
 {
     Q_OBJECT
@@ -64,7 +65,7 @@ public:
     ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText);
 
 protected:
-    bool isItemFilteredImpl(const ItemID& item) const override;
+    bool isItemPassFilterImpl(const ItemID& item) const override;
 
 private:
     QSharedPointer<ModelText> m_modelText;

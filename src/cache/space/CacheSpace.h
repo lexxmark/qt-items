@@ -8,6 +8,7 @@ namespace Qi
 
 class ControllerContext;
 class CacheItem;
+class CacheItemFactory;
 
 class QI_EXPORT CacheSpace: public QObject
 {
@@ -19,7 +20,10 @@ class QI_EXPORT CacheSpace: public QObject
 public:
     ~CacheSpace();
 
-    const Space* space() const { return m_space.data(); }
+    const Space& space() const { return *m_space; }
+    Space& rSpace() const { return *m_space; }
+
+    const CacheItemFactory& cacheItemFactory() const { return *m_cacheItemsFactory; }
 
     ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }
     void setViewApplicationMask(ViewApplicationMask viewApplicationMask);
@@ -49,19 +53,16 @@ public:
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
 
-private slots:
-    void onSpaceChanged(const Space* space, ChangeReason reason);
-
 protected:
     explicit CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
 
-    void invalidateItemsCache();
-    void clearItemsCache() const;
     void validateItemsCache() const;
+    void clearItemsCache() const;
 
     virtual void clearItemsCacheImpl() const = 0;
     virtual void validateItemsCacheImpl() const = 0;
     virtual void invalidateItemsCacheStructureImpl() const = 0;
+    virtual void updateItemsCacheSchemaImpl() const = 0;
     virtual void drawImpl(QPainter* painter, const GuiContext& ctx) const = 0;
     virtual const CacheItem* cacheItemImpl(const ItemID& visibleItem) const = 0;
     virtual const CacheItem* cacheItemByPositionImpl(const QPoint& point) const = 0;
@@ -69,8 +70,10 @@ protected:
     // space
     QSharedPointer<Space> m_space;
 
-    // filter for views
     ViewApplicationMask m_viewApplicationMask;
+
+    // cache items factory
+    QSharedPointer<CacheItemFactory> m_cacheItemsFactory;
 
     // visible frame
     QRect m_window;
@@ -85,6 +88,12 @@ protected:
 
     // flag for debugging
     mutable bool m_cacheIsInUse;
+
+private:
+    void invalidateItemsCache();
+
+    void onSpaceChanged(const Space* space, ChangeReason reason);
+    void updateCacheItemsFactory();
 };
 
 } // end namespace Qi 

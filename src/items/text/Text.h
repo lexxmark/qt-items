@@ -2,10 +2,11 @@
 #define QI_TEXT_H
 
 #include "core/ext/ViewModeled.h"
-#include "core/ext/ControllerMousePushable.h"
+#include "core/ext/ControllerMouseInplaceEdit.h"
 #include "core/ext/ModelCallback.h"
 #include "core/ext/ModelStore.h"
 #include <QString>
+#include <QMargins>
 
 namespace Qi
 {
@@ -28,6 +29,9 @@ public:
     Qt::TextElideMode textElideMode(const ItemID& item) const { return textElideModeImpl(item); }
     void setTextElideMode(Qt::TextElideMode textElideMode);
 
+    const QMargins& margins() const { return m_margins; }
+    void setMargins(const QMargins& margins);
+
 protected:
     virtual Qt::Alignment alignmentImpl(const ItemID& /*item*/) const { return m_alignment; }
     virtual Qt::TextElideMode textElideModeImpl(const ItemID& /*item*/) const { return m_textElideMode; }
@@ -42,6 +46,7 @@ protected:
 private:
     Qt::Alignment m_alignment;
     Qt::TextElideMode m_textElideMode;
+    QMargins m_margins;
 };
 
 class QI_EXPORT ViewTextOrHint: public ViewText
@@ -60,6 +65,25 @@ protected:
     QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
     bool tooltipTextImpl(const ItemID& item, QString& txt) const override;
+};
+
+class QI_EXPORT ControllerMouseText: public ControllerMouseInplaceEdit
+{
+public:
+    ControllerMouseText(const QSharedPointer<ModelText>& model);
+
+    void enableLiveUpdate(bool enable = true);
+
+protected:
+    bool acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const override;
+    QWidget* createInplaceEditorImpl(const ItemID& item, const QRect& rect, QWidget* parent, const QKeyEvent* keyEvent) override;
+
+private:
+    void onEditingFinished();
+    void onTextEdited(const QString& text);
+
+    QSharedPointer<ModelText> m_model;
+    bool m_liveUpdate;
 };
 
 } // end namespace Qi

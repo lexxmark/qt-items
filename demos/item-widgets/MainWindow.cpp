@@ -16,18 +16,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // setup checkboxes
-    ui->checkBox1->space().setItem(ItemID(0, 0));
-    ui->checkBox2->space().setItem(ItemID(1, 0));
-    ui->checkBox3->space().setItem(ItemID(2, 0));
+    ui->checkBox1->spaceItem().setItem(ItemID(0, 0));
+    ui->checkBox2->spaceItem().setItem(ItemID(1, 0));
+    ui->checkBox3->spaceItem().setItem(ItemID(2, 0));
 
     auto modelChecks = QSharedPointer<ModelStorageVector<Qt::CheckState>>::create();
     modelChecks->setValueAll(Qt::Checked, 3);
     ItemSchema schema(makeRangeAll(), makeLayoutLeft(), QSharedPointer<ViewCheck>::create(modelChecks));
     auto controller = schema.view->controller();
 
-    ui->checkBox1->space().addSchema(schema);
-    ui->checkBox2->space().addSchema(schema);
-    ui->checkBox3->space().addSchema(schema);
+    ui->checkBox1->spaceItem().addSchema(schema);
+    ui->checkBox2->spaceItem().addSchema(schema);
+    ui->checkBox3->spaceItem().addSchema(schema);
 
     auto modelText = QSharedPointer<ModelTextCallback>::create();
     modelText->getValueFunction = [](const ItemID& item) -> QString {
@@ -42,22 +42,22 @@ MainWindow::MainWindow(QWidget *parent) :
         return true;
     };
 
-    ui->checkBox1->space().addSchema(schema);
-    ui->checkBox2->space().addSchema(schema);
-    ui->checkBox3->space().addSchema(schema);
+    ui->checkBox1->spaceItem().addSchema(schema);
+    ui->checkBox2->spaceItem().addSchema(schema);
+    ui->checkBox3->spaceItem().addSchema(schema);
 
     // setup radio buttons
-    ui->radioButton1->space().setItem(ItemID(0, 0));
-    ui->radioButton2->space().setItem(ItemID(1, 0));
-    ui->radioButton3->space().setItem(ItemID(2, 0));
+    ui->radioButton1->spaceItem().setItem(ItemID(0, 0));
+    ui->radioButton2->spaceItem().setItem(ItemID(1, 0));
+    ui->radioButton3->spaceItem().setItem(ItemID(2, 0));
 
     schema.layout = makeLayoutLeft();
     auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
     schema.view = QSharedPointer<ViewRadio>::create(modelRadio);
 
-    ui->radioButton1->space().addSchema(schema);
-    ui->radioButton2->space().addSchema(schema);
-    ui->radioButton3->space().addSchema(schema);
+    ui->radioButton1->spaceItem().addSchema(schema);
+    ui->radioButton2->spaceItem().addSchema(schema);
+    ui->radioButton3->spaceItem().addSchema(schema);
 
     schema.layout = makeLayoutClient();
     modelText = QSharedPointer<ModelTextCallback>::create();
@@ -66,9 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     };
     schema.view = QSharedPointer<ViewText>::create(modelText, false, Qt::AlignLeft, Qt::ElideMiddle);
 
-    ui->radioButton1->space().addSchema(schema);
-    ui->radioButton2->space().addSchema(schema);
-    ui->radioButton3->space().addSchema(schema);
+    ui->radioButton1->spaceItem().addSchema(schema);
+    ui->radioButton2->spaceItem().addSchema(schema);
+    ui->radioButton3->spaceItem().addSchema(schema);
 
     /*
     view = new ViewText();

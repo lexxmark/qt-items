@@ -1,11 +1,11 @@
 #include "SpaceItem.h"
+#include "cache/CacheItemFactory.h"
 
 namespace Qi
 {
 
-SpaceItem::SpaceItem(const ItemID& item, SpaceHints hints)
-    : Space(hints),
-      m_item(item)
+SpaceItem::SpaceItem(const ItemID& item)
+    : m_item(item)
 {
 }
 
@@ -18,6 +18,11 @@ QRect SpaceItem::itemRect(const ItemID& visibleItem) const
     Q_UNUSED(visibleItem);
     Q_ASSERT(m_item == visibleItem);
     return QRect(QPoint(0, 0), m_size);
+}
+
+QSharedPointer<CacheItemFactory> SpaceItem::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+{
+    return createCacheItemFactoryItem(*this, viewApplicationMask);
 }
 
 void SpaceItem::setSize(const QSize& size)

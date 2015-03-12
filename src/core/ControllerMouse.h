@@ -42,10 +42,9 @@ public:
     virtual bool processMouseMove(QMouseEvent* /*event*/) { return false; }
     virtual bool processContextMenu(QContextMenuEvent* /*event*/) { return false; }
 
-    bool acceptEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr) const;
-    void doEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr);
-
-    virtual void updateEditLayout() {}
+    bool acceptInplaceEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr) const;
+    void doInplaceEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr);
+    void updateInplaceEditLayout();
 
 protected:
     ControllerMouse(ControllerMousePriority priority = ControllerMousePriorityNormal);
@@ -61,6 +60,8 @@ protected:
 
     class QI_EXPORT ActivationInfo
     {
+        Q_DISABLE_COPY(ActivationInfo)
+
     public:
         ActivationInfo(const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace);
 
@@ -74,6 +75,8 @@ protected:
 
     class QI_EXPORT ActivationState
     {
+        Q_DISABLE_COPY(ActivationState)
+
     public:
         explicit ActivationState(const ActivationInfo& info);
 
@@ -103,8 +106,9 @@ protected:
     virtual void startCapturingImpl();
     virtual void stopCapturingImpl();
 
-    virtual bool acceptEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const { return false; }
-    virtual void doEditImpl(const QKeyEvent* /*keyEvent*/) {}
+    virtual bool acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const { return false; }
+    virtual void doInplaceEditImpl(const QKeyEvent* /*keyEvent*/) {}
+    virtual void updateInplaceEditLayoutImpl() {}
 
 private:
     void activate(const ActivationInfo& activationInfo);

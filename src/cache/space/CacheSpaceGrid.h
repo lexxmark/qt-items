@@ -30,13 +30,10 @@ private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
     void invalidateItemsCacheStructureImpl() const override;
+    void updateItemsCacheSchemaImpl() const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx) const override;
     const CacheItem* cacheItemImpl(const ItemID& visibleItem) const override;
     const CacheItem* cacheItemByPositionImpl(const QPoint& point) const override;
-
-    QSize calculateItemSize(const ItemID& itemVisible, const GuiContext& ctx, ViewSizeMode sizeMode) const;
-
-    QSharedPointer<CacheItem> createCacheItem(const ItemID& itemAbsolute, const QPoint& itemOrigin, const QSize& itemSize) const;
 
     // source grid space
     QSharedPointer<SpaceGrid> m_grid;
@@ -46,9 +43,6 @@ private:
     mutable ItemID m_itemEnd;
     // caches items
     mutable QVector<QSharedPointer<CacheItem>> m_items;
-
-    // hints optimizations
-    mutable QScopedPointer<QMap<int, ViewSchema>> m_viewsByColumnOptimization;
 };
 
 } // end namespace Qi 

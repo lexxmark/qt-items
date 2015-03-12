@@ -37,13 +37,11 @@ SOURCES += QiAPI.cpp \
     items/cache/ViewCacheSpace.cpp \
     core/ext/ControllerMouseMultiple.cpp \
     cache/CacheControllerMouse.cpp \
-    cache/CacheItemIterator.cpp \
     core/ext/ControllerMouseCaptured.cpp \
     core/ext/ControllerMousePushable.cpp \
     items/checkbox/Check.cpp \
     items/radiobutton/Radio.cpp \
     items/text/Text.cpp \
-    widgets/SpaceWidget_p.cpp \
     items/selection/Selection.cpp \
     core/ControllerKeyboard.cpp \
     items/misc/ControllerMousePushableCallback.cpp \
@@ -65,7 +63,13 @@ SOURCES += QiAPI.cpp \
     items/sorting/Sorting.cpp \
     items/visible/Visible.cpp \
     items/filter/Filter.cpp \
-    items/filter/FilterText.cpp
+    items/filter/FilterText.cpp \
+    utils/InplaceEditing.cpp \
+    core/ext/ControllerMouseInplaceEdit.cpp \
+    cache/CacheItemFactory.cpp \
+    widgets/SpaceWidgetAbstract.cpp \
+    widgets/SpaceWidgetCore.cpp \
+    widgets/SpaceWidgetScrollAbstract.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -101,17 +105,14 @@ HEADERS +=  QiAPI.h \
     items/cache/ViewCacheSpace.h \
     core/ext/ControllerMouseMultiple.h \
     cache/CacheControllerMouse.h \
-    cache/CacheItemIterator.h \
     core/ext/ControllerMouseCaptured.h \
     core/ext/ControllerMousePushable.h \
     core/ext/ViewModeled.h \
     items/checkbox/Check.h \
     items/radiobutton/Radio.h \
     items/text/Text.h \
-    widgets/SpaceWidget_p.h \
     items/selection/Selection.h \
     core/ControllerKeyboard.h \
-    widgets/WidgetDriver.h \
     items/misc/ControllerMousePushableCallback.h \
     items/button/Button.h \
     items/image/StyleStandardPixmap.h \
@@ -132,7 +133,13 @@ HEADERS +=  QiAPI.h \
     items/sorting/Sorting.h \
     items/visible/Visible.h \
     items/filter/Filter.h \
-    items/filter/FilterText.h
+    items/filter/FilterText.h \
+    utils/InplaceEditing.h \
+    core/ext/ControllerMouseInplaceEdit.h \
+    cache/CacheItemFactory.h \
+    widgets/SpaceWidgetAbstract.h \
+    widgets/SpaceWidgetCore.h \
+    widgets/SpaceWidgetScrollAbstract.h
 
 win32 {
     TARGET_EXT = .dll

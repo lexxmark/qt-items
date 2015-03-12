@@ -18,7 +18,7 @@ public:
     virtual ~ItemsFilter();
 
     const QSharedPointer<Model>& modelToFilter() const { return m_modelToFilter; }
-    bool isItemFiltered(const ItemID& item) const { return isItemFilteredImpl(item); }
+    bool isItemPassFilter(const ItemID& item) const { return isItemPassFilterImpl(item); }
 
 signals:
     void filterChanged(const ItemsFilter*);
@@ -26,7 +26,7 @@ signals:
 protected:
     ItemsFilter(const QSharedPointer<Model>& modelToFilter);
 
-    virtual bool isItemFilteredImpl(const ItemID& item) const = 0;
+    virtual bool isItemPassFilterImpl(const ItemID& item) const = 0;
 
 private:
     void onModelToFilterChanged(const Model*);

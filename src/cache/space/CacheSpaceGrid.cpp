@@ -1,5 +1,6 @@
 #include "CacheSpaceGrid.h"
 #include "cache/CacheItem.h"
+#include "cache/CacheItemFactory.h"
 #include "utils/auto_value.h"
 #include <QMap>
 
@@ -74,7 +75,6 @@ void CacheSpaceGrid::clearItemsCacheImpl() const
     m_items.clear();
     m_scrollDelta = QPoint(0, 0);
     m_sizeDelta = QSize(0, 0);
-    m_viewsByColumnOptimization.reset();
 }
 
 void CacheSpaceGrid::validateItemsCacheImpl() const
@@ -147,15 +147,8 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
 
     // initialize non-intersected cells
     QPoint origin = originPos();
-    ItemID itemAbsolute;
-    QPoint itemOrigin;
-    QSize itemSize;
     for (ItemID itemVisible = newItemStart; itemVisible.column <= newItemEnd.column; ++itemVisible.column)
     {
-        itemAbsolute.column = columns.toAbsolute(itemVisible.column);
-        itemOrigin.rx() = (int)columns.startPos(itemVisible.column) + origin.x();
-        itemSize.rwidth() = (int)columns.lineSize(itemAbsolute.column);
-
         for (itemVisible.row = newItemStart.row; itemVisible.row <= newItemEnd.row; ++itemVisible.row)
         {
             ItemID item = itemVisible - newItemStart;
@@ -164,11 +157,9 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
             if (cacheItem)
                 continue;
 
-            itemAbsolute.row = rows.toAbsolute(itemVisible.row);
-            itemOrigin.ry() = (int)rows.startPos(itemVisible.row) + origin.y();
-            itemSize.rheight() = (int)rows.lineSize(itemAbsolute.row);
-
-            cacheItem = createCacheItem(itemAbsolute, itemOrigin, itemSize);
+            cacheItem = QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(itemVisible));
+            // correct rectangle
+            cacheItem->rect.translate(origin);
         }
     }
 
@@ -183,39 +174,20 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     m_itemsCacheInvalid = false;
 }
 
-QSharedPointer<CacheItem> CacheSpaceGrid::createCacheItem(const ItemID& itemAbsolute, const QPoint& itemOrigin, const QSize& itemSize) const
-{
-    auto_value<bool> inUse(m_cacheIsInUse, true);
-
-    auto cacheItem = QSharedPointer<CacheItem>::create();
-    cacheItem->item = itemAbsolute;
-    cacheItem->rect = QRect(itemOrigin, itemSize);
-
-    // init views
-    if (m_grid->hints() & SpaceHintSimilarViewsByColumns)
-    {
-        if (!m_viewsByColumnOptimization)
-            m_viewsByColumnOptimization.reset(new QMap<int, ViewSchema>());
-
-        ViewSchema& columnSchema = (*m_viewsByColumnOptimization)[itemAbsolute.column];
-        if (!columnSchema.isValid())
-            columnSchema = viewSchemaForItem(itemAbsolute, m_viewApplicationMask | m_grid->viewApplicationMask(), m_grid->schemasOrdered());
-
-        cacheItem->schema = columnSchema;
-    }
-    else
-    {
-        cacheItem->schema = viewSchemaForItem(itemAbsolute, m_viewApplicationMask | m_grid->viewApplicationMask(), m_grid->schemasOrdered());
-    }
-
-    return cacheItem;
-}
-
 void CacheSpaceGrid::invalidateItemsCacheStructureImpl() const
 {
     for (const auto& cacheItem : m_items)
     {
         cacheItem->invalidateCacheView();
+    }
+}
+
+void CacheSpaceGrid::updateItemsCacheSchemaImpl() const
+{
+    for (const auto& cacheItem : m_items)
+    {
+        cacheItem->invalidateCacheView();
+        m_cacheItemsFactory->updateSchema(*cacheItem);
     }
 }
 
@@ -262,18 +234,6 @@ const CacheItem* CacheSpaceGrid::cacheItemByPositionImpl(const QPoint& point) co
     int index = visibleItem.row * itemColumns + visibleItem.column;
     Q_ASSERT(index < m_items.size());
     return m_items[index].data();
-}
-
-QSize CacheSpaceGrid::calculateItemSize(const ItemID& itemVisible, const GuiContext& ctx, ViewSizeMode sizeMode) const
-{
-    auto_value<bool> inUse(m_cacheIsInUse, true);
-
-    const QPoint itemOrigin(0, 0);
-    const QSize itemSize(50, 20);//(int)ctx.defaultColumnWidth, (int)ctx.defaultRowHeight);
-    const ItemID itemAbsolute(m_grid->toAbsolute(itemVisible));
-
-    QSharedPointer<CacheItem> cacheItem = createCacheItem(itemAbsolute, itemOrigin, itemSize);
-    return cacheItem->calculateItemSize(ctx, sizeMode);
 }
 
 } // end namespace Qi

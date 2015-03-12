@@ -12,13 +12,14 @@ class QI_EXPORT SpaceItem: public Space
     Q_DISABLE_COPY(SpaceItem)
 
 public:
-    SpaceItem(const ItemID& item, SpaceHints hints = SpaceHintNone);
+    SpaceItem(const ItemID& item);
     ~SpaceItem();
 
     QSize size() const override { return m_size; }
     ItemID toAbsolute(const ItemID& visibleItem) const override { return visibleItem; }
     ItemID toVisible(const ItemID& absoluteItem) const override { return absoluteItem; }
     QRect itemRect(const ItemID& visibleItem) const override;
+    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask) const override;
 
     void setSize(const QSize& size);
 

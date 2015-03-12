@@ -1,6 +1,7 @@
 #include "SpaceGrid.h"
 #include "core/Model.h"
 #include "core/ext/Ranges.h"
+#include "cache/CacheItemFactory.h"
 
 namespace Qi
 {
@@ -330,19 +331,19 @@ private:
     ItemID m_rightItem;
 };
 
-SpaceGrid::SpaceGrid(SpaceHints hints)
-    : Space(hints),
-      m_rows(new Lines()),
-      m_columns(new Lines())
+SpaceGrid::SpaceGrid(SpaceGridHint hint)
+    : m_rows(new Lines()),
+      m_columns(new Lines()),
+      m_hint(hint)
 {
     connectLines(m_rows);
     connectLines(m_columns);
 }
 
-SpaceGrid::SpaceGrid(const QSharedPointer<Lines>& rows, const QSharedPointer<Lines>& columns, SpaceHints hints)
-    : Space(hints),
-      m_rows(rows),
-      m_columns(columns)
+SpaceGrid::SpaceGrid(const QSharedPointer<Lines>& rows, const QSharedPointer<Lines>& columns, SpaceGridHint hint)
+    : m_rows(rows),
+      m_columns(columns),
+      m_hint(hint)
 {
     connectLines(m_rows);
     connectLines(m_columns);
@@ -352,6 +353,15 @@ SpaceGrid::~SpaceGrid()
 {
     disconnectLines(m_rows);
     disconnectLines(m_columns);
+}
+
+void SpaceGrid::setHint(SpaceGridHint hint)
+{
+    if (m_hint == hint)
+        return;
+
+    m_hint = hint;
+    emit spaceChanged(this, ChangeReasonSpaceHint);
 }
 
 void SpaceGrid::setDimensions(int rows, int columns)
@@ -382,6 +392,18 @@ QRect SpaceGrid::itemRect(const ItemID& visibleItem) const
     rect.setRight(m_columns->endPos(visibleItem.column));
 
     return rect;
+}
+
+QSharedPointer<CacheItemFactory> SpaceGrid::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+{
+    switch (m_hint) {
+    case SpaceGridHintSameSchemasByColumn:
+        return createCacheItemFactorySameSchemaByColumn(*this, viewApplicationMask);
+    case SpaceGridHintSameSchemasByRow:
+        return createCacheItemFactorySameSchemaByRow(*this, viewApplicationMask);
+    default:
+        return createCacheItemFactoryDefault(*this, viewApplicationMask);
+    }
 }
 
 QSize SpaceGrid::itemSize(const ItemID& item) const

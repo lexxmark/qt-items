@@ -1,5 +1,6 @@
 #include "Text.h"
 #include <QStyleOptionViewItem>
+#include <QLineEdit>
 
 namespace Qi
 {
@@ -7,11 +8,12 @@ namespace Qi
 ViewText::ViewText(const QSharedPointer<ModelText>& model, bool useDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewModeled<ModelText>(model),
       m_alignment(alignment),
-      m_textElideMode(textElideMode)
+      m_textElideMode(textElideMode),
+      m_margins(2, 0, 2, 0)
 {
     if (useDefaultController)
     {
- //       setController(QSharedPointer<ControllerMouseText>::create(model));
+        setController(QSharedPointer<ControllerMouseText>::create(model));
     }
 }
 
@@ -31,6 +33,15 @@ void ViewText::setTextElideMode(Qt::TextElideMode textElideMode)
 
     m_textElideMode = textElideMode;
     emitViewChanged(ChangeReasonViewContent);
+}
+
+void ViewText::setMargins(const QMargins& margins)
+{
+    if (m_margins == margins)
+        return;
+
+    m_margins = margins;
+    emitViewChanged(ChangeReasonViewSize);
 }
 
 QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
@@ -62,7 +73,8 @@ QSize ViewText::sizeText(const QString& text, const GuiContext& ctx, const ItemI
     return ctx.widget->style()->sizeFromContents(QStyle::CT_ItemViewItem, &option, QSize(0, 0), ctx.widget) + QSize(5, 5);
     */
     QFontMetrics fontMetrics = ctx.widget->fontMetrics();
-    return QSize(fontMetrics.width(text), fontMetrics.height());
+    return QSize(fontMetrics.width(text) + m_margins.left() + m_margins.right(),
+                 fontMetrics.height() + m_margins.top() + m_margins.bottom());
 }
 
 void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* showTooltip) const
@@ -80,7 +92,7 @@ void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext
     ctx.widget->style()->drawControl(QStyle::CE_ItemViewItem, &option, painter, ctx.widget);
     */
 
-    QRect rect = cache.cacheView.rect();
+    QRect rect = cache.cacheView.rect().marginsRemoved(m_margins);
     QString textToDraw = text;
     Qt::TextElideMode elideMode = textElideMode(cache.item);
     if (elideMode != Qt::ElideNone)
@@ -126,6 +138,8 @@ void ViewTextOrHint::drawImpl(QPainter* painter, const GuiContext& ctx, const Ca
         painter->setPen(ctx.widget->palette().color(QPalette::Disabled, QPalette::Text));
         drawText(hintText, painter, ctx, cache, showTooltip);
         painter->setPen(oldPen);
+
+        if (showTooltip) *showTooltip = true;
     }
     else
         return ViewText::drawImpl(painter, ctx, cache, showTooltip);
@@ -142,6 +156,54 @@ bool ViewTextOrHint::tooltipTextImpl(const ItemID& item, QString& txt) const
     }
     else
         return ViewText::tooltipTextImpl(item, txt);
+}
+
+ControllerMouseText::ControllerMouseText(const QSharedPointer<ModelText>& model)
+    : ControllerMouseInplaceEdit(),
+      m_model(model),
+      m_liveUpdate(false)
+{
+    Q_ASSERT(m_model);
+}
+
+void ControllerMouseText::enableLiveUpdate(bool enable)
+{
+    m_liveUpdate = enable;
+}
+
+bool ControllerMouseText::acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
+{
+    return !keyEvent || !keyEvent->text().isEmpty();
+}
+
+QWidget* ControllerMouseText::createInplaceEditorImpl(const ItemID& item, const QRect& rect, QWidget* parent, const QKeyEvent* /*keyEvent*/)
+{
+    QLineEdit* editor = new QLineEdit(parent);
+    editor->setGeometry(rect);
+    editor->setText(m_model->value(item));
+
+    connect(editor, &QLineEdit::editingFinished, this, &ControllerMouseText::onEditingFinished);
+    if (m_liveUpdate)
+        connect(editor, &QLineEdit::textEdited, this, &ControllerMouseText::onTextEdited);
+
+    return editor;
+}
+
+void ControllerMouseText::onEditingFinished()
+{
+    auto editor = inplaceEditor<QLineEdit>();
+    if (!editor)
+        return;
+
+    m_model->setValue(activeItem(), editor->text());
+
+    // stop edit
+    stopInplaceEditor();
+}
+
+void ControllerMouseText::onTextEdited(const QString& text)
+{
+    m_model->setValue(activeItem(), text);
 }
 
 

@@ -3,9 +3,9 @@
 namespace Qi
 {
 
-ControllerContext::ControllerContext(QWidget* widget, WidgetDriver* widgetDriver)
+ControllerContext::ControllerContext(QWidget* widget, SpaceWidgetCore* widgetCore)
     : widget(widget),
-      widgetDriver(widgetDriver),
+      widgetCore(widgetCore),
       point(0, 0)
 {
 }

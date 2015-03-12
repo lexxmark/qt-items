@@ -1,15 +1,15 @@
 #include "CacheControllerMouse.h"
-#include "cache/CacheItemIterator.h"
+#include "cache/CacheItemFactory.h"
 #include "cache/space/CacheSpace.h"
-#include "widgets/WidgetDriver.h"
+#include "widgets/SpaceWidgetCore.h"
 #include "utils/auto_value.h"
 #include <QDebug>
 
 namespace Qi
 {
 
-CacheControllerMouse::CacheControllerMouse(QWidget* owner, WidgetDriver* driver, const QSharedPointer<CacheSpace> &cacheSpace)
-    : ControllerContext(owner, driver),
+CacheControllerMouse::CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, const QSharedPointer<CacheSpace> &cacheSpace)
+    : ControllerContext(owner, widgetCore),
       m_cacheSpaces(1, cacheSpace),
       m_capturingController(nullptr),
       m_isStopped(false),
@@ -42,7 +42,7 @@ void CacheControllerMouse::resume()
     m_isStopped = false;
 
     if (m_capturingController)
-        m_capturingController->updateEditLayout();
+        m_capturingController->updateInplaceEditLayout();
 }
 
 void CacheControllerMouse::clear()
@@ -59,19 +59,20 @@ void CacheControllerMouse::clear()
     Q_ASSERT(!m_capturingController);
 }
 
-bool CacheControllerMouse::doEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view)
+bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view)
 {
     bool needEnsureVisible = false;
 
-    QScopedPointer<CacheItemIterator> itemIt;
+    QScopedPointer<CacheItem> newItem;
     // look up cacheItem in existing cache grid
     CacheItem* cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
     if (!cacheItem)
     {
         // create temporary cache item
         needEnsureVisible = true;
-        itemIt.reset(new CacheItemIterator(*cacheSpace.space(), cacheSpace.viewApplicationMask()));
-        cacheItem = &itemIt->moveTo(visibleItem);
+        const auto& cacheItemFactory = cacheSpace.cacheItemFactory();
+        newItem.reset(new CacheItem(cacheItemFactory.create(visibleItem)));
+        cacheItem = newItem.data();
     }
 
     QVector<const View*> itemViews;
@@ -86,12 +87,12 @@ bool CacheControllerMouse::doEdit(const CacheSpace& cacheSpace, const ItemID& vi
         const auto& controller = itemView->controller();
         if (controller)
         {
-            if (!controller->acceptEdit(cacheItem->item, cacheSpace, keyEvent))
+            if (!controller->acceptInplaceEdit(cacheItem->item, cacheSpace, keyEvent))
                 continue;
 
             if (needEnsureVisible)
             {
-                widgetDriver->ensureVisible(visibleItem, &cacheSpace, true);
+                widgetCore->ensureVisible(visibleItem, &cacheSpace, true);
                 // get cache item from existing cache grid
                 cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
                 Q_ASSERT(cacheItem);
@@ -115,7 +116,7 @@ bool CacheControllerMouse::doEdit(const CacheSpace& cacheSpace, const ItemID& vi
 
             CacheContext cache(cacheItem->item, cacheItem->rect, *cacheView, &cacheSpace.window());
             // start edit
-            controller->doEdit(m_activeControllers, *this, cache, cacheSpace, keyEvent);
+            controller->doInplaceEdit(m_activeControllers, *this, cache, cacheSpace, keyEvent);
             return true;
         }
     }

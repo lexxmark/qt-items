@@ -7,22 +7,46 @@
 namespace Qi
 {
 
+CacheItemInfo::CacheItemInfo()
+{
+}
+
+CacheItemInfo::CacheItemInfo(const CacheItemInfo& other)
+{
+    *this = other;
+}
+
+CacheItemInfo& CacheItemInfo::operator=(const CacheItemInfo& other)
+{
+    item = other.item;
+    rect = other.rect;
+    schema = other.schema;
+    return *this;
+}
+
 CacheItem::CacheItem()
     : m_isCacheViewValid(false),
       m_isAnyFloatView(false)
 {
 }
 
+CacheItem::CacheItem(const CacheItemInfo& info)
+    : CacheItemInfo(info),
+      m_isCacheViewValid(false),
+      m_isAnyFloatView(false)
+{
+}
+
 CacheItem::CacheItem(const CacheItem& other)
+    : CacheItemInfo(other)
 {
     *this = other;
 }
 
 CacheItem& CacheItem::operator=(const CacheItem& other)
 {
-    item = other.item;
-    rect = other.rect;
-    schema = other.schema;
+    CacheItemInfo::operator =(other);
+
     m_cacheView = other.m_cacheView;
     m_isCacheViewValid = other.m_isCacheViewValid;
     m_isAnyFloatView = other.m_isAnyFloatView;

@@ -30,7 +30,7 @@ ControllerMouse::ActivationState::ActivationState(const ControllerMouse::Activat
 
 ItemID ControllerMouse::ActivationState::visibleItem() const
 {
-    return cacheSpace.space()->toVisible(item);
+    return cacheSpace.space().toVisible(item);
 }
 
 ControllerMouse::ControllerMouse(ControllerMousePriority priority)
@@ -195,12 +195,12 @@ void ControllerMouse::stopCapturingImpl()
     m_state = ControllerMouseStateActive;
 }
 
-bool ControllerMouse::acceptEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
+bool ControllerMouse::acceptInplaceEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
 {
-    return acceptEditImpl(item, cacheSpace, keyEvent);
+    return acceptInplaceEditImpl(item, cacheSpace, keyEvent);
 }
 
-void ControllerMouse::doEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent)
+void ControllerMouse::doInplaceEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent)
 {
     Q_ASSERT(m_state == ControllerMouseStateInactive);
     if (isCapturing())
@@ -210,7 +210,12 @@ void ControllerMouse::doEdit(QVector<ControllerMouse*>& activatedControllers, co
     activate(activationInfo);
     activatedControllers.append(this);
 
-    doEditImpl(keyEvent);
+    doInplaceEditImpl(keyEvent);
+}
+
+void ControllerMouse::updateInplaceEditLayout()
+{
+    updateInplaceEditLayoutImpl();
 }
 
 } // end namespace Qi

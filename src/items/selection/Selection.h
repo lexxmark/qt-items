@@ -22,7 +22,7 @@ public:
     ModelSelection(const QSharedPointer<Space>& space);
     virtual ~ModelSelection();
 
-    const Space* space() const { return m_space.data(); }
+    const Space& space() const { return *m_space.data(); }
 
     bool isItemSelected(const ItemID& item) const { return isItemSelectedImpl(item); }
     bool isVisibleItemSelected(const ItemID& visibleItem) const;
@@ -228,7 +228,7 @@ class QI_EXPORT ControllerKeyboardSelection: public ControllerKeyboard
     Q_DISABLE_COPY(ControllerKeyboardSelection)
 
 public:
-    ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace* cacheSpace, WidgetDriver* widgetDriver);
+    ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace* cacheSpace, SpaceWidgetCore* widgetCore);
     virtual ~ControllerKeyboardSelection();
 
     bool processKeyPress(QKeyEvent* event) override;
@@ -242,7 +242,7 @@ private:
 
     QSharedPointer<ModelSelection> m_model;
     const CacheSpace* m_cacheSpace;
-    WidgetDriver* m_widgetDriver;
+    SpaceWidgetCore* m_widgetCore;
 
     ItemID m_trackItem;
     RangeSelection m_selection;

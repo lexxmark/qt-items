@@ -12,16 +12,25 @@ class ControllerContext;
 class CacheSpace;
 struct TooltipInfo;
 
-class QI_EXPORT CacheItem
+class QI_EXPORT CacheItemInfo
 {
 public:
-    CacheItem();
-    CacheItem(const CacheItem& other);
-    CacheItem& operator=(const CacheItem& other);
+    CacheItemInfo();
+    CacheItemInfo(const CacheItemInfo&);
+    CacheItemInfo& operator=(const CacheItemInfo& other);
 
     ItemID item;
     QRect rect;
     ViewSchema schema;
+};
+
+class QI_EXPORT CacheItem: public CacheItemInfo
+{
+public:
+    CacheItem();
+    explicit CacheItem(const CacheItemInfo& info);
+    CacheItem(const CacheItem& other);
+    CacheItem& operator=(const CacheItem& other);
 
     const CacheView* cacheView() const { return m_cacheView.data(); }
 

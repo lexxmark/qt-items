@@ -20,8 +20,8 @@ public:
 
 protected:
     void applyImpl() override;
-    bool acceptEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
-    void doEditImpl(const QKeyEvent* keyEvent) override;
+    bool acceptInplaceEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
+    void doInplaceEditImpl(const QKeyEvent* keyEvent) override;
 
 private:
     void emitOnApply();

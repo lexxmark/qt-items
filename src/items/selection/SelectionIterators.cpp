@@ -9,7 +9,7 @@ ItemsIteratorSelectedVisible::ItemsIteratorSelectedVisible(const ModelSelection&
       m_rows(nullptr),
       m_columns(nullptr)
 {
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(m_selection.space());
+    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_selection.space());
     Q_ASSERT(spaceGrid);
     m_rows = spaceGrid->rows().data();
     m_columns = spaceGrid->columns().data();
@@ -59,7 +59,7 @@ ItemsIteratorSelectedVisibleByColumn::ItemsIteratorSelectedVisibleByColumn(const
     : m_selection(selection),
       m_rows(nullptr)
 {
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(m_selection.space());
+    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_selection.space());
     Q_ASSERT(spaceGrid);
     m_rows = spaceGrid->rows().data();
 

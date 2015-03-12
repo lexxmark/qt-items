@@ -1,23 +1,20 @@
 #include "ItemWidget.h"
+#include "cache/space/CacheSpaceItem.h"
 #include "cache/CacheItem.h"
-#include "SpaceWidget_p.h"
 #include <QResizeEvent>
 
 namespace Qi
 {
 
 ItemWidget::ItemWidget(QWidget* parent)
-    : QWidget(parent),
+    : SpaceWidgetAbstract(parent),
       m_syncSpaceSizeWithContent(true)
 {
+
     m_space = QSharedPointer<SpaceItem>::create(ItemID(0, 0));
-    auto cacheSpace = QSharedPointer<CacheSpaceItem>::create(m_space);
-    m_impl.reset(new SpaceWidgetPrivate(this, this, cacheSpace));
+    initSpaceWidgetCore(QSharedPointer<CacheSpaceItem>::create(m_space));
 
     connect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
-
-    // enable tracking mouse moves
-    setMouseTracking(true);
 }
 
 ItemWidget::~ItemWidget()
@@ -35,12 +32,12 @@ void ItemWidget::syncSpaceSizeWithContent(bool enable)
     if (m_syncSpaceSizeWithContent)
     {
         // shrink space size to fit item content
-        auto cacheItem = m_impl->cacheSpace().cacheItem(m_space->item());
+        auto cacheItem = mainCacheSpace().cacheItem(m_space->item());
         Q_ASSERT(cacheItem);
         if (!cacheItem)
             m_space->setSize(QSize());
         else
-            m_space->setSize(cacheItem->calculateItemSize(GuiContext(this)) + QSize(0, 0));
+            m_space->setSize(cacheItem->calculateItemSize(guiContext()));
     }
     else
     {
@@ -59,13 +56,11 @@ QSize ItemWidget::minimumSizeHint() const
     if (m_syncSpaceSizeWithContent)
         return m_space->size();
     else
-        return QWidget::minimumSizeHint();
+        return SpaceWidgetAbstract::minimumSizeHint();
 }
 
 bool ItemWidget::event(QEvent* e)
 {
-    bool result = QWidget::event(e);
-
     if (!m_syncSpaceSizeWithContent && e->type() == QEvent::Resize)
     {
         QResizeEvent* resizeEvent = static_cast<QResizeEvent*>(e);
@@ -73,8 +68,7 @@ bool ItemWidget::event(QEvent* e)
         m_space->setSize(resizeEvent->size());
     }
 
-    result |= m_impl->ownerEvent(e);
-    return result;
+    return SpaceWidgetAbstract::event(e);
 }
 
 void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
@@ -87,12 +81,12 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
         // shrink space size to fit item content
         if (m_syncSpaceSizeWithContent)
         {
-            auto cacheItem = m_impl->cacheSpace().cacheItem(m_space->item());
+            auto cacheItem = mainCacheSpace().cacheItem(m_space->item());
             Q_ASSERT(cacheItem);
             if (!cacheItem)
                 m_space->setSize(QSize());
             else
-                m_space->setSize(cacheItem->calculateItemSize(GuiContext(this)) + QSize(0, 0));
+                m_space->setSize(cacheItem->calculateItemSize(guiContext()));
         }
     }
 
@@ -101,22 +95,6 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
         // notify system to recalculate layout
         updateGeometry();
     }
-}
-
-void ItemWidget::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool /*validateItem*/)
-{
-    Q_UNUSED(visibleItem);
-    Q_UNUSED(cacheSpace);
-    Q_ASSERT(visibleItem == m_space->item());
-    Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);
-    // not applicable
-}
-
-bool ItemWidget::doEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent* event)
-{
-    Q_ASSERT(visibleItem == m_space->item());
-    Q_ASSERT(&m_impl->cacheSpace() == cacheSpace);
-    return m_impl->doEdit(*cacheSpace, visibleItem, event);
 }
 
 } // end namespace Qi

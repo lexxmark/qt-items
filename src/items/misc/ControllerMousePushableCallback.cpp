@@ -13,12 +13,12 @@ void ControllerMousePushableCallback::applyImpl()
     emitOnApply();
 }
 
-bool ControllerMousePushableCallback::acceptEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
+bool ControllerMousePushableCallback::acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
 {
     return keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
 }
 
-void ControllerMousePushableCallback::doEditImpl(const QKeyEvent* keyEvent)
+void ControllerMousePushableCallback::doInplaceEditImpl(const QKeyEvent* keyEvent)
 {
     Q_UNUSED(keyEvent);
     Q_ASSERT(keyEvent);
