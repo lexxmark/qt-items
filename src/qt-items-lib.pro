@@ -67,9 +67,11 @@ SOURCES += QiAPI.cpp \
     utils/InplaceEditing.cpp \
     core/ext/ControllerMouseInplaceEdit.cpp \
     cache/CacheItemFactory.cpp \
-    widgets/SpaceWidgetAbstract.cpp \
-    widgets/SpaceWidgetCore.cpp \
-    widgets/SpaceWidgetScrollAbstract.cpp
+    widgets/core/SpaceWidgetAbstract.cpp \
+    widgets/core/SpaceWidgetCore.cpp \
+    widgets/core/SpaceWidgetScrollAbstract.cpp \
+    misc/GridColumnsResizer.cpp \
+    utils/CallLater.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -137,9 +139,11 @@ HEADERS +=  QiAPI.h \
     utils/InplaceEditing.h \
     core/ext/ControllerMouseInplaceEdit.h \
     cache/CacheItemFactory.h \
-    widgets/SpaceWidgetAbstract.h \
-    widgets/SpaceWidgetCore.h \
-    widgets/SpaceWidgetScrollAbstract.h
+    widgets/core/SpaceWidgetAbstract.h \
+    widgets/core/SpaceWidgetCore.h \
+    widgets/core/SpaceWidgetScrollAbstract.h \
+    misc/GridColumnsResizer.h \
+    utils/CallLater.h
 
 win32 {
     TARGET_EXT = .dll

@@ -2,7 +2,7 @@
 #define QI_ITEM_WIDGET_H
 
 #include "space/SpaceItem.h"
-#include "SpaceWidgetAbstract.h"
+#include "core/SpaceWidgetAbstract.h"
 
 namespace Qi
 {

@@ -109,6 +109,26 @@ QSharedPointer<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior)
     return QSharedPointer<LayoutSquareBottom>::create(behavior);
 }
 
+QSharedPointer<Layout> makeLayoutFixedLeft(int width, LayoutBehaviorMask behavior)
+{
+    return QSharedPointer<LayoutFixedLeft>::create(width, behavior);
+}
+
+QSharedPointer<Layout> makeLayoutFixedRight(int width, LayoutBehaviorMask behavior)
+{
+    return QSharedPointer<LayoutFixedRight>::create(width, behavior);
+}
+
+QSharedPointer<Layout> makeLayoutFixedTop(int height, LayoutBehaviorMask behavior)
+{
+    return QSharedPointer<LayoutFixedTop>::create(height, behavior);
+}
+
+QSharedPointer<Layout> makeLayoutFixedBottom(int height, LayoutBehaviorMask behavior)
+{
+    return QSharedPointer<LayoutFixedBottom>::create(height, behavior);
+}
+
 bool LayoutCenter::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const
 {
     info.viewRect = info.itemRect;
@@ -245,6 +265,46 @@ bool LayoutSquareBottom::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& 
 
     info.viewRect = info.itemRect;
     info.viewRect.setTop(qMax(info.viewRect.top(), info.viewRect.bottom() - viewSize.height()));
+    if (!isTransparent())
+        info.itemRect.setBottom(info.viewRect.top()-1);
+
+    return true;
+}
+
+bool LayoutFixedLeft::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    info.viewRect = info.itemRect;
+    info.viewRect.setRight(qMin(info.viewRect.right(), info.viewRect.left() + m_width));
+    if (!isTransparent())
+        info.itemRect.setLeft(info.viewRect.right()+1);
+
+    return true;
+}
+
+bool LayoutFixedRight::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    info.viewRect = info.itemRect;
+    info.viewRect.setLeft(qMax(info.viewRect.left(), info.viewRect.right() - m_width));
+    if (!isTransparent())
+        info.itemRect.setRight(info.viewRect.left()-1);
+
+    return true;
+}
+
+bool LayoutFixedTop::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    info.viewRect = info.itemRect;
+    info.viewRect.setBottom(qMin(info.viewRect.bottom(), info.viewRect.top() + m_height));
+    if (!isTransparent())
+        info.itemRect.setTop(info.viewRect.bottom()+1);
+
+    return true;
+}
+
+bool LayoutFixedBottom::doLayoutImpl(const ViewInfo& /*viewInfo*/, LayoutInfo& info) const
+{
+    info.viewRect = info.itemRect;
+    info.viewRect.setTop(qMax(info.viewRect.top(), info.viewRect.bottom() - m_height));
     if (!isTransparent())
         info.itemRect.setBottom(info.viewRect.top()-1);
 

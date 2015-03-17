@@ -35,7 +35,7 @@ public:
     ItemID toAbsolute(const ItemID& visibleItem) const override { return ItemID(m_rows->toAbsoluteSafe(visibleItem.row), m_columns->toAbsoluteSafe(visibleItem.column)); }
     ItemID toVisible(const ItemID& absoluteItem) const override { return ItemID(m_rows->toVisibleSafe(absoluteItem.row), m_columns->toVisibleSafe(absoluteItem.column)); }
     QRect itemRect(const ItemID& visibleItem) const override;
-    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask) const override;
+    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     bool isEmpty() const { return m_rows->isEmpty() || m_columns->isEmpty(); }
     bool isEmptyVisible() const { return m_rows->isEmptyVisible() || m_columns->isEmptyVisible(); }

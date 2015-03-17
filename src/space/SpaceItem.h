@@ -19,7 +19,7 @@ public:
     ItemID toAbsolute(const ItemID& visibleItem) const override { return visibleItem; }
     ItemID toVisible(const ItemID& absoluteItem) const override { return absoluteItem; }
     QRect itemRect(const ItemID& visibleItem) const override;
-    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask) const override;
+    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     void setSize(const QSize& size);
 

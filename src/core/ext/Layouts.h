@@ -129,6 +129,54 @@ protected:
     bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
 };
 
+class QI_EXPORT LayoutFixedLeft : public LayoutFixedHor
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutFixedLeft)
+
+public:
+    LayoutFixedLeft(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutFixedHor(width, behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutFixedRight : public LayoutFixedHor
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutFixedRight)
+
+public:
+    LayoutFixedRight(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutFixedHor(width, behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutFixedTop : public LayoutFixedVer
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutFixedTop)
+
+public:
+    LayoutFixedTop(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutFixedVer(height, behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
+class QI_EXPORT LayoutFixedBottom : public LayoutFixedVer
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(LayoutFixedBottom)
+
+public:
+    LayoutFixedBottom(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone) : LayoutFixedVer(height, behavior) {}
+
+protected:
+    bool doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const override;
+};
+
 } // end namespace Qi
 
 #endif // QI_LAYOUTS_H

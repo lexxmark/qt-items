@@ -31,4 +31,14 @@ void LayoutSquareVer::expandSizeImpl(const ViewInfo& /*viewInfo*/, QSize& size) 
     size.rheight() += (viewSize.height()+1);
 }
 
+void LayoutFixedHor::expandSizeImpl(const ViewInfo& /*viewInfo*/, QSize& size) const
+{
+    size.rwidth() += m_width+1;
+}
+
+void LayoutFixedVer::expandSizeImpl(const ViewInfo& /*viewInfo*/, QSize& size) const
+{
+    size.rheight() += m_height+1;
+}
+
 } // end namespace Qi

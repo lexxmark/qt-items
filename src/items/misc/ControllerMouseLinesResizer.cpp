@@ -96,7 +96,7 @@ void ControllerMouseColumnsResizer::applyImpl()
     Q_ASSERT(isActive());
     Q_ASSERT(m_columnIndex != InvalidIndex);
 
-    int size = std::max<int>(MinLineSize, activationState().point().x() - m_position + m_delta);
+    int size = qMax(MinLineSize, activationState().point().x() - m_position + m_delta);
     m_columns->setLineSize(m_columnIndex, size);
 }
 
@@ -126,19 +126,23 @@ bool ControllerMouseRowsResizer::processMouseMove(QMouseEvent* event)
     return ControllerMouseCaptured::processMouseMove(event);
 }
 
-bool ControllerMouseRowsResizer::acceptImpl(const ActivationInfo& activationInfo) const
+bool ControllerMouseRowsResizer::acceptImpl(const ActivationInfo& /*activationInfo*/) const
 {
+    return true;
+    /*
     m_delta = activationInfo.cache.cacheView.rect().bottom() - activationInfo.context.point.y();
     if (abs(m_delta) < ToleranseZone)
         return true;
 
     return false;
+    */
 }
 
 void ControllerMouseRowsResizer::activateImpl(const ActivationInfo& activationInfo)
 {
     ControllerMouseCaptured::activateImpl(activationInfo);
 
+    m_delta = activationInfo.cache.cacheView.rect().bottom() - activationInfo.context.point.y();
     m_position = activationInfo.cache.itemRect.topLeft().y();
     m_trackPosition = activationInfo.context.point.y();
     m_rowIndex = activationInfo.item().row;
@@ -185,7 +189,7 @@ void ControllerMouseRowsResizer::applyImpl()
     Q_ASSERT(isActive());
     Q_ASSERT(m_rowIndex != InvalidIndex);
 
-    int size = std::max<int>(MinLineSize, activationState().point().y() - m_position + m_delta);
+    int size = qMax(MinLineSize, activationState().point().y() - m_position + m_delta);
     m_rows->setLineSize(m_rowIndex, size);
 }
 

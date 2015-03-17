@@ -34,9 +34,11 @@ public:
     void addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard);
 
     // scrolls widget to make visibleItem fully visible
-    void ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem);
+    void ensureVisible(const ItemID& visibleItem, const CacheSpace* cacheSpace, bool validateItem);
     // performs inplace editing for visibleItem
-    bool doInplaceEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent* event);
+    bool doInplaceEdit(const ItemID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
+
+    const GuiContext& guiContext() const { return m_guiContext; }
 
 protected:
     explicit SpaceWidgetCore(QWidget* owner);
@@ -48,8 +50,6 @@ protected:
 
     void stopControllers();
     void resumeControllers();
-
-    const GuiContext& guiContext() const { return m_guiContext; }
 
     // scrolls widget to make visibleItem fully visible
     virtual void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) = 0;

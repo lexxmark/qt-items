@@ -25,7 +25,7 @@ public:
     virtual ItemID toAbsolute(const ItemID& visibleItem) const = 0;
     virtual ItemID toVisible(const ItemID& absoluteItem) const = 0;
     virtual QRect itemRect(const ItemID& visibleItem) const = 0;
-    virtual QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask) const = 0;
+    virtual QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const = 0;
 
     const QVector<ItemSchema>& schemas() const { return m_schemas; }
     int addSchema(const ItemSchema& schema);

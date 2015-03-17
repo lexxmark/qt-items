@@ -2,7 +2,7 @@
 #define QI_GRID_WIDGET_H
 
 #include "space/SpaceGrid.h"
-#include "SpaceWidgetScrollAbstract.h"
+#include "core/SpaceWidgetScrollAbstract.h"
 
 namespace Qi
 {
@@ -40,6 +40,9 @@ public:
 
     const QSharedPointer<SpaceGrid>& subGrid(const ItemID& subGridID = clientID) const;
     CacheSpaceGrid& cacheSubGrid(const ItemID& subGridID);
+
+    const QSharedPointer<Lines>& rows(int subRowsID) const { return m_rows[subRowsID]; }
+    const QSharedPointer<Lines>& columns(int subColumnsID) const { return m_columns[subColumnsID]; }
 
 protected:
     // QAbstractScrollArea implementation

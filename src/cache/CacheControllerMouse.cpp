@@ -1,7 +1,7 @@
 #include "CacheControllerMouse.h"
 #include "cache/CacheItemFactory.h"
 #include "cache/space/CacheSpace.h"
-#include "widgets/SpaceWidgetCore.h"
+#include "widgets/core/SpaceWidgetCore.h"
 #include "utils/auto_value.h"
 #include <QDebug>
 

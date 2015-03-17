@@ -1,6 +1,6 @@
 #include "Selection.h"
 #include "cache/space/CacheSpaceGrid.h"
-#include "widgets/SpaceWidgetCore.h"
+#include "widgets/core/SpaceWidgetCore.h"
 #include <QStyleOptionViewItem>
 
 namespace Qi
@@ -491,7 +491,7 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
     case SelectionColumnsHeader:
     {
         QSet<int> rows;
-        for (ItemID item(std::min(m_startLine, m_trackLine), 0); item.row <= std::max(m_startLine, m_trackLine); ++item.row)
+        for (ItemID item(qMin(m_startLine, m_trackLine), 0); item.row <= qMax(m_startLine, m_trackLine); ++item.row)
         {
             rows.insert(space.toAbsolute(item).row);
         }
@@ -504,7 +504,7 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
     case SelectionRowsHeader:
     {
         QSet<int> columns;
-        for (ItemID item(0, std::min(m_startLine, m_trackLine)); item.column <= std::max(m_startLine, m_trackLine); ++item.column)
+        for (ItemID item(0, qMin(m_startLine, m_trackLine)); item.column <= qMax(m_startLine, m_trackLine); ++item.column)
         {
             columns.insert(space.toAbsolute(item).column);
         }
@@ -608,32 +608,32 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
 
     case Qt::Key_PageUp:
     {
-        rowOffset = -std::min(10, trackVisibleItem.row - 0);
+        rowOffset = -qMin(10, trackVisibleItem.row - 0);
     } break;
 
     case Qt::Key_PageDown:
     {
-        rowOffset = std::min(10, (rows->visibleCount() - 1) - trackVisibleItem.row);
+        rowOffset = qMin(10, (rows->visibleCount() - 1) - trackVisibleItem.row);
     } break;
 
     case Qt::Key_Up:
     {
-        rowOffset = -std::min(1, trackVisibleItem.row - 0);
+        rowOffset = -qMin(1, trackVisibleItem.row - 0);
     } break;
 
     case Qt::Key_Down:
     {
-        rowOffset = std::min(1, (rows->visibleCount() - 1) - trackVisibleItem.row);
+        rowOffset = qMin(1, (rows->visibleCount() - 1) - trackVisibleItem.row);
     } break;
 
     case Qt::Key_Left:
     {
-        columnOffset = -std::min(1, trackVisibleItem.column - 0);
+        columnOffset = -qMin(1, trackVisibleItem.column - 0);
     } break;
 
     case Qt::Key_Right:
     {
-        columnOffset = std::min(1, (columns->visibleCount() - 1) - trackVisibleItem.column);
+        columnOffset = qMin(1, (columns->visibleCount() - 1) - trackVisibleItem.column);
     } break;
 
     case 'a':

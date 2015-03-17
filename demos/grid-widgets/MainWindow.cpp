@@ -22,6 +22,7 @@
 #include "items/progressbar/Progress.h"
 #include "items/enum/Enum.h"
 
+#include "misc/GridColumnsResizer.h"
 #include "cache/space/CacheSpaceGrid.h"
 
 #include <QMessageBox>
@@ -108,22 +109,31 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup controllers to resize columns and rows
     {
+        auto rangeAll = makeRangeAll();
+        auto layoutRows = makeLayoutFixedBottom(3, LayoutBehaviorTransparent);
+        auto layoutColumns = makeLayoutFixedRight(3, LayoutBehaviorTransparent);
+
         auto view = QSharedPointer<View>::create();
         QSharedPointer<ControllerMouse> controller = QSharedPointer<ControllerMouseColumnsResizer>::create(topGrid->columns());
         view->addController(controller);
-        topGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
+        controller = QSharedPointer<ControllerMouseColumnsAutoFit>::create(ui->gridWidget, topID.column);
+        view->addController(controller);
+        topGrid->addSchema(rangeAll, view, layoutColumns);
 
         view = QSharedPointer<View>::create();
         controller = QSharedPointer<ControllerMouseRowsResizer>::create(leftGrid->rows());
         view->addController(controller);
-        leftGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
+        leftGrid->addSchema(rangeAll, view, layoutRows);
 
         view = QSharedPointer<View>::create();
         controller = QSharedPointer<ControllerMouseColumnsResizer>::create(fixedGrid->columns());
         view->addController(controller);
+        fixedGrid->addSchema(rangeAll, view, layoutColumns);
+
+        view = QSharedPointer<View>::create();
         controller = QSharedPointer<ControllerMouseRowsResizer>::create(fixedGrid->rows());
         view->addController(controller);
-        fixedGrid->addSchema(makeRangeAll(), view, makeLayoutBackground());
+        fixedGrid->addSchema(rangeAll, view, layoutRows);
     }
 
     int selectionViewIndex = 0;

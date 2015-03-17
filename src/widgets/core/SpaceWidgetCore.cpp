@@ -81,7 +81,7 @@ void SpaceWidgetCore::addControllerKeyboard(const QSharedPointer<ControllerKeybo
     }
 }
 
-void SpaceWidgetCore::ensureVisible(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
+void SpaceWidgetCore::ensureVisible(const ItemID& visibleItem, const CacheSpace* cacheSpace, bool validateItem)
 {
     ensureVisibleImpl(visibleItem, cacheSpace, validateItem);
 }
@@ -161,7 +161,7 @@ bool SpaceWidgetCore::processOwnerEvent(QEvent* event)
     return m_cacheControllers->processEvent(event) || processed;
 }
 
-bool SpaceWidgetCore::doInplaceEdit(const ItemID& visibleItem, const CacheSpace *cacheSpace, const QKeyEvent* event)
+bool SpaceWidgetCore::doInplaceEdit(const ItemID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event)
 {
     Q_ASSERT(m_cacheControllers);
     if (m_cacheControllers.isNull())
