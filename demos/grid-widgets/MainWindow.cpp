@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         auto rangeAll = makeRangeAll();
         auto layoutRows = makeLayoutFixedBottom(3, LayoutBehaviorTransparent);
-        auto layoutColumns = makeLayoutFixedRight(3, LayoutBehaviorTransparent);
+        auto layoutColumns = makeLayoutFixedRight(3);
 
         auto view = QSharedPointer<View>::create();
         QSharedPointer<ControllerMouse> controller = QSharedPointer<ControllerMouseColumnsResizer>::create(topGrid->columns());
@@ -187,7 +187,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         auto modelRowNum = QSharedPointer<ModelRowNumber>::create();
         auto modelRowText = QSharedPointer<ModelNumericText<int>>::create(modelRowNum);
-        leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewText>::create(modelRowText, false, Qt::AlignRight | Qt::AlignVCenter));
+        leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewText>::create(modelRowText, ViewDefaultControllerNone, Qt::AlignRight | Qt::AlignVCenter));
     }
 
     // text in all items except column 5, 6, 10 and 11

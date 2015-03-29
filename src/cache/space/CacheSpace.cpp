@@ -1,6 +1,7 @@
 #include "CacheSpace.h"
 #include "core/ControllerMouse.h"
 #include "cache/CacheItem.h"
+#include "cache/CacheItemFactory.h"
 #include "utils/auto_value.h"
 
 namespace Qi
@@ -122,6 +123,11 @@ void CacheSpace::clearItemsCache() const
     clearItemsCacheImpl();
 }
 
+QSharedPointer<CacheItem> CacheSpace::createCacheItem(const ItemID& visibleItem) const
+{
+    return QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(visibleItem));
+}
+
 void CacheSpace::validateItemsCache() const
 {
     if (!m_itemsCacheInvalid)
@@ -142,16 +148,32 @@ const CacheItem* CacheSpace::cacheItemByPosition(const QPoint& point) const
     return cacheItemByPositionImpl(point);
 }
 
+bool CacheSpace::forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+{
+    Q_ASSERT(visitor);
+    return forEachCacheItemImpl(visitor);
+}
+
 void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
 {
     validateItemsCache();
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
+    forEachCacheItem([&ctx, this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+                         cacheItem->validateCacheView(ctx, &m_window);
+                         return true;
+                     });
+
+    emit preDraw();
+
     painter->save();
     painter->setClipRect(m_window);
 
-    drawImpl(painter, ctx);
+    forEachCacheItem([painter, &ctx, this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+                         cacheItem->draw(painter, ctx, &m_window);
+                         return true;
+                     });
 
     painter->restore();
 }
@@ -188,8 +210,13 @@ void CacheSpace::updateCacheItemsFactory()
 {
     m_cacheItemsFactory = m_space->createCacheItemFactory(m_viewApplicationMask);
     Q_ASSERT(m_cacheItemsFactory);
+
     // update schemas
-    updateItemsCacheSchemaImpl();
+    forEachCacheItem([this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+                         cacheItem->invalidateCacheView();
+                         m_cacheItemsFactory->updateSchema(*cacheItem);
+                         return true;
+                     });
 }
 
 

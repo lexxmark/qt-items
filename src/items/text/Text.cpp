@@ -5,13 +5,13 @@
 namespace Qi
 {
 
-ViewText::ViewText(const QSharedPointer<ModelText>& model, bool useDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+ViewText::ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewModeled<ModelText>(model),
       m_alignment(alignment),
       m_textElideMode(textElideMode),
       m_margins(2, 0, 2, 0)
 {
-    if (useDefaultController)
+    if (createDefaultController)
     {
         setController(QSharedPointer<ControllerMouseText>::create(model));
     }
@@ -113,8 +113,8 @@ void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext
 }
 
 
-ViewTextOrHint::ViewTextOrHint(const QSharedPointer<ModelText>& model, bool useDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
-    : ViewText(model, useDefaultController, alignment, textElideMode)
+ViewTextOrHint::ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+    : ViewText(model, createDefaultController, alignment, textElideMode)
 {
 }
 
@@ -156,6 +156,27 @@ bool ViewTextOrHint::tooltipTextImpl(const ItemID& item, QString& txt) const
     }
     else
         return ViewText::tooltipTextImpl(item, txt);
+}
+
+ViewTextFont::ViewTextFont(const QSharedPointer<ModelFont>& model)
+    : ViewModeled<ModelFont>(model)
+{
+}
+
+ViewTextFont::ViewTextFont(const QFont& font)
+    : ViewModeled<ModelFont>(QSharedPointer<ModelStorageValue<QFont>>::create(font))
+{
+}
+
+void ViewTextFont::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
+{
+    m_oldFont = painter->font();
+    painter->setFont(theModel()->value(cache.item));
+}
+
+void ViewTextFont::cleanupDrawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const
+{
+    painter->setFont(m_oldFont);
 }
 
 ControllerMouseText::ControllerMouseText(const QSharedPointer<ModelText>& model)

@@ -21,7 +21,7 @@ class QI_EXPORT ViewText: public ViewModeled<ModelText>
     Q_DISABLE_COPY(ViewText)
 
 public:
-    ViewText(const QSharedPointer<ModelText>& model, bool useDefaultController = false, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     Qt::Alignment alignment(const ItemID& item) const { return alignmentImpl(item); }
     void setAlignment(Qt::Alignment alignment);
@@ -55,7 +55,7 @@ class QI_EXPORT ViewTextOrHint: public ViewText
     Q_DISABLE_COPY(ViewTextOrHint)
 
 public:
-    ViewTextOrHint(const QSharedPointer<ModelText>& model, bool useDefaultController = false, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     std::function<bool(const ItemID&, const ModelText*)> isItemHint;
     std::function<QString(const ItemID&, const ModelText*)> itemHintText;
@@ -65,6 +65,25 @@ protected:
     QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
     bool tooltipTextImpl(const ItemID& item, QString& txt) const override;
+};
+
+typedef ModelTyped<QFont> ModelFont;
+
+class QI_EXPORT ViewTextFont: public ViewModeled<ModelFont>
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ViewTextFont)
+
+public:
+    explicit ViewTextFont(const QSharedPointer<ModelFont>& model);
+    explicit ViewTextFont(const QFont& font);
+
+protected:
+    void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
+    void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;
+
+private:
+    mutable QFont m_oldFont;
 };
 
 class QI_EXPORT ControllerMouseText: public ControllerMouseInplaceEdit

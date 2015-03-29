@@ -45,6 +45,8 @@ public:
     const CacheItem* cacheItem(const ItemID& visibleItem) const;
     const CacheItem* cacheItemByPosition(const QPoint& point) const;
 
+    bool forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const;
+
     void draw(QPainter* painter, const GuiContext& ctx) const;
 
     void tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const;
@@ -52,18 +54,18 @@ public:
 
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
+    void preDraw() const;
 
 protected:
     explicit CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
 
     void validateItemsCache() const;
     void clearItemsCache() const;
+    QSharedPointer<CacheItem> createCacheItem(const ItemID& visibleItem) const;
 
     virtual void clearItemsCacheImpl() const = 0;
     virtual void validateItemsCacheImpl() const = 0;
-    virtual void invalidateItemsCacheStructureImpl() const = 0;
-    virtual void updateItemsCacheSchemaImpl() const = 0;
-    virtual void drawImpl(QPainter* painter, const GuiContext& ctx) const = 0;
+    virtual bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const = 0;
     virtual const CacheItem* cacheItemImpl(const ItemID& visibleItem) const = 0;
     virtual const CacheItem* cacheItemByPositionImpl(const QPoint& point) const = 0;
 

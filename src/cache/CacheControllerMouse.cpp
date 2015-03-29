@@ -76,7 +76,8 @@ bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, const Ite
     }
 
     QVector<const View*> itemViews;
-    cacheItem->addViews(itemViews);
+    if (cacheItem->schema.view)
+        cacheItem->schema.view->addView(cacheItem->item, itemViews);
 
     // search for controller acceptable for edit
     for (auto itemView: itemViews)

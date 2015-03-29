@@ -3,43 +3,34 @@
 
 #include "QiAPI.h"
 #include "space/SpaceGrid.h"
-#include <QAbstractScrollArea>
+#include "core/SpaceWidgetScrollAbstract.h"
 
 namespace Qi
 {
 
-class ItemWidgetPrivate;
-class ViewCache;
-/*
-class QI_EXPORT ListWidget: public QAbstractScrollArea
+class CacheSpaceGrid;
+
+class QI_EXPORT ListWidget: public SpaceWidgetScrollAbstract
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ListWidget)
 
 public:
     explicit ListWidget(QWidget *parent = nullptr);
-    explicit ListWidget(SpaceGrid* grid, QWidget *parent = nullptr);
     virtual ~ListWidget();
 
-    SpaceGrid& grid();
-    const SpaceGrid& grid() const;
+    const QSharedPointer<SpaceGrid>& grid() const { return m_grid; }
 
-    void setGrid(SpaceGrid* grid);
+    const QSharedPointer<Lines>& rows() const { return m_grid->rows(); }
+    const QSharedPointer<Lines>& columns() const { return m_grid->columns(); }
 
-protected:
-    bool viewportEvent(QEvent* event) override;
-    void resizeEvent(QResizeEvent* event) override;
-    void scrollContentsBy(int dx, int dy) override;
+    const QSharedPointer<CacheSpaceGrid>& cacheGrid() const { return m_cacheGrid;}
 
 private:
-    void init();
-    void updateFrame();
-
-    QScopedPointer<ItemWidgetPrivate> d;
-
-    QPointer<SpaceGrid> m_grid;
-    QPointer<ViewCache> m_viewGrid;
+    QSharedPointer<SpaceGrid> m_grid;
+    QSharedPointer<CacheSpaceGrid> m_cacheGrid;
 };
-*/
+
 } // end namespace Qi
 
 #endif // QI_LIST_WIDGET_H

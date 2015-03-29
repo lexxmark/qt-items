@@ -36,6 +36,12 @@ enum ViewApplicationFlag
 Q_DECLARE_FLAGS(ViewApplicationMask, ViewApplicationFlag)
 Q_DECLARE_OPERATORS_FOR_FLAGS(ViewApplicationMask)
 
+enum ViewDefaultController
+{
+    ViewDefaultControllerNone = 0x0,
+    ViewDefaultControllerCreate = 0x1
+};
+
 class QI_EXPORT GuiContext
 {
 public:

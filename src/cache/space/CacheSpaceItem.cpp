@@ -1,7 +1,6 @@
 #include "CacheSpaceItem.h"
 #include "core/ControllerMouse.h"
 #include "cache/CacheItem.h"
-#include "cache/CacheItemFactory.h"
 #include "utils/auto_value.h"
 
 namespace Qi
@@ -31,13 +30,22 @@ void CacheSpaceItem::validateItemsCacheImpl() const
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
-    m_item = QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(m_spaceItem->item()));
+    m_item = createCacheItem(m_spaceItem->item());
     m_item->rect.translate(originPos());
 
     // mark item as valid
     m_itemsCacheInvalid = false;
 }
 
+bool CacheSpaceItem::forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+{
+    if (m_item)
+        return visitor(m_item);
+    else
+        return true;
+}
+
+/*
 void CacheSpaceItem::invalidateItemsCacheStructureImpl() const
 {
     if (m_item)
@@ -58,7 +66,7 @@ void CacheSpaceItem::drawImpl(QPainter* painter, const GuiContext& ctx) const
     Q_ASSERT(!m_itemsCacheInvalid);
     m_item->draw(painter, ctx, &m_window);
 }
-
+*/
 const CacheItem* CacheSpaceItem::cacheItemImpl(const ItemID& visibleItem) const
 {
     if (m_item->item == visibleItem)

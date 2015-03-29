@@ -117,8 +117,7 @@ QString CacheItem::text() const
 
 void CacheItem::draw(QPainter *painter, const GuiContext& ctx, const QRect* visibleRect)
 {
-    if (!m_isCacheViewValid)
-        initializeCacheView(ctx, visibleRect);
+    validateCacheView(ctx, visibleRect);
 
     if (!m_cacheView)
         return;
@@ -215,17 +214,11 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
     return success;
 }
 
-void CacheItem::addViews(QVector<const View*>& views) const
+void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRect)
 {
-    if (!schema.view)
+    if (m_isCacheViewValid)
         return;
 
-    schema.view->addView(item, views);
-}
-
-void CacheItem::initializeCacheView(const GuiContext& ctx, const QRect* visibleRect)
-{
-    Q_ASSERT(!m_isCacheViewValid);
     Q_ASSERT(!m_cacheView);
 
     QRect* visibleItemRectPtr = nullptr;

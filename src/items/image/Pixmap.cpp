@@ -21,7 +21,12 @@ void ViewPixmap::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Ca
     int x = viewRect.left() + (viewRect.width() - pixmap.width()) / 2;
     int y = viewRect.top() + (viewRect.height() - pixmap.height()) / 2;
 
+    painter->save();
+    painter->setClipRect(viewRect);
+
     painter->drawPixmap(x, y, pixmap);
+
+    painter->restore();
 }
 
 } // end namespace Qi

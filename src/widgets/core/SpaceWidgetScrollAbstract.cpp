@@ -65,10 +65,7 @@ void SpaceWidgetScrollAbstract::ensureVisibleImpl(const ItemID& visibleItem, con
         if (!cacheItem)
             return;
 
-        if (!cacheItem->isCacheViewValid())
-        {
-            cacheItem->initializeCacheView(guiContext(), &cacheSpace->window());
-        }
+        cacheItem->validateCacheView(guiContext(), &cacheSpace->window());
     }
 }
 

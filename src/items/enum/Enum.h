@@ -154,8 +154,8 @@ class ViewEnumText: public ViewText
     Q_DISABLE_COPY(ViewEnumText)
 
 public:
-    ViewEnumText(const QSharedPointer<ModelEnum<EnumType>>& model, bool useDefaultController = false, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
-        : ViewText(QSharedPointer<ModelEnumText<EnumType>>::create(model), useDefaultController, alignment, textElideMode),
+    ViewEnumText(const QSharedPointer<ModelEnum<EnumType>>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
+        : ViewText(QSharedPointer<ModelEnumText<EnumType>>::create(model), createDefaultController, alignment, textElideMode),
           m_model(model)
     {
     }

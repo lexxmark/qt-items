@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     };
 
     schema.layout = makeLayoutClient();
-    schema.view = QSharedPointer<ViewText>::create(modelText, false, Qt::AlignLeft, Qt::ElideRight);
+    schema.view = QSharedPointer<ViewText>::create(modelText, ViewDefaultControllerNone, Qt::AlignLeft, Qt::ElideRight);
     schema.view->setController(controller);
     schema.view->tooltipTextCallback = [](const ItemID& /*item*/, QString& text)->bool {
         text = "Click me";
@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     modelText->getValueFunction = [](const ItemID& item) -> QString {
         return QString("RadioButton #%1").arg(item.row);
     };
-    schema.view = QSharedPointer<ViewText>::create(modelText, false, Qt::AlignLeft, Qt::ElideMiddle);
+    schema.view = QSharedPointer<ViewText>::create(modelText, ViewDefaultControllerNone, Qt::AlignLeft, Qt::ElideMiddle);
 
     ui->radioButton1->spaceItem().addSchema(schema);
     ui->radioButton2->spaceItem().addSchema(schema);

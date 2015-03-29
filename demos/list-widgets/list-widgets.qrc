@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/afghan-hound_01_sm.jpg</file>
+        <file>img/alaskan-malamute_01_sm.jpg</file>
+        <file>img/american-foxhound_01_sm.jpg</file>
+        <file>img/anatolian-shepherd_01_sm.jpg</file>
+        <file>img/australian-shepherd_01_sm.jpg</file>
+        <file>img/basenji_01_sm.jpg</file>
+        <file>img/basset-hound_01_sm.jpg</file>
+        <file>img/beagle_01_sm.jpg</file>
+        <file>img/belgian-malinois_01_sm.jpg</file>
+        <file>img/borzoi_01_sm.jpg</file>
+        <file>img/bulldog_01_sm.jpg</file>
+        <file>img/dalmation_01_sm.jpg</file>
+        <file>img/english-setter_01_sm.jpg</file>
+        <file>img/greater-swiss-mountain-dog_01_sm.jpg</file>
+        <file>img/irish-water-spaniel_01_sm.jpg</file>
+        <file>img/neopolitan-mastiff_01_sm.jpg</file>
+        <file>img/poodle-standard_01_sm.jpg</file>
+        <file>img/shiba-inu_01_sm.jpg</file>
+        <file>img/siberian-husky_01_sm.jpg</file>
+        <file>img/vizsla_01_sm.jpg</file>
+    </qresource>
+</RCC>

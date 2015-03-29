@@ -21,9 +21,7 @@ public:
 private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
-    void invalidateItemsCacheStructureImpl() const override;
-    void updateItemsCacheSchemaImpl() const override;
-    void drawImpl(QPainter* painter, const GuiContext& ctx) const override;
+    bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
     const CacheItem* cacheItemImpl(const ItemID& visibleItem) const override;
     const CacheItem* cacheItemByPositionImpl(const QPoint& point) const override;
 

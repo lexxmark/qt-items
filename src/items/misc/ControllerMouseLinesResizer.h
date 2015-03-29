@@ -17,7 +17,7 @@ class QI_EXPORT ControllerMouseColumnsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseColumnsResizer)
 
 public:
-    ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority = ControllerMousePriorityOverlay);
+    ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority = ControllerMousePriorityNormal);
 
     bool processMouseMove(QMouseEvent* event) override;
 
@@ -47,7 +47,7 @@ class QI_EXPORT ControllerMouseRowsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseRowsResizer)
 
 public:
-    ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority = ControllerMousePriorityOverlay);
+    ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority = ControllerMousePriorityNormal);
 
     bool processMouseMove(QMouseEvent* event) override;
 

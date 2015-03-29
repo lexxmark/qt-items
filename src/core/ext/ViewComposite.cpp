@@ -78,8 +78,16 @@ void ViewComposite::drawImpl(QPainter* painter, const GuiContext& ctx, const Cac
     {
         subCacheView.draw(painter, ctx, cache.item, cache.itemRect, cache.visibleRect);
     }
-}
 
+    // restore draw state in reversed order
+    const auto& subCacheViews = cache.cacheView.subViews();
+    for (int i = subCacheViews.size() - 1; i >= 0; --i)
+    {
+        const auto& subCacheView = subCacheViews[i];
+        subCacheView.cleanupDraw(painter, ctx, cache.item, cache.itemRect, cache.visibleRect);
+    }
+}
+/*
 void ViewComposite::cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const
 {
     // restore draw state in reversed order
@@ -90,7 +98,7 @@ void ViewComposite::cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, co
         subCacheView.cleanupDraw(painter, ctx, cache.item, cache.itemRect, cache.visibleRect);
     }
 }
-
+*/
 bool ViewComposite::textImpl(const ItemID& item, QString& txt) const
 {
     bool isAnySubText = false;

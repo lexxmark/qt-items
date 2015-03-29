@@ -1,6 +1,5 @@
 #include "CacheSpaceGrid.h"
 #include "cache/CacheItem.h"
-#include "cache/CacheItemFactory.h"
 #include "utils/auto_value.h"
 #include <QMap>
 
@@ -19,8 +18,7 @@ CacheSpaceGrid::~CacheSpaceGrid()
 
 bool CacheSpaceGrid::isItemInFrame(const ItemID& visibleItem) const
 {
-    if (m_itemsCacheInvalid)
-        validateItemsCache();
+    validateItemsCache();
 
     return visibleItem.row >= m_itemStart.row && visibleItem.row <= m_itemEnd.row &&
             visibleItem.column >= m_itemStart.column && visibleItem.column <= m_itemEnd.column;
@@ -28,8 +26,7 @@ bool CacheSpaceGrid::isItemInFrame(const ItemID& visibleItem) const
 
 bool CacheSpaceGrid::isItemInFrameStrict(const ItemID& visibleItem) const
 {
-    if (m_itemsCacheInvalid)
-        validateItemsCache();
+    validateItemsCache();
 
     return visibleItem.row > m_itemStart.row && visibleItem.row < m_itemEnd.row &&
             visibleItem.column > m_itemStart.column && visibleItem.column < m_itemEnd.column;
@@ -46,8 +43,7 @@ bool CacheSpaceGrid::isItemAbsInFrame(const ItemID& absItem) const
 
 void CacheSpaceGrid::visibleItemsRange(ItemID& itemStart, ItemID& itemEnd) const
 {
-    if (m_itemsCacheInvalid)
-        validateItemsCache();
+    validateItemsCache();
 
     itemStart = m_itemStart;
     itemEnd = m_itemEnd;
@@ -157,7 +153,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
             if (cacheItem)
                 continue;
 
-            cacheItem = QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(itemVisible));
+            cacheItem = createCacheItem(itemVisible);
             // correct rectangle
             cacheItem->rect.translate(origin);
         }
@@ -174,32 +170,14 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     m_itemsCacheInvalid = false;
 }
 
-void CacheSpaceGrid::invalidateItemsCacheStructureImpl() const
+bool CacheSpaceGrid::forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
 {
     for (const auto& cacheItem : m_items)
     {
-        cacheItem->invalidateCacheView();
+        if (!visitor(cacheItem))
+            return false;
     }
-}
-
-void CacheSpaceGrid::updateItemsCacheSchemaImpl() const
-{
-    for (const auto& cacheItem : m_items)
-    {
-        cacheItem->invalidateCacheView();
-        m_cacheItemsFactory->updateSchema(*cacheItem);
-    }
-}
-
-void CacheSpaceGrid::drawImpl(QPainter* painter, const GuiContext& ctx) const
-{
-    Q_ASSERT(!m_itemsCacheInvalid);
-
-    for (const auto& cacheItem : m_items)
-    {
-        //if (drawContext.pDC->RectVisible(&cacheCell->cell.rect))
-            cacheItem->draw(painter, ctx, &m_window);
-    }
+    return true;
 }
 
 const CacheItem* CacheSpaceGrid::cacheItemImpl(const ItemID& visibleItem) const
@@ -209,13 +187,14 @@ const CacheItem* CacheSpaceGrid::cacheItemImpl(const ItemID& visibleItem) const
 
     int itemColumns = m_itemEnd.column - m_itemStart.column + 1;
     auto item = visibleItem - m_itemStart;
-    return m_items[item.row * itemColumns + item.column].data();
+    int index = item.row * itemColumns + item.column;
+    Q_ASSERT(index < m_items.size());
+    return m_items[index].data();
 }
 
 const CacheItem* CacheSpaceGrid::cacheItemByPositionImpl(const QPoint& point) const
 {
-    if (m_itemsCacheInvalid)
-        validateItemsCache();
+    validateItemsCache();
 
     if (isEmpty())
         return nullptr;
@@ -226,14 +205,7 @@ const CacheItem* CacheSpaceGrid::cacheItemByPositionImpl(const QPoint& point) co
     visibleItem.row = m_grid->rows()->findVisibleIDByPos(gridPoint.y(), m_itemStart.row, m_itemEnd.row);
     visibleItem.column = m_grid->columns()->findVisibleIDByPos(gridPoint.x(), m_itemStart.column, m_itemEnd.column);
 
-    if (!isItemInFrame(visibleItem))
-        return nullptr;
-
-    int itemColumns = m_itemEnd.column - m_itemStart.column + 1;
-    visibleItem = visibleItem - m_itemStart;
-    int index = visibleItem.row * itemColumns + visibleItem.column;
-    Q_ASSERT(index < m_items.size());
-    return m_items[index].data();
+    return cacheItem(visibleItem);
 }
 
 } // end namespace Qi

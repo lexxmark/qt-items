@@ -12,8 +12,8 @@ class ControllerMouse;
 
 enum ControllerMousePriority
 {
-    ControllerMousePriorityNormal = 1, // normal priority
     ControllerMousePriorityBackground = 0, // low priority
+    ControllerMousePriorityNormal = 1, // normal priority
     ControllerMousePriorityOverlay = 2 // high priority
 };
 

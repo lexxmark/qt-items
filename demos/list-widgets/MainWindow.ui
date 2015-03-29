@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>276</height>
+    <width>627</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,6 +33,9 @@
     <locale language="English" country="UnitedStates"/>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="Qi::ListWidget" name="listWidget" native="true"/>
+    </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="sizeConstraint">
@@ -73,6 +76,14 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Qi::ListWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">widgets/ListWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

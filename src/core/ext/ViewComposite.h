@@ -27,7 +27,7 @@ protected:
     CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
     QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
-    void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;
+    //void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;
     bool textImpl(const ItemID& item, QString& txt) const override;
 
 private slots:
