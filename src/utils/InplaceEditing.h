@@ -25,7 +25,7 @@ private:
 
     QWidget* m_inplaceEditor;
 
-    friend InplaceEdit& inplaceEdit();
+    friend QI_EXPORT InplaceEdit& inplaceEdit();
 };
 
 QI_EXPORT InplaceEdit& inplaceEdit();

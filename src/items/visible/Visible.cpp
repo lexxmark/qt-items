@@ -69,6 +69,7 @@ ControllerMouseVisible::ControllerMouseVisible(const QSharedPointer<ViewVisible>
 
 bool ControllerMouseVisible::event(QEvent* e)
 {
+    Q_UNUSED(e);
     Q_ASSERT(e->type() == QEvent::LayoutRequest);
     // notify view visibility has changed
     m_view->emitViewChanged(ChangeReasonViewSize);

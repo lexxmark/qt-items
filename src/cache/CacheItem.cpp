@@ -38,9 +38,11 @@ CacheItem::CacheItem(const CacheItemInfo& info)
 }
 
 CacheItem::CacheItem(const CacheItem& other)
-    : CacheItemInfo(other)
+    : CacheItemInfo(other),
+      m_cacheView(other.m_cacheView),
+      m_isCacheViewValid(other.m_isCacheViewValid),
+      m_isAnyFloatView(other.m_isAnyFloatView)
 {
-    *this = other;
 }
 
 CacheItem& CacheItem::operator=(const CacheItem& other)
@@ -246,7 +248,7 @@ void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRec
             m_isAnyFloatView = false;
             // check views for floating
             m_cacheView->forEach([this](const CacheView& cacheView)->bool {
-                if (!cacheView.layout()->isFloat())
+                if (cacheView.layout()->isFloat())
                 {
                     m_isAnyFloatView = true;
                     return false;

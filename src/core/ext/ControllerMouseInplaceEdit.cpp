@@ -136,6 +136,7 @@ QRect ControllerMouseInplaceEdit::editorRect() const
 
 void ControllerMouseInplaceEdit::onInplaceEditorDestroyed(QObject* obj)
 {
+    Q_UNUSED(obj);
     Q_ASSERT(m_inplaceEditor == obj);
     m_inplaceEditor = nullptr;
 

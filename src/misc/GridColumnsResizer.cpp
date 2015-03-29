@@ -378,7 +378,7 @@ ListColumnsResizer::ListColumnsResizer(ListWidget* listWidget)
     : m_listWidget(listWidget)
 {
     Q_ASSERT(!m_listWidget.isNull());
-    m_listWidget->installEventFilter(this);
+    m_listWidget->viewport()->installEventFilter(this);
 
     connect(m_listWidget->rows().data(), &Lines::linesChanged, this, &ListColumnsResizer::onRowsChanged);
     connect(m_listWidget->columns().data(), &Lines::linesChanged, this, &ListColumnsResizer::onColumnsChanged);
@@ -389,7 +389,7 @@ ListColumnsResizer::~ListColumnsResizer()
 {
     if (!m_listWidget.isNull())
     {
-        m_listWidget->removeEventFilter(this);
+        m_listWidget->viewport()->removeEventFilter(this);
 
         disconnect(m_listWidget->rows().data(), &Lines::linesChanged, this, &ListColumnsResizer::onRowsChanged);
         disconnect(m_listWidget->columns().data(), &Lines::linesChanged, this, &ListColumnsResizer::onColumnsChanged);
@@ -485,11 +485,12 @@ void ListColumnsResizer::invalidateFitCache()
 
 bool ListColumnsResizer::eventFilter(QObject* object, QEvent* event)
 {
-    Q_ASSERT(object == m_listWidget.data());
+    Q_ASSERT(object == m_listWidget->viewport());
 
     if (event->type() == QEvent::Resize)
     {
-        doResizeLater();
+        doResize();
+        //doResizeLater();
     }
 
     return QObject::eventFilter(object, event);

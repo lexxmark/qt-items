@@ -54,7 +54,7 @@ private:
     bool m_isActive;
 };
 
-QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter);
+QI_EXPORT QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter);
 
 class QI_EXPORT ItemsFilterTextByText: public ItemsFilterByText
 {

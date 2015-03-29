@@ -112,6 +112,7 @@ bool InplaceEdit::eventFilter(QObject* watched, QEvent* event)
 
 void InplaceEdit::onEditorDestroyed(QObject* object)
 {
+    Q_UNUSED(object);
     Q_ASSERT(object == m_inplaceEditor);
 
     QCoreApplication::instance()->removeEventFilter(this);

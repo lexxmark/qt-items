@@ -107,6 +107,16 @@ MainWindow::MainWindow(QWidget *parent) :
         clientGrid->addSchema(range, QSharedPointer<ViewAlternateBackground>::create(), makeLayoutBackground());
     }
 
+    int selectionViewIndex = 0;
+    // setup selection
+    {
+        selectionViewIndex = clientGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionClient>::create(selection), makeLayoutBackground());
+        topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionRowsHeader), makeLayoutBackground());
+        leftGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionColumnsHeader), makeLayoutBackground());
+        fixedGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionCornerHeader), makeLayoutBackground());
+        ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
+    }
+
     // setup controllers to resize columns and rows
     {
         auto rangeAll = makeRangeAll();
@@ -134,16 +144,6 @@ MainWindow::MainWindow(QWidget *parent) :
         controller = QSharedPointer<ControllerMouseRowsResizer>::create(fixedGrid->rows());
         view->addController(controller);
         fixedGrid->addSchema(rangeAll, view, layoutRows);
-    }
-
-    int selectionViewIndex = 0;
-    // setup selection
-    {
-        selectionViewIndex = clientGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionClient>::create(selection), makeLayoutBackground());
-        topGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionRowsHeader), makeLayoutBackground());
-        leftGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionColumnsHeader), makeLayoutBackground());
-        fixedGrid->addSchema(makeRangeAll(), QSharedPointer<ViewSelectionHeader>::create(selection, SelectionCornerHeader), makeLayoutBackground());
-        ui->gridWidget->setControllerKeyboard(QSharedPointer<ControllerKeyboardSelection>::create(selection, &ui->gridWidget->cacheSubGrid(clientID), ui->gridWidget));
     }
 
     // setup sortings

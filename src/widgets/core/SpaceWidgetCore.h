@@ -18,7 +18,7 @@ class Space;
 class CacheControllerMouse;
 class ControllerKeyboard;
 
-class SpaceWidgetCore
+class QI_EXPORT SpaceWidgetCore
 {
     Q_DISABLE_COPY(SpaceWidgetCore)
 
