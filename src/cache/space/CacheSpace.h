@@ -45,12 +45,24 @@ public:
     const CacheItem* cacheItem(const ItemID& visibleItem) const;
     const CacheItem* cacheItemByPosition(const QPoint& point) const;
 
-    bool forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const;
-
     void draw(QPainter* painter, const GuiContext& ctx) const;
 
     void tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const;
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
+
+    struct QI_EXPORT IterateInfo
+    {
+        QSharedPointer<CacheItem> cacheItem;
+        int cacheItemIndex;
+        CacheView* cacheView;
+        int cacheViewIndex;
+
+        IterateInfo(): cacheItemIndex(0), cacheView(nullptr), cacheViewIndex(0) {}
+    };
+
+    bool forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const;
+    bool forEachCacheView(const std::function<bool(const IterateInfo&)>& visitor) const;
+    //bool forEachCacheView(const std::function<bool(const QSharedPointer<CacheItem>&, CacheView*)>& visitor);
 
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);

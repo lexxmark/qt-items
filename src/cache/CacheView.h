@@ -38,14 +38,14 @@ public:
     bool tooltipText(const ItemID& item, QString& tooltipText) const;
 
     template <typename Pred>
-    bool forEach(Pred pred)
+    bool forEachCacheView(Pred pred)
     {
-        if (!pred(*this))
+        if (!pred(this))
             return false;
 
         for (auto& cacheSubView: m_subViews)
         {
-            if (!cacheSubView.forEach(pred))
+            if (!cacheSubView.forEachCacheView(pred))
                 return false;
         }
 
@@ -53,14 +53,14 @@ public:
     }
 
     template <typename Pred>
-    bool forEach(Pred pred) const
+    bool forEachCacheView(Pred pred) const
     {
-        if (!pred(*this))
+        if (!pred(this))
             return false;
 
         for (const auto& cacheSubView: m_subViews)
         {
-            if (!cacheSubView.forEach(pred))
+            if (!cacheSubView.forEachCacheView(pred))
                 return false;
         }
 

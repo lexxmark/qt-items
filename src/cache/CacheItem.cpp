@@ -63,10 +63,10 @@ const CacheView* CacheItem::findCacheViewByController(const ControllerMouse* con
 
     const CacheView* result = nullptr;
 
-    m_cacheView->forEach([&result, controller](const CacheView& cacheView)->bool {
-        if (cacheView.view()->controller().data() == controller)
+    m_cacheView->forEachCacheView([&result, controller](const CacheView* cacheView)->bool {
+        if (cacheView->view()->controller().data() == controller)
         {
-            result = &cacheView;
+            result = cacheView;
             return false;
         }
         else
@@ -101,8 +101,8 @@ void CacheItem::correctRectangles(const QPoint &offset)
     // just offset all rects
     if (m_cacheView)
     {
-        m_cacheView->forEach([&offset](CacheView& cacheView)->bool {
-            cacheView.rRect().translate(offset);
+        m_cacheView->forEachCacheView([&offset](CacheView* cacheView)->bool {
+            cacheView->rRect().translate(offset);
             return true;
         });
     }
@@ -142,14 +142,14 @@ void CacheItem::tryActivateControllers(const ControllerContext& context, const C
     QVector<ControllerInfo_t> itemControllersInfo;
 
     // collect affected controllers
-    m_cacheView->forEach([&itemControllersInfo, &context](const CacheView& cacheView)->bool {
-        if (!cacheView.view()->controller())
+    m_cacheView->forEachCacheView([&itemControllersInfo, &context](const CacheView* cacheView)->bool {
+        if (!cacheView->view()->controller())
             return true;
 
-        if (!cacheView.rect().contains(context.point))
+        if (!cacheView->rect().contains(context.point))
             return true;
 
-        itemControllersInfo.push_back(ControllerInfo_t(cacheView.view()->controller().data(), &cacheView));
+        itemControllersInfo.push_back(ControllerInfo_t(cacheView->view()->controller().data(), cacheView));
 
         return true;
     });
@@ -186,15 +186,15 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
         return false;
 
     bool success = false;
-    m_cacheView->forEach([&success, &point, &tooltipInfo, this](const CacheView& cacheView)->bool {
+    m_cacheView->forEachCacheView([&success, &point, &tooltipInfo, this](const CacheView* cacheView)->bool {
         // skip views not under the point
-        if (!cacheView.rect().contains(point))
+        if (!cacheView->rect().contains(point))
             return true;
 
-        if (cacheView.tooltipText(item, tooltipInfo.text))
+        if (cacheView->tooltipText(item, tooltipInfo.text))
         {
             // save view rect
-            tooltipInfo.rect = cacheView.rect();
+            tooltipInfo.rect = cacheView->rect();
             // mark success flag
             success = true;
             // stop searching
@@ -202,7 +202,7 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
         }
         else
         {
-            if (cacheView.view()->tooltipByPoint(point, item, tooltipInfo))
+            if (cacheView->view()->tooltipByPoint(point, item, tooltipInfo))
             {
                 success = true;
                 // stop searching
@@ -247,8 +247,8 @@ void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRec
 
             m_isAnyFloatView = false;
             // check views for floating
-            m_cacheView->forEach([this](const CacheView& cacheView)->bool {
-                if (cacheView.layout()->isFloat())
+            m_cacheView->forEachCacheView([this](const CacheView* cacheView)->bool {
+                if (cacheView->layout()->isFloat())
                 {
                     m_isAnyFloatView = true;
                     return false;

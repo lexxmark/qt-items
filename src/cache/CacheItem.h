@@ -33,6 +33,7 @@ public:
     CacheItem& operator=(const CacheItem& other);
 
     const CacheView* cacheView() const { return m_cacheView.data(); }
+    CacheView* cacheView() { return m_cacheView.data(); }
 
     bool isCacheViewValid() const { return m_isCacheViewValid; }
     const CacheView* findCacheViewByController(const ControllerMouse* controller) const;

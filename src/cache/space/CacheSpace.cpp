@@ -42,12 +42,12 @@ void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
     {
         // update items factory
         updateCacheItemsFactory();
-        emit cacheChanged(this, ChangeReasonCacheContent);
+        emit cacheChanged(this, reason|ChangeReasonCacheContent);
     }
     else if (reason & ChangeReasonSpaceItemsContent)
     {
         // forward event
-        emit cacheChanged(this, ChangeReasonCacheContent);
+        emit cacheChanged(this, reason|ChangeReasonCacheContent);
     }
 }
 
@@ -153,6 +153,44 @@ bool CacheSpace::forEachCacheItem(const std::function<bool(const QSharedPointer<
     Q_ASSERT(visitor);
     return forEachCacheItemImpl(visitor);
 }
+
+bool CacheSpace::forEachCacheView(const std::function<bool(const CacheSpace::IterateInfo&)>& visitor) const
+{
+    Q_ASSERT(visitor);
+
+    IterateInfo info;
+    return forEachCacheItem([&visitor, &info](const QSharedPointer<CacheItem>& cacheItem)->bool {
+
+        bool result = true;
+
+        info.cacheItem = cacheItem;
+        info.cacheViewIndex = 0;
+        auto rootCacheView = cacheItem->cacheView();
+        if (rootCacheView)
+        {
+            result = rootCacheView->forEachCacheView([&visitor, &info](CacheView* cacheView)->bool {
+                info.cacheView = cacheView;
+                bool result = visitor(info);
+                ++info.cacheViewIndex;
+                return result;
+            });
+        }
+        ++info.cacheItemIndex;
+        return result;
+    });
+}
+/*
+bool CacheSpace::forEachCacheView(const std::function<bool(const QSharedPointer<CacheItem>&, CacheView*)>& visitor)
+{
+    Q_ASSERT(visitor);
+
+    return forEachCacheItem([&visitor](const QSharedPointer<CacheItem>& cacheItem)->bool {
+        return item->forEachCacheView([&visitor, &cacheItem](const CacheView* cacheView)->bool {
+                                          return visitor(cacheItem, cacheView);
+                                      });
+    });
+}
+*/
 
 void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
 {
