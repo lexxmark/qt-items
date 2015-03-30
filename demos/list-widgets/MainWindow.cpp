@@ -251,11 +251,16 @@ public:
 
             do
             {
-                startRect = info.cacheView->rect();
+                //startRect = info.cacheView->rect();
                 QPoint randomPoint;
                 randomPoint.rx() = randomArea.left() + std::rand()%randomArea.width();
                 randomPoint.ry() = randomArea.top() + std::rand()%randomArea.height();
-                startRect.moveTo(randomPoint);
+                QSize randomSize;
+                //float factor = (float)(std::rand()%100)/100.f;
+                randomSize.rwidth() = 1;//int(factor * (float)info.cacheView->rect().width());
+                randomSize.rheight() = 1;//int(factor * (float)info.cacheView->rect().height());
+
+                startRect = QRect(randomPoint, randomSize);
             } while (startRect.intersects(cacheSpace->window()));
 
             va->setStartValue(startRect);
