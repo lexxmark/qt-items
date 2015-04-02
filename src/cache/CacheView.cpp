@@ -51,6 +51,14 @@ CacheView& CacheView::operator=(const CacheView& other)
 
 void CacheView::draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect *visibleRect) const
 {
+    if (drawProxy)
+        drawProxy(painter, ctx, item, itemRect, visibleRect);
+    else
+        drawRaw(painter, ctx, item, itemRect, visibleRect);
+}
+
+void CacheView::drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect *visibleRect) const
+{
 #ifdef DEBUG_RECTS
     painter->save();
     painter->setPen(Qt::blue);
@@ -65,7 +73,7 @@ void CacheView::draw(QPainter* painter, const GuiContext &ctx, const ItemID& ite
     // exclude rect of float views because they can overlap other views
     if (m_layout->isFloat())
     {
-        //*drawContext.pDC->ExcludeClipRect(&rect);
+        //*painter->ExcludeClipRect(&rect);
     }
 }
 

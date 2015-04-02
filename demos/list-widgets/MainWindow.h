@@ -31,6 +31,8 @@ private slots:
 
     void on_shiftRandomBttn_clicked();
 
+    void on_circleImageBttn_clicked();
+
 private:
     void shuffleRows();
 
@@ -38,9 +40,10 @@ private:
     QSharedPointer<Qi::ModelPixmap> m_images;
     QSharedPointer<Qi::ModelText> m_names;
     QSharedPointer<Qi::ModelText> m_descriptions;
+    QSharedPointer<Qi::View> m_wikiView;
     QSharedPointer<Qi::ListColumnsResizer> m_resizer;
 
-    Qi::CacheSpaceAnimationAbstract* m_backAnimation;
+    QPointer<Qi::CacheSpaceAnimationAbstract> m_animation;
 };
 
 #endif // MAINWINDOW_H

@@ -26,9 +26,11 @@ public:
     }
 
 protected:
-    void updateCurrentTime(int /*currentTime*/) override
+    void updateCurrentTime(int currentTime) override
     {
-        m_owner->m_widget->repaint();
+        // don't repaint at start
+        if (currentTime != 0)
+            m_owner->m_widget->repaint();
     }
 
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/) override
@@ -53,12 +55,14 @@ CacheSpaceAnimationAbstract::CacheSpaceAnimationAbstract(QWidget* widget, CacheS
       m_cacheSpace(cacheSpace),
       m_policy(QAbstractAnimation::DeleteWhenStopped),
       m_direction(QAbstractAnimation::Forward),
-      m_state(Stopped)
+      m_state(Stopped),
+      m_destruction(false)
 {
 }
 
 CacheSpaceAnimationAbstract::~CacheSpaceAnimationAbstract()
 {
+    m_destruction = true;
     stop();
 }
 
@@ -100,6 +104,7 @@ bool CacheSpaceAnimationAbstract::stop()
 
 void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace& cacheSpace, QPainter* painter, const GuiContext& ctx)
 {
+    Q_UNUSED(cacheSpace);
     Q_ASSERT(m_cacheSpace == &cacheSpace);
     Q_ASSERT(m_widget == ctx.widget);
     Q_ASSERT(m_state != Stopped);
@@ -114,19 +119,24 @@ void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace& cacheSpace, QPaint
     Q_ASSERT(!m_auxAnimation);
     Q_ASSERT(m_state == Started);
 
+    m_animation = createAnimationImpl(m_cacheSpace, painter, ctx);
+    if (!m_animation)
+    {
+        // error
+        Q_ASSERT(false);
+        stop();
+        return;
+    }
+
+    m_animation->setDirection(m_direction);
+    m_auxAnimation = new Impl::AuxAnimation(this);
+    connect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheSpaceAnimationAbstract::onCacheChanged);
     m_state = Running;
 
-    connect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheSpaceAnimationAbstract::onCacheChanged);
+    m_animation->start(QAbstractAnimation::DeleteWhenStopped);
+    m_auxAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 
-    m_animation = createAnimationImpl(m_cacheSpace, painter, ctx);
-    Q_ASSERT(m_animation);
-    m_auxAnimation = new Impl::AuxAnimation(this);
-
-    callLater(this, [this](){
-        m_animation->setDirection(m_direction);
-        m_animation->start(QAbstractAnimation::DeleteWhenStopped);
-        m_auxAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-    });
+    m_cacheSpace->drawRaw(painter, ctx);
 }
 
 void CacheSpaceAnimationAbstract::onCacheChanged(const CacheSpace* cache, ChangeReason reason)
@@ -142,45 +152,59 @@ void CacheSpaceAnimationAbstract::onCacheChanged(const CacheSpace* cache, Change
 
 void CacheSpaceAnimationAbstract::onAuxAnimationStopped()
 {
-    Q_ASSERT(m_animation);
-    Q_ASSERT(m_auxAnimation);
+    Q_ASSERT(m_state != Stopped);
 
-    disconnect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheSpaceAnimationAbstract::onCacheChanged);
     m_cacheSpace->setDrawProxy(nullptr);
-    m_cacheSpace->clear();
 
-    m_animation = nullptr;
-    m_auxAnimation = nullptr;
+    if (m_state == Running)
+    {
+        Q_ASSERT(m_animation && m_auxAnimation);
+        disconnect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheSpaceAnimationAbstract::onCacheChanged);
+        m_cacheSpace->clear();
+
+        m_animation = nullptr;
+        m_auxAnimation = nullptr;
+    }
 
     m_state = Stopped;
 
-    emit stopped();
+    if (!m_destruction)
+        emit stopped();
 }
 
-QAbstractAnimation* CacheSpaceAnimationShiftRight::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
+QAbstractAnimation* CacheSpaceAnimationCallback::createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx)
+{
+    if (!animationFactory)
+        return nullptr;
+
+    return animationFactory(cacheSpace, painter, ctx);
+}
+
+QAbstractAnimation* CacheSpaceAnimationShiftViewsRight::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
 {
     cacheSpace->validate(ctx);
 
     auto animation = new QParallelAnimationGroup(this);
     // init
     cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-        auto ss = new QSequentialAnimationGroup(animation);
 
-        auto va = new QVariantAnimation(ss);
-        va->setDuration(1000);
-        va->setEasingCurve(easingCurve());
+        auto subAnimation = new QSequentialAnimationGroup(animation);
+
+        auto rectAnimation = new QVariantAnimation(subAnimation);
+        rectAnimation->setDuration(1000);
+        rectAnimation->setEasingCurve(easingCurve());
         QRect startRect = info.cacheView->rect();
         startRect.moveTo(cacheSpace->window().left() - startRect.width(), startRect.top());
-        va->setStartValue(startRect);
-        va->setEndValue(info.cacheView->rect());
+        rectAnimation->setStartValue(startRect);
+        rectAnimation->setEndValue(info.cacheView->rect());
         CacheView* cv = info.cacheView;
-        connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
+        connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
             cv->rRect() = value.toRect();
         });
-        ss->addPause(info.cacheItemIndex*100);
-        ss->addAnimation(va);
+        subAnimation->addPause(info.cacheItemIndex*100);
+        subAnimation->addAnimation(rectAnimation);
 
-        animation->addAnimation(ss);
+        animation->addAnimation(subAnimation);
 
         if (direction() == QAbstractAnimation::Forward)
         {
@@ -193,30 +217,31 @@ QAbstractAnimation* CacheSpaceAnimationShiftRight::createAnimationImpl(CacheSpac
     return animation;
 }
 
-QAbstractAnimation* CacheSpaceAnimationShiftLeft::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
+QAbstractAnimation* CacheSpaceAnimationShiftViewsLeft::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
 {
     cacheSpace->validate(ctx);
 
     auto animation = new QParallelAnimationGroup(this);
     // init
     cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-        auto ss = new QSequentialAnimationGroup(animation);
 
-        auto va = new QVariantAnimation(ss);
-        va->setDuration(1000);
-        va->setEasingCurve(easingCurve());
+        auto subAnimation = new QSequentialAnimationGroup(animation);
+
+        auto rectAnimation = new QVariantAnimation(subAnimation);
+        rectAnimation->setDuration(1000);
+        rectAnimation->setEasingCurve(easingCurve());
         QRect startRect = info.cacheView->rect();
         startRect.moveTo(cacheSpace->window().right(), startRect.top());
-        va->setStartValue(startRect);
-        va->setEndValue(info.cacheView->rect());
+        rectAnimation->setStartValue(startRect);
+        rectAnimation->setEndValue(info.cacheView->rect());
         CacheView* cv = info.cacheView;
-        connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
+        connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
             cv->rRect() = value.toRect();
         });
-        ss->addPause(info.cacheItemIndex*100);
-        ss->addAnimation(va);
+        subAnimation->addPause(info.cacheItemIndex*100);
+        subAnimation->addAnimation(rectAnimation);
 
-        animation->addAnimation(ss);
+        animation->addAnimation(subAnimation);
 
         if (direction() == QAbstractAnimation::Forward)
         {
@@ -229,7 +254,7 @@ QAbstractAnimation* CacheSpaceAnimationShiftLeft::createAnimationImpl(CacheSpace
     return animation;
 }
 
-QAbstractAnimation* CacheSpaceAnimationShiftRandom::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
+QAbstractAnimation* CacheSpaceAnimationShiftViewsRandom::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
 {
     cacheSpace->validate(ctx);
 
@@ -238,32 +263,33 @@ QAbstractAnimation* CacheSpaceAnimationShiftRandom::createAnimationImpl(CacheSpa
     randomArea.adjust(-2*randomArea.width(), -2*randomArea.height(), 2*randomArea.width(), 2*randomArea.height());
 
     cacheSpace->forEachCacheView([this, &randomArea, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-        auto ss = new QSequentialAnimationGroup(animation);
 
-        auto va = new QVariantAnimation(ss);
-        va->setDuration(1000);
-        va->setEasingCurve(easingCurve());
+        auto subAnimation = new QSequentialAnimationGroup(animation);
+
+        auto rectAnimation = new QVariantAnimation(subAnimation);
+        rectAnimation->setDuration(1000);
+        rectAnimation->setEasingCurve(easingCurve());
+
+        // generate random start rect which is out of visible window
         QRect startRect;
-
         do
         {
-            //startRect = info.cacheView->rect();
             QPoint randomPoint;
             randomPoint.rx() = randomArea.left() + std::rand()%randomArea.width();
             randomPoint.ry() = randomArea.top() + std::rand()%randomArea.height();
             startRect = QRect(randomPoint, QSize(1, 1));
         } while (startRect.intersects(cacheSpace->window()));
 
-        va->setStartValue(startRect);
-        va->setEndValue(info.cacheView->rect());
+        rectAnimation->setStartValue(startRect);
+        rectAnimation->setEndValue(info.cacheView->rect());
         CacheView* cv = info.cacheView;
-        connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
+        connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
             cv->rRect() = value.toRect();
         });
-        ss->addPause(info.cacheItemIndex*100);
-        ss->addAnimation(va);
+        subAnimation->addPause(info.cacheItemIndex*100);
+        subAnimation->addAnimation(rectAnimation);
 
-        animation->addAnimation(ss);
+        animation->addAnimation(subAnimation);
 
         if (direction() == QAbstractAnimation::Forward)
         {

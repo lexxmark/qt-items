@@ -30,8 +30,12 @@ public:
     QVector<CacheView>& rSubViews() { return m_subViews; }
     QRect& rRect() { return m_rect; }
 
+    std::function<void(QPainter*, const GuiContext&, const ItemID&, const QRect&, const QRect*)> drawProxy;
+
     // draws view within m_rect
     void draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
+    void drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
+
     void cleanupDraw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
 
     // retruns tooltip text

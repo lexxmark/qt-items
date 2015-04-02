@@ -22,7 +22,7 @@ void ViewPixmap::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Ca
     int y = viewRect.top() + (viewRect.height() - pixmap.height()) / 2;
 
     painter->save();
-    painter->setClipRect(viewRect);
+    painter->setClipRect(viewRect, Qt::IntersectClip);
 
     painter->drawPixmap(x, y, pixmap);
 

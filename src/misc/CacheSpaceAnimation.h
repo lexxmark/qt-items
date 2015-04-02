@@ -4,6 +4,7 @@
 #include "cache/space/CacheSpace.h"
 #include <QAbstractAnimation>
 #include <QEasingCurve>
+#include <functional>
 
 class QWidget;
 
@@ -29,7 +30,7 @@ public:
 
     QAbstractAnimation::Direction direction() const { return m_direction; }
 
-    bool start(QAbstractAnimation::Direction direction = QAbstractAnimation::Forward, QAbstractAnimation::DeletionPolicy policy = QAbstractAnimation::DeleteWhenStopped);
+    bool start(QAbstractAnimation::Direction direction = QAbstractAnimation::Forward, QAbstractAnimation::DeletionPolicy policy = QAbstractAnimation::KeepWhenStopped);
     bool stop();
 
 signals:
@@ -63,15 +64,32 @@ private:
     };
 
     State m_state;
+    bool m_destruction;
 };
 
-class CacheSpaceAnimationShiftRight : public CacheSpaceAnimationAbstract
+class CacheSpaceAnimationCallback : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceAnimationShiftRight)
+    Q_DISABLE_COPY(CacheSpaceAnimationCallback)
 
 public:
-    CacheSpaceAnimationShiftRight(QWidget* widget, CacheSpace* cacheSpace)
+    CacheSpaceAnimationCallback(QWidget* widget, CacheSpace* cacheSpace)
+        : CacheSpaceAnimationAbstract(widget, cacheSpace)
+    {}
+
+    std::function<QAbstractAnimation* (CacheSpace*, QPainter*, const GuiContext&)> animationFactory;
+
+protected:
+    QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
+};
+
+class CacheSpaceAnimationShiftViewsRight : public CacheSpaceAnimationAbstract
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsRight)
+
+public:
+    CacheSpaceAnimationShiftViewsRight(QWidget* widget, CacheSpace* cacheSpace)
         : CacheSpaceAnimationAbstract(widget, cacheSpace)
     {}
 
@@ -79,13 +97,13 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class CacheSpaceAnimationShiftLeft : public CacheSpaceAnimationAbstract
+class CacheSpaceAnimationShiftViewsLeft : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceAnimationShiftLeft)
+    Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsLeft)
 
 public:
-    CacheSpaceAnimationShiftLeft(QWidget* widget, CacheSpace* cacheSpace)
+    CacheSpaceAnimationShiftViewsLeft(QWidget* widget, CacheSpace* cacheSpace)
         : CacheSpaceAnimationAbstract(widget, cacheSpace)
     {}
 
@@ -93,13 +111,13 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class CacheSpaceAnimationShiftRandom : public CacheSpaceAnimationAbstract
+class CacheSpaceAnimationShiftViewsRandom : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceAnimationShiftRandom)
+    Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsRandom)
 
 public:
-    CacheSpaceAnimationShiftRandom(QWidget* widget, CacheSpace* cacheSpace)
+    CacheSpaceAnimationShiftViewsRandom(QWidget* widget, CacheSpace* cacheSpace)
         : CacheSpaceAnimationAbstract(widget, cacheSpace)
     {}
 
