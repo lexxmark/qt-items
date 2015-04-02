@@ -71,7 +71,8 @@ SOURCES += QiAPI.cpp \
     widgets/core/SpaceWidgetCore.cpp \
     widgets/core/SpaceWidgetScrollAbstract.cpp \
     misc/GridColumnsResizer.cpp \
-    utils/CallLater.cpp
+    utils/CallLater.cpp \
+    misc/CacheSpaceAnimation.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -143,7 +144,9 @@ HEADERS +=  QiAPI.h \
     widgets/core/SpaceWidgetCore.h \
     widgets/core/SpaceWidgetScrollAbstract.h \
     misc/GridColumnsResizer.h \
-    utils/CallLater.h
+    utils/CallLater.h \
+    utils/MemFunction.h \
+    misc/CacheSpaceAnimation.h
 
 win32 {
     TARGET_EXT = .dll

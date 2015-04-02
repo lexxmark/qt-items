@@ -21,270 +21,12 @@
 #include "items/enum/Enum.h"
 
 #include "misc/GridColumnsResizer.h"
+#include "misc/CacheSpaceAnimation.h"
 #include "cache/space/CacheSpaceGrid.h"
 #include "cache/CacheItem.h"
 #include "utils/CallLater.h"
 
-#include <QAbstractAnimation>
-#include <QEasingCurve>
-#include <QParallelAnimationGroup>
-#include <QSequentialAnimationGroup>
-#include <QPauseAnimation>
-#include <QVariantAnimation>
-
 using namespace Qi;
-/*
-class AnimationCallback: public QAbstractAnimation
-{
-public:
-    AnimationCallback(QObject* parent, const std::function<void(qreal)>& callback)
-        : QAbstractAnimation(parent),
-          m_duration(-1),
-          m_callback(callback)
-    {
-        m_callback(0);
-    }
-
-    ~AnimationCallback()
-    {
-
-    }
-
-    int duration() const override { return m_duration; }
-    void setDuration(int duration) { m_duration = duration; }
-
-    QEasingCurve easingCurve() const { return m_easingCurve; }
-    void setEasingCurve(const QEasingCurve & easing) { m_easingCurve = easing; }
-
-protected:
-    void updateCurrentTime(int currentTime) override
-    {
-        qreal progress = m_easingCurve.valueForProgress((qreal)currentTime / (qreal)totalDuration());
-        m_callback(progress);
-    }
-
-private:
-    int m_duration;
-    QEasingCurve m_easingCurve;
-    std::function<void(qreal)> m_callback;
-};
-*/
-class CacheAnimationAbstract: public QAbstractAnimation
-{
-public:
-    CacheAnimationAbstract(QWidget* widget, CacheSpace* cacheSpace)
-        : QAbstractAnimation(widget),
-          m_animation(nullptr),
-          m_widget(widget),
-          m_cacheSpace(cacheSpace)
-    {
-    }
-
-    virtual ~CacheAnimationAbstract()
-    {
-        //disconnect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheAnimationAbstract::onCacheChanged);
-    }
-
-    int duration () const override { return m_animation ? m_animation->duration() : 0; }
-
-    QEasingCurve easingCurve() const { return m_easingCurve; }
-    void setEasingCurve(const QEasingCurve & easing) { m_easingCurve = easing; }
-
-    void launch()
-    {
-        connect(m_cacheSpace, &CacheSpace::preDraw, this, &CacheAnimationAbstract::onPreDraw);
-        m_widget->repaint();
-    }
-
-    virtual QAbstractAnimation* createAnimation(QWidget* widget, CacheSpace* cacheSpace) = 0;
-
-protected:
-    void updateCurrentTime(int /*currentTime*/) override
-    {
-        m_widget->repaint();
-    }
-
-    void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/) override
-    {
-        if (newState == Stopped)
-        {
-            m_cacheSpace->clear();
-        }
-    }
-
-private:
-    void onPreDraw()
-    {
-        disconnect(m_cacheSpace, &CacheSpace::preDraw, this, &CacheAnimationAbstract::onPreDraw);
-        connect(m_cacheSpace, &CacheSpace::cacheChanged, this, &CacheAnimationAbstract::onCacheChanged);
-
-        m_animation = createAnimation(m_widget, m_cacheSpace);
-
-        callLater(this, [this](){
-            m_animation->setDirection(direction());
-            m_animation->setCurrentTime(currentTime());
-            m_animation->start(DeleteWhenStopped);
-            start(DeleteWhenStopped);
-        });
-    }
-
-    void onCacheChanged(const CacheSpace* cache, ChangeReason reason)
-    {
-        Q_UNUSED(cache);
-        Q_UNUSED(reason);
-        Q_ASSERT(cache == m_cacheSpace);
-        if (!(reason&ChangeReasonSpaceItemsContent))
-            stop();
-    }
-
-    QEasingCurve m_easingCurve;
-    QAbstractAnimation* m_animation;
-
-    QWidget* m_widget;
-    CacheSpace* m_cacheSpace;
-};
-
-class CacheAnimationShiftRight : public CacheAnimationAbstract
-{
-public:
-    CacheAnimationShiftRight(QWidget* widget, CacheSpace* cacheSpace)
-        : CacheAnimationAbstract(widget, cacheSpace)
-    {}
-
-    QAbstractAnimation* createAnimation(QWidget* /*widget*/, CacheSpace* cacheSpace) override
-    {
-        auto animation = new QParallelAnimationGroup(this);
-        // init
-        cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-            auto ss = new QSequentialAnimationGroup(animation);
-
-            auto va = new QVariantAnimation(ss);
-            va->setDuration(1000);
-            va->setEasingCurve(easingCurve());
-            QRect startRect = info.cacheView->rect();
-            startRect.moveTo(cacheSpace->window().left() - startRect.width(), startRect.top());
-            va->setStartValue(startRect);
-            va->setEndValue(info.cacheView->rect());
-            CacheView* cv = info.cacheView;
-            connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
-                cv->rRect() = value.toRect();
-            });
-            ss->addPause(info.cacheItemIndex*100);
-            ss->addAnimation(va);
-
-            animation->addAnimation(ss);
-
-            if (direction() == QAbstractAnimation::Forward)
-            {
-                info.cacheView->rRect() = startRect;
-            }
-
-            return true;
-        });
-
-        return animation;
-    }
-};
-
-class CacheAnimationShiftLeft : public CacheAnimationAbstract
-{
-public:
-    CacheAnimationShiftLeft(QWidget* widget, CacheSpace* cacheSpace)
-        : CacheAnimationAbstract(widget, cacheSpace)
-    {}
-
-    QAbstractAnimation* createAnimation(QWidget* /*widget*/, CacheSpace* cacheSpace) override
-    {
-        auto animation = new QParallelAnimationGroup(this);
-        // init
-        cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-            auto ss = new QSequentialAnimationGroup(animation);
-
-            auto va = new QVariantAnimation(ss);
-            va->setDuration(1000);
-            va->setEasingCurve(easingCurve());
-            QRect startRect = info.cacheView->rect();
-            startRect.moveTo(cacheSpace->window().right(), startRect.top());
-            va->setStartValue(startRect);
-            va->setEndValue(info.cacheView->rect());
-            CacheView* cv = info.cacheView;
-            connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
-                cv->rRect() = value.toRect();
-            });
-            ss->addPause(info.cacheItemIndex*100);
-            ss->addAnimation(va);
-
-            animation->addAnimation(ss);
-
-            if (direction() == QAbstractAnimation::Forward)
-            {
-                info.cacheView->rRect() = startRect;
-            }
-
-            return true;
-        });
-
-        return animation;
-    }
-};
-
-class CacheAnimationShiftRandom : public CacheAnimationAbstract
-{
-public:
-    CacheAnimationShiftRandom(QWidget* widget, CacheSpace* cacheSpace)
-        : CacheAnimationAbstract(widget, cacheSpace)
-    {}
-
-    QAbstractAnimation* createAnimation(QWidget* /*widget*/, CacheSpace* cacheSpace) override
-    {
-        auto animation = new QParallelAnimationGroup(this);
-        QRect randomArea = cacheSpace->window();
-        randomArea.adjust(-2*randomArea.width(), -2*randomArea.height(), 2*randomArea.width(), 2*randomArea.height());
-
-        cacheSpace->forEachCacheView([this, &randomArea, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
-            auto ss = new QSequentialAnimationGroup(animation);
-
-            auto va = new QVariantAnimation(ss);
-            va->setDuration(1000);
-            va->setEasingCurve(easingCurve());
-            QRect startRect;
-
-            do
-            {
-                //startRect = info.cacheView->rect();
-                QPoint randomPoint;
-                randomPoint.rx() = randomArea.left() + std::rand()%randomArea.width();
-                randomPoint.ry() = randomArea.top() + std::rand()%randomArea.height();
-                QSize randomSize;
-                //float factor = (float)(std::rand()%100)/100.f;
-                randomSize.rwidth() = 1;//int(factor * (float)info.cacheView->rect().width());
-                randomSize.rheight() = 1;//int(factor * (float)info.cacheView->rect().height());
-
-                startRect = QRect(randomPoint, randomSize);
-            } while (startRect.intersects(cacheSpace->window()));
-
-            va->setStartValue(startRect);
-            va->setEndValue(info.cacheView->rect());
-            CacheView* cv = info.cacheView;
-            connect(va, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
-                cv->rRect() = value.toRect();
-            });
-            ss->addPause(info.cacheItemIndex*100);
-            ss->addAnimation(va);
-
-            animation->addAnimation(ss);
-
-            if (direction() == QAbstractAnimation::Forward)
-            {
-                info.cacheView->rRect() = startRect;
-            }
-
-            return true;
-        });
-
-        return animation;
-    }
-};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -420,13 +162,12 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // animation
-    m_backAnimation = new CacheAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    m_backAnimation = new CacheSpaceAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     m_backAnimation->setEasingCurve(QEasingCurve::OutCirc);
-    m_backAnimation->setDirection(QAbstractAnimation::Backward);
 
-    auto a = new CacheAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    auto a = new CacheSpaceAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     a->setEasingCurve(QEasingCurve::OutCirc);
-    a->launch();
+    a->start();
 }
 
 MainWindow::~MainWindow()
@@ -448,48 +189,45 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_shiftRightBttn_clicked()
 {
-    connect(m_backAnimation, &QAbstractAnimation::finished, [this]() {
+    connect(m_backAnimation, &CacheSpaceAnimationAbstract::stopped, [this]() {
         shuffleRows();
 
-        auto a = new CacheAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+        auto a = new CacheSpaceAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
         a->setEasingCurve(QEasingCurve::OutCirc);
-        a->launch();
+        a->start();
     });
-    m_backAnimation->launch();
+    m_backAnimation->start(QAbstractAnimation::Backward);
 
-    m_backAnimation = new CacheAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    m_backAnimation = new CacheSpaceAnimationShiftRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     m_backAnimation->setEasingCurve(QEasingCurve::OutCirc);
-    m_backAnimation->setDirection(QAbstractAnimation::Backward);
 }
 
 void MainWindow::on_shiftLeftBttn_clicked()
 {
-    connect(m_backAnimation, &QAbstractAnimation::finished, [this]() {
+    connect(m_backAnimation, &CacheSpaceAnimationAbstract::stopped, [this]() {
         shuffleRows();
 
-        auto a = new CacheAnimationShiftLeft(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+        auto a = new CacheSpaceAnimationShiftLeft(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
         a->setEasingCurve(QEasingCurve::OutCirc);
-        a->launch();
+        a->start();
     });
-    m_backAnimation->launch();
+    m_backAnimation->start(QAbstractAnimation::Backward);
 
-    m_backAnimation = new CacheAnimationShiftLeft(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    m_backAnimation = new CacheSpaceAnimationShiftLeft(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     m_backAnimation->setEasingCurve(QEasingCurve::OutCirc);
-    m_backAnimation->setDirection(QAbstractAnimation::Backward);
 }
 
 void MainWindow::on_shiftRandomBttn_clicked()
 {
-    connect(m_backAnimation, &QAbstractAnimation::finished, [this]() {
+    connect(m_backAnimation, &CacheSpaceAnimationAbstract::stopped, [this]() {
         shuffleRows();
 
-        auto a = new CacheAnimationShiftRandom(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+        auto a = new CacheSpaceAnimationShiftRandom(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
         a->setEasingCurve(QEasingCurve::OutCirc);
-        a->launch();
+        a->start();
     });
-    m_backAnimation->launch();
+    m_backAnimation->start(QAbstractAnimation::Backward);
 
-    m_backAnimation = new CacheAnimationShiftRandom(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    m_backAnimation = new CacheSpaceAnimationShiftRandom(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     m_backAnimation->setEasingCurve(QEasingCurve::OutCirc);
-    m_backAnimation->setDirection(QAbstractAnimation::Backward);
 }

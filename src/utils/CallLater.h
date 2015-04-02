@@ -2,7 +2,6 @@
 #define QI_CALL_LATER_H
 
 #include "QiAPI.h"
-//#include <QWidget>
 #include <functional>
 
 namespace Qi

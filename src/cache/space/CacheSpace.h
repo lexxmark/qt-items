@@ -45,7 +45,12 @@ public:
     const CacheItem* cacheItem(const ItemID& visibleItem) const;
     const CacheItem* cacheItemByPosition(const QPoint& point) const;
 
+    void validate(const GuiContext& ctx) const;
     void draw(QPainter* painter, const GuiContext& ctx) const;
+    void drawRaw(QPainter* painter, const GuiContext& ctx) const;
+
+    bool hasDrawProxy() const { return (bool)m_drawProxy; }
+    void setDrawProxy(const std::function<void(const CacheSpace&, QPainter* painter, const GuiContext& ctx)>& drawProxy);
 
     void tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const;
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
@@ -66,7 +71,6 @@ public:
 
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
-    void preDraw() const;
 
 protected:
     explicit CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
@@ -103,8 +107,11 @@ protected:
     // flag for debugging
     mutable bool m_cacheIsInUse;
 
+    //
+    std::function<void(const CacheSpace&, QPainter* painter, const GuiContext& ctx)> m_drawProxy;
+
 private:
-    void invalidateItemsCache();
+    void invalidateItemsCache(ChangeReason reason);
 
     void onSpaceChanged(const Space* space, ChangeReason reason);
     void updateCacheItemsFactory();

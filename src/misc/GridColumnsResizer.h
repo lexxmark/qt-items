@@ -1,7 +1,6 @@
 #ifndef QI_GRID_COLUMNS_RESIZER_H
 #define QI_GRID_COLUMNS_RESIZER_H
 
-//#include "widgets/GridWidget.h"
 #include "space/SpaceGrid.h"
 #include "core/ControllerMouse.h"
 

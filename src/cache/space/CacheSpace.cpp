@@ -42,7 +42,7 @@ void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
     {
         // update items factory
         updateCacheItemsFactory();
-        emit cacheChanged(this, reason|ChangeReasonCacheContent);
+        emit cacheChanged(this, reason|ChangeReasonCacheItems);
     }
     else if (reason & ChangeReasonSpaceItemsContent)
     {
@@ -56,7 +56,7 @@ void CacheSpace::setViewApplicationMask(ViewApplicationMask viewApplicationMask)
     if (m_viewApplicationMask != viewApplicationMask)
     {
         updateCacheItemsFactory();
-        emit cacheChanged(this, ChangeReasonCacheContent);
+        emit cacheChanged(this, ChangeReasonCacheItems);
     }
 }
 
@@ -72,7 +72,7 @@ void CacheSpace::setWindow(const QRect& window)
     m_sizeDelta += (_window.size() - m_window.size());
     m_window = _window;
 
-    invalidateItemsCache();
+    invalidateItemsCache(ChangeReasonCacheItems);
 }
 
 void CacheSpace::setScrollOffset(const QPoint& scrollOffset)
@@ -84,7 +84,7 @@ void CacheSpace::setScrollOffset(const QPoint& scrollOffset)
     m_scrollDelta += offset;
     m_scrollOffset = scrollOffset;
 
-    invalidateItemsCache();
+    invalidateItemsCache(ChangeReasonCacheItems);
 }
 
 void CacheSpace::set(const QRect& window, const QPoint& scrollOffset)
@@ -106,15 +106,15 @@ QPoint CacheSpace::space2Window(const QPoint& spacePoint) const
 void CacheSpace::clear()
 {
     clearItemsCache();
-    invalidateItemsCache();
+    invalidateItemsCache(ChangeReasonCacheItems);
 }
 
-void CacheSpace::invalidateItemsCache()
+void CacheSpace::invalidateItemsCache(ChangeReason reason)
 {
     Q_ASSERT(!m_cacheIsInUse);
     m_itemsCacheInvalid = true;
 
-    emit cacheChanged(this, ChangeReasonCacheContent);
+    emit cacheChanged(this, reason);
 }
 
 void CacheSpace::clearItemsCache() const
@@ -192,7 +192,7 @@ bool CacheSpace::forEachCacheView(const std::function<bool(const QSharedPointer<
 }
 */
 
-void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
+void CacheSpace::validate(const GuiContext& ctx) const
 {
     validateItemsCache();
 
@@ -202,8 +202,21 @@ void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
                          cacheItem->validateCacheView(ctx, &m_window);
                          return true;
                      });
+}
 
-    emit preDraw();
+void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
+{
+    if (m_drawProxy)
+        m_drawProxy(*this, painter, ctx);
+    else
+        drawRaw(painter, ctx);
+}
+
+void CacheSpace::drawRaw(QPainter* painter, const GuiContext& ctx) const
+{
+    validateItemsCache();
+
+    auto_value<bool> inUse(m_cacheIsInUse, true);
 
     painter->save();
     painter->setClipRect(m_window);
@@ -214,6 +227,12 @@ void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
                      });
 
     painter->restore();
+}
+
+void CacheSpace::setDrawProxy(const std::function<void(const CacheSpace&, QPainter*, const GuiContext&)>& drawProxy)
+{
+    Q_ASSERT(!drawProxy || !m_drawProxy);
+    m_drawProxy = drawProxy;
 }
 
 void CacheSpace::tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const

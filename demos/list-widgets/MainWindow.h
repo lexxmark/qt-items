@@ -4,13 +4,15 @@
 #include <QMainWindow>
 #include "items/image/Pixmap.h"
 #include "items/text/Text.h"
-#include "misc/GridColumnsResizer.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class CacheAnimationAbstract;
+namespace Qi {
+class CacheSpaceAnimationAbstract;
+class ListColumnsResizer;
+}
 
 class MainWindow : public QMainWindow
 {
@@ -38,7 +40,7 @@ private:
     QSharedPointer<Qi::ModelText> m_descriptions;
     QSharedPointer<Qi::ListColumnsResizer> m_resizer;
 
-    CacheAnimationAbstract* m_backAnimation;
+    Qi::CacheSpaceAnimationAbstract* m_backAnimation;
 };
 
 #endif // MAINWINDOW_H

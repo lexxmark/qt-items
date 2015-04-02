@@ -38,7 +38,8 @@ enum ChangeReasonFlag
     ChangeReasonSpaceItemsStructure = 0x1000,
     ChangeReasonSpaceItemsContent = 0x2000,
 
-    ChangeReasonCacheFrame = 0x4000,
+//    ChangeReasonCacheFrame = 0x4000,
+    ChangeReasonCacheItems = 0x4000,
     ChangeReasonCacheContent = 0x8000,
 };
 
