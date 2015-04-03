@@ -50,7 +50,7 @@ public:
     void drawRaw(QPainter* painter, const GuiContext& ctx) const;
 
     bool hasDrawProxy() const { return (bool)m_drawProxy; }
-    void setDrawProxy(const std::function<void(const CacheSpace&, QPainter* painter, const GuiContext& ctx)>& drawProxy);
+    void setDrawProxy(const std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)>& drawProxy);
 
     void tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const;
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
@@ -107,8 +107,8 @@ protected:
     // flag for debugging
     mutable bool m_cacheIsInUse;
 
-    //
-    std::function<void(const CacheSpace&, QPainter* painter, const GuiContext& ctx)> m_drawProxy;
+    // proxy function
+    std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)> m_drawProxy;
 
 private:
     void invalidateItemsCache(ChangeReason reason);

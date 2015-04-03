@@ -207,7 +207,7 @@ void CacheSpace::validate(const GuiContext& ctx) const
 void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
 {
     if (m_drawProxy)
-        m_drawProxy(*this, painter, ctx);
+        m_drawProxy(this, painter, ctx);
     else
         drawRaw(painter, ctx);
 }
@@ -229,7 +229,7 @@ void CacheSpace::drawRaw(QPainter* painter, const GuiContext& ctx) const
     painter->restore();
 }
 
-void CacheSpace::setDrawProxy(const std::function<void(const CacheSpace&, QPainter*, const GuiContext&)>& drawProxy)
+void CacheSpace::setDrawProxy(const std::function<void(const CacheSpace*, QPainter*, const GuiContext&)>& drawProxy)
 {
     Q_ASSERT(!drawProxy || !m_drawProxy);
     m_drawProxy = drawProxy;

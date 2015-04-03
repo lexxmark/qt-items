@@ -119,6 +119,14 @@ QString CacheItem::text() const
 
 void CacheItem::draw(QPainter *painter, const GuiContext& ctx, const QRect* visibleRect)
 {
+    if (drawProxy)
+        drawProxy(this, painter, ctx, visibleRect);
+    else
+        drawRaw(painter, ctx, visibleRect);
+}
+
+void CacheItem::drawRaw(QPainter *painter, const GuiContext& ctx, const QRect* visibleRect)
+{
     validateCacheView(ctx, visibleRect);
 
     if (!m_cacheView)

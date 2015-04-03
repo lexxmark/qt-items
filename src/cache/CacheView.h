@@ -30,7 +30,7 @@ public:
     QVector<CacheView>& rSubViews() { return m_subViews; }
     QRect& rRect() { return m_rect; }
 
-    std::function<void(QPainter*, const GuiContext&, const ItemID&, const QRect&, const QRect*)> drawProxy;
+    std::function<void(const CacheView*, QPainter*, const GuiContext&, const ItemID&, const QRect&, const QRect*)> drawProxy;
 
     // draws view within m_rect
     void draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;

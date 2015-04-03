@@ -42,7 +42,7 @@ protected:
 private:
     friend class Impl::AuxAnimation;
 
-    void drawProxy(const CacheSpace& cacheSpace, QPainter* painter, const GuiContext& ctx);
+    void drawProxy(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx);
     void onCacheChanged(const CacheSpace* cache, ChangeReason reason);
     void onAuxAnimationStopped();
 
@@ -77,7 +77,7 @@ public:
         : CacheSpaceAnimationAbstract(widget, cacheSpace)
     {}
 
-    std::function<QAbstractAnimation* (CacheSpace*, QPainter*, const GuiContext&)> animationFactory;
+    std::function<QAbstractAnimation* (const CacheSpaceAnimationAbstract*, CacheSpace*, QPainter*, const GuiContext&)> animationFactory;
 
 protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;

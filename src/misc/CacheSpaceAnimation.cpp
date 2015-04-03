@@ -102,10 +102,10 @@ bool CacheSpaceAnimationAbstract::stop()
     return true;
 }
 
-void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace& cacheSpace, QPainter* painter, const GuiContext& ctx)
+void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx)
 {
     Q_UNUSED(cacheSpace);
-    Q_ASSERT(m_cacheSpace == &cacheSpace);
+    Q_ASSERT(m_cacheSpace == cacheSpace);
     Q_ASSERT(m_widget == ctx.widget);
     Q_ASSERT(m_state != Stopped);
 
@@ -177,7 +177,7 @@ QAbstractAnimation* CacheSpaceAnimationCallback::createAnimationImpl(CacheSpace*
     if (!animationFactory)
         return nullptr;
 
-    return animationFactory(cacheSpace, painter, ctx);
+    return animationFactory(this, cacheSpace, painter, ctx);
 }
 
 QAbstractAnimation* CacheSpaceAnimationShiftViewsRight::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)

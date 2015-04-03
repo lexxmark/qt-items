@@ -43,10 +43,15 @@ public:
     void correctRectangles(const QPoint& offset);
 
     QSize calculateItemSize(const GuiContext& ctx, ViewSizeMode sizeMode = ViewSizeModeExact) const;
-    void draw(QPainter* painter, const GuiContext& ctx, const QRect* visibleRect = nullptr);
     QString text() const;
     void tryActivateControllers(const ControllerContext& context, const CacheSpace& cacheSpace, const QRect* visibleRect, QVector<ControllerMouse*>& controllers) const;
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
+
+    std::function<void(CacheItem*, QPainter*, const GuiContext&, const QRect*)> drawProxy;
+
+    void draw(QPainter* painter, const GuiContext& ctx, const QRect* visibleRect = nullptr);
+    void drawRaw(QPainter* painter, const GuiContext& ctx, const QRect* visibleRect = nullptr);
+
 
 private:
     QSharedPointer<CacheView> m_cacheView;

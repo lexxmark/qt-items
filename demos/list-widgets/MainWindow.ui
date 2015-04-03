@@ -44,7 +44,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Animations:</string>
+         <string>View Animations:</string>
         </property>
        </widget>
       </item>
@@ -79,6 +79,20 @@
        <widget class="QCommandLinkButton" name="circleImageBttn">
         <property name="text">
          <string>Circle image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Item Animations:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCommandLinkButton" name="shiftRightItemBttn">
+        <property name="text">
+         <string>Shift right</string>
         </property>
        </widget>
       </item>

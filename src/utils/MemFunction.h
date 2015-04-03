@@ -12,8 +12,20 @@ std::function<R()> memFunction(T* t, R (T::*memFn)())
     return std::bind(memFn, t);
 }
 
+template <typename T, typename R>
+std::function<R()> memFunction(const T* t, R (T::*memFn)() const)
+{
+    return std::bind(memFn, t);
+}
+
 template <typename T, typename R, typename A1>
 std::function<R(A1)> memFunction(T* t, R (T::*memFn)(A1))
+{
+    return std::bind(memFn, t, std::placeholders::_1);
+}
+
+template <typename T, typename R, typename A1>
+std::function<R(A1)> memFunction(const T* t, R (T::*memFn)(A1) const)
 {
     return std::bind(memFn, t, std::placeholders::_1);
 }
@@ -24,14 +36,32 @@ std::function<R(A1, A2)> memFunction(T* t, R (T::*memFn)(A1, A2))
     return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2);
 }
 
+template <typename T, typename R, typename A1, typename A2>
+std::function<R(A1, A2)> memFunction(const T* t, R (T::*memFn)(A1, A2) const)
+{
+    return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2);
+}
+
 template <typename T, typename R, typename A1, typename A2, typename A3>
 std::function<R(A1, A2, A3)> memFunction(T* t, R (T::*memFn)(A1, A2, A3))
 {
     return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
+template <typename T, typename R, typename A1, typename A2, typename A3>
+std::function<R(A1, A2, A3)> memFunction(const T* t, R (T::*memFn)(A1, A2, A3) const)
+{
+    return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+}
+
 template <typename T, typename R, typename A1, typename A2, typename A3, typename A4>
 std::function<R(A1, A2, A3, A4)> memFunction(T* t, R (T::*memFn)(A1, A2, A3, A4))
+{
+    return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+}
+
+template <typename T, typename R, typename A1, typename A2, typename A3, typename A4>
+std::function<R(A1, A2, A3, A4)> memFunction(const T* t, R (T::*memFn)(A1, A2, A3, A4) const)
 {
     return std::bind(memFn, t, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 }

@@ -52,7 +52,7 @@ CacheView& CacheView::operator=(const CacheView& other)
 void CacheView::draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect *visibleRect) const
 {
     if (drawProxy)
-        drawProxy(painter, ctx, item, itemRect, visibleRect);
+        drawProxy(this, painter, ctx, item, itemRect, visibleRect);
     else
         drawRaw(painter, ctx, item, itemRect, visibleRect);
 }
