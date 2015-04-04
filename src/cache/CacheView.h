@@ -4,6 +4,7 @@
 #include "core/ItemID.h"
 #include <QVector>
 #include <QPainter>
+#include <functional>
 
 namespace Qi
 {

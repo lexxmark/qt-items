@@ -68,7 +68,7 @@ private:
     bool m_destruction;
 };
 
-class CacheSpaceAnimationCallback : public CacheSpaceAnimationAbstract
+class QI_EXPORT CacheSpaceAnimationCallback : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
     Q_DISABLE_COPY(CacheSpaceAnimationCallback)
@@ -84,7 +84,7 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class CacheSpaceAnimationShiftViewsRight : public CacheSpaceAnimationAbstract
+class QI_EXPORT CacheSpaceAnimationShiftViewsRight : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
     Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsRight)
@@ -98,7 +98,7 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class CacheSpaceAnimationShiftViewsLeft : public CacheSpaceAnimationAbstract
+class QI_EXPORT CacheSpaceAnimationShiftViewsLeft : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
     Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsLeft)
@@ -112,7 +112,7 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class CacheSpaceAnimationShiftViewsRandom : public CacheSpaceAnimationAbstract
+class QI_EXPORT CacheSpaceAnimationShiftViewsRandom : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
     Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsRandom)

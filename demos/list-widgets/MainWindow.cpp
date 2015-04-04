@@ -340,7 +340,7 @@ QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpa
         startRect.moveTo(cacheSpace->window().left() - startRect.width(), startRect.top());
         rectAnimation->setStartValue(startRect);
         rectAnimation->setEndValue(cacheItem->rect);
-        connect(rectAnimation, &QVariantAnimation::valueChanged, [cacheItem](const QVariant &value){
+        QObject::connect(rectAnimation, &QVariantAnimation::valueChanged, [cacheItem](const QVariant &value){
             cacheItem->rect = value.toRect();
         });
         subAnimation->addPause(itemIndex*100);
