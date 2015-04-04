@@ -2,6 +2,7 @@
 #include "core/ControllerMouse.h"
 #include "cache/CacheItem.h"
 #include "cache/CacheItemFactory.h"
+#include "misc/CacheSpaceAnimation.h"
 #include "utils/auto_value.h"
 
 namespace Qi
@@ -206,8 +207,11 @@ void CacheSpace::validate(const GuiContext& ctx) const
 
 void CacheSpace::draw(QPainter* painter, const GuiContext& ctx) const
 {
-    if (m_drawProxy)
-        m_drawProxy(this, painter, ctx);
+    if (!m_animation.isNull())
+        m_animation->drawCacheSpace(this, painter, ctx);
+
+    if (drawProxy)
+        drawProxy(this, painter, ctx);
     else
         drawRaw(painter, ctx);
 }
@@ -229,10 +233,15 @@ void CacheSpace::drawRaw(QPainter* painter, const GuiContext& ctx) const
     painter->restore();
 }
 
-void CacheSpace::setDrawProxy(const std::function<void(const CacheSpace*, QPainter*, const GuiContext&)>& drawProxy)
+CacheSpaceAnimationAbstract* CacheSpace::animation() const
 {
-    Q_ASSERT(!drawProxy || !m_drawProxy);
-    m_drawProxy = drawProxy;
+    return m_animation.data();
+}
+
+void CacheSpace::setAnimation(CacheSpaceAnimationAbstract* animation)
+{
+    Q_ASSERT(!animation || !m_animation.data());
+    m_animation = animation;
 }
 
 void CacheSpace::tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const

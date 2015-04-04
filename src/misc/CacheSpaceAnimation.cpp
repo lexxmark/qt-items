@@ -1,6 +1,5 @@
 #include "CacheSpaceAnimation.h"
 #include "utils/CallLater.h"
-#include "utils/MemFunction.h"
 
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
@@ -71,13 +70,13 @@ bool CacheSpaceAnimationAbstract::start(QAbstractAnimation::Direction direction,
     if (m_state != Stopped)
         return false;
 
-    if (m_cacheSpace->hasDrawProxy())
+    if (m_cacheSpace->animation())
         return false;
 
     m_state = Started;
     m_policy = policy;
     m_direction = direction;
-    m_cacheSpace->setDrawProxy(memFunction(this, &CacheSpaceAnimationAbstract::drawProxy));
+    m_cacheSpace->setAnimation(this);
     m_widget->update();
 
     return true;
@@ -102,7 +101,7 @@ bool CacheSpaceAnimationAbstract::stop()
     return true;
 }
 
-void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx)
+void CacheSpaceAnimationAbstract::drawCacheSpace(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx)
 {
     Q_UNUSED(cacheSpace);
     Q_ASSERT(m_cacheSpace == cacheSpace);
@@ -110,10 +109,7 @@ void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace* cacheSpace, QPaint
     Q_ASSERT(m_state != Stopped);
 
     if (m_state == Running)
-    {
-        m_cacheSpace->drawRaw(painter, ctx);
         return;
-    }
 
     Q_ASSERT(!m_animation);
     Q_ASSERT(!m_auxAnimation);
@@ -135,8 +131,6 @@ void CacheSpaceAnimationAbstract::drawProxy(const CacheSpace* cacheSpace, QPaint
 
     m_animation->start(QAbstractAnimation::DeleteWhenStopped);
     m_auxAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-
-    m_cacheSpace->drawRaw(painter, ctx);
 }
 
 void CacheSpaceAnimationAbstract::onCacheChanged(const CacheSpace* cache, ChangeReason reason)
@@ -154,7 +148,7 @@ void CacheSpaceAnimationAbstract::onAuxAnimationStopped()
 {
     Q_ASSERT(m_state != Stopped);
 
-    m_cacheSpace->setDrawProxy(nullptr);
+    m_cacheSpace->setAnimation(nullptr);
 
     if (m_state == Running)
     {

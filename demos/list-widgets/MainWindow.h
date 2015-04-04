@@ -28,13 +28,15 @@ public:
     ~MainWindow();
 
 private slots:
-
     void on_pushButton_clicked();
     void on_shiftRightBttn_clicked();
     void on_shiftLeftBttn_clicked();
     void on_shiftRandomBttn_clicked();
     void on_circleImageBttn_clicked();
     void on_shiftRightItemBttn_clicked();
+    void on_shiftDownItemBttn_clicked();
+    void on_shiftBottomRightBttn_clicked();
+    void on_fadeBttn_clicked();
 
 private:
     void shuffleRows();
@@ -42,6 +44,9 @@ private:
 
     QAbstractAnimation* createCircleViewAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
     QAbstractAnimation* createShiftRightItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
+    QAbstractAnimation* createShiftDownItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
+    QAbstractAnimation* createShiftBottomRightAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
+    QAbstractAnimation* createFadeAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
 
     Ui::MainWindow *ui;
     QSharedPointer<Qi::ModelPixmap> m_images;

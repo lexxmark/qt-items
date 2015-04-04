@@ -41,8 +41,9 @@ protected:
 
 private:
     friend class Impl::AuxAnimation;
+    friend class CacheSpace;
 
-    void drawProxy(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx);
+    void drawCacheSpace(const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx);
     void onCacheChanged(const CacheSpace* cache, ChangeReason reason);
     void onAuxAnimationStopped();
 

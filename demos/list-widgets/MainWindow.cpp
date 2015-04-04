@@ -307,13 +307,13 @@ void MainWindow::on_circleImageBttn_clicked()
     playAnimation(animation);
 }
 
-QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* /*painter*/, const Qi::GuiContext& ctx) const
+QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
 {
     auto animation = new QParallelAnimationGroup();
 
     cacheSpace->validate(ctx);
     int itemIndex = 0;
-    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const QSharedPointer<CacheItem>& cacheItem)->bool {
 
         // create image of the item
         {
@@ -321,8 +321,8 @@ QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpa
             itemPixmap.fill(Qt::transparent);
             QPainter itemPainter(&itemPixmap);
             itemPainter.setWindow(cacheItem->rect);
-            itemPainter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
-            itemPainter.setBackgroundMode(Qt::TransparentMode);
+            itemPainter.setRenderHints(painter->renderHints());
+            itemPainter.setBackgroundMode(painter->backgroundMode());
 
             cacheItem->draw(&itemPainter, ctx, &cacheSpace->window());
 
@@ -365,6 +365,150 @@ void MainWindow::on_shiftRightItemBttn_clicked()
 {
     auto animation = new CacheSpaceAnimationCallback(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
     animation->animationFactory = memFunction(this, &MainWindow::createShiftRightItemAnimation);
+
+    playAnimation(animation, QEasingCurve::OutBounce);
+}
+
+QAbstractAnimation* MainWindow::createShiftDownItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
+{
+    auto animation = new QSequentialAnimationGroup();
+
+    cacheSpace->validate(ctx);
+    int itemIndex = 0;
+    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const QSharedPointer<CacheItem>& cacheItem)->bool {
+
+        auto topAnimation = new QVariantAnimation(animation);
+        topAnimation->setDuration(200);
+        topAnimation->setEasingCurve(QEasingCurve::OutBack);
+        topAnimation->setStartValue(cacheItem->rect.top() - cacheItem->rect.height());
+        topAnimation->setEndValue(cacheItem->rect.top());
+
+        // create image of the item
+        {
+            QPixmap itemPixmap(cacheItem->rect.size());
+            itemPixmap.fill(Qt::transparent);
+            QPainter itemPainter(&itemPixmap);
+            itemPainter.setWindow(cacheItem->rect);
+            itemPainter.setRenderHints(painter->renderHints());
+            itemPainter.setBackgroundMode(painter->backgroundMode());
+
+            cacheItem->draw(&itemPainter, ctx, &cacheSpace->window());
+
+            cacheItem->drawProxy = [itemPixmap, topAnimation](CacheItem* cacheItem, QPainter* painter, const GuiContext& /*ctx*/, const QRect* /*visibleRect*/) {
+                painter->save();
+                painter->setClipRect(cacheItem->rect, Qt::IntersectClip);
+                painter->drawPixmap(cacheItem->rect.left(), topAnimation->currentValue().toInt(), itemPixmap);
+                painter->restore();
+            };
+        }
+
+        animation->addAnimation(topAnimation);
+
+        if (mainAnimation->direction() == QAbstractAnimation::Backward)
+        {
+            topAnimation->setCurrentTime(topAnimation->duration());
+        }
+
+        ++itemIndex;
+
+        return true;
+    });
+
+    return animation;
+}
+
+void MainWindow::on_shiftDownItemBttn_clicked()
+{
+    auto animation = new CacheSpaceAnimationCallback(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    animation->animationFactory = memFunction(this, &MainWindow::createShiftDownItemAnimation);
+
+    playAnimation(animation);
+}
+
+QAbstractAnimation* MainWindow::createShiftBottomRightAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
+{
+    QPixmap cachePixmap(cacheSpace->window().size());
+    {
+        cachePixmap.fill(Qt::transparent);
+        QPainter cachePainter(&cachePixmap);
+        cachePainter.setWindow(cacheSpace->window());
+        cachePainter.setRenderHints(painter->renderHints());
+        cachePainter.setBackgroundMode(painter->backgroundMode());
+
+        cacheSpace->drawRaw(&cachePainter, ctx);
+    }
+
+    auto topLeftAnimation = new QVariantAnimation();
+    topLeftAnimation->setDuration(2000);
+    topLeftAnimation->setEasingCurve(QEasingCurve::OutBack);
+    QPoint startValue = cacheSpace->window().topLeft();
+    if (mainAnimation->direction() == QAbstractAnimation::Forward)
+        startValue.rx() -= cacheSpace->window().width();
+    else
+        startValue.rx() += cacheSpace->window().width();
+    startValue.ry() -= cacheSpace->window().height();
+    topLeftAnimation->setStartValue(startValue);
+    topLeftAnimation->setEndValue(cacheSpace->window().topLeft());
+
+    cacheSpace->drawProxy = [cachePixmap, topLeftAnimation](const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& /*ctx*/) {
+        painter->save();
+        painter->setClipRect(cacheSpace->window(), Qt::IntersectClip);
+        painter->drawPixmap(topLeftAnimation->currentValue().toPoint(), cachePixmap);
+        painter->restore();
+    };
+
+    connect(mainAnimation, &Qi::CacheSpaceAnimationAbstract::stopped, [cacheSpace](){
+        cacheSpace->drawProxy = nullptr;
+    });
+
+    return topLeftAnimation;
+}
+
+void MainWindow::on_shiftBottomRightBttn_clicked()
+{
+    auto animation = new CacheSpaceAnimationCallback(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    animation->animationFactory = memFunction(this, &MainWindow::createShiftBottomRightAnimation);
+
+    playAnimation(animation);
+}
+
+QAbstractAnimation* MainWindow::createFadeAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
+{
+    QPixmap cachePixmap(cacheSpace->window().size());
+    {
+        cachePixmap.fill(Qt::transparent);
+        QPainter cachePainter(&cachePixmap);
+        cachePainter.setWindow(cacheSpace->window());
+        cachePainter.setRenderHints(painter->renderHints());
+        cachePainter.setBackgroundMode(painter->backgroundMode());
+
+        cacheSpace->drawRaw(&cachePainter, ctx);
+    }
+
+    auto fadeAnimation = new QVariantAnimation();
+    fadeAnimation->setDuration(2000);
+    fadeAnimation->setEasingCurve(QEasingCurve::InCirc);
+    fadeAnimation->setStartValue(0.f);
+    fadeAnimation->setEndValue(1.f);
+
+    cacheSpace->drawProxy = [cachePixmap, fadeAnimation](const CacheSpace* cacheSpace, QPainter* painter, const GuiContext& /*ctx*/) {
+        qreal oldOpacity = painter->opacity();
+        painter->setOpacity(fadeAnimation->currentValue().toFloat());
+        painter->drawPixmap(cacheSpace->window(), cachePixmap);
+        painter->setOpacity(oldOpacity);
+    };
+
+    connect(mainAnimation, &Qi::CacheSpaceAnimationAbstract::stopped, [cacheSpace](){
+        cacheSpace->drawProxy = nullptr;
+    });
+
+    return fadeAnimation;
+}
+
+void MainWindow::on_fadeBttn_clicked()
+{
+    auto animation = new CacheSpaceAnimationCallback(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
+    animation->animationFactory = memFunction(this, &MainWindow::createFadeAnimation);
 
     playAnimation(animation);
 }

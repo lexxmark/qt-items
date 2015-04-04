@@ -9,6 +9,7 @@ namespace Qi
 class ControllerContext;
 class CacheItem;
 class CacheItemFactory;
+class CacheSpaceAnimationAbstract;
 
 class QI_EXPORT CacheSpace: public QObject
 {
@@ -45,12 +46,14 @@ public:
     const CacheItem* cacheItem(const ItemID& visibleItem) const;
     const CacheItem* cacheItemByPosition(const QPoint& point) const;
 
+    std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)> drawProxy;
+
     void validate(const GuiContext& ctx) const;
     void draw(QPainter* painter, const GuiContext& ctx) const;
     void drawRaw(QPainter* painter, const GuiContext& ctx) const;
 
-    bool hasDrawProxy() const { return (bool)m_drawProxy; }
-    void setDrawProxy(const std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)>& drawProxy);
+    CacheSpaceAnimationAbstract* animation() const;
+    void setAnimation(CacheSpaceAnimationAbstract* animation);
 
     void tryActivateControllers(const ControllerContext& context, QVector<ControllerMouse*>& controllers) const;
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
@@ -68,6 +71,7 @@ public:
     bool forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const;
     bool forEachCacheView(const std::function<bool(const IterateInfo&)>& visitor) const;
     //bool forEachCacheView(const std::function<bool(const QSharedPointer<CacheItem>&, CacheView*)>& visitor);
+
 
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
@@ -107,8 +111,7 @@ protected:
     // flag for debugging
     mutable bool m_cacheIsInUse;
 
-    // proxy function
-    std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)> m_drawProxy;
+    QPointer<CacheSpaceAnimationAbstract> m_animation;
 
 private:
     void invalidateItemsCache(ChangeReason reason);
