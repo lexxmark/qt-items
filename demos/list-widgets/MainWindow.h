@@ -53,6 +53,7 @@ private:
     QSharedPointer<Qi::ModelText> m_names;
     QSharedPointer<Qi::ModelText> m_descriptions;
     QSharedPointer<Qi::View> m_wikiView;
+    QSharedPointer<Qi::View> m_ratingView;
     QSharedPointer<Qi::ListColumnsResizer> m_resizer;
 
     QPointer<Qi::CacheSpaceAnimationAbstract> m_animation;

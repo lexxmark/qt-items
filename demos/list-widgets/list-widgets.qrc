@@ -20,5 +20,7 @@
         <file>img/shiba-inu_01_sm.jpg</file>
         <file>img/siberian-husky_01_sm.jpg</file>
         <file>img/vizsla_01_sm.jpg</file>
+        <file>img/StarOff.png</file>
+        <file>img/StarOn.png</file>
     </qresource>
 </RCC>

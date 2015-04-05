@@ -1,7 +1,6 @@
 #include "CacheSpaceGrid.h"
 #include "cache/CacheItem.h"
 #include "utils/auto_value.h"
-#include <QMap>
 
 namespace Qi
 {
