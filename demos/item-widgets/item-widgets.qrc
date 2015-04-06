@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>img/likeOff.png</file>
+        <file>img/likeOn.png</file>
+    </qresource>
+</RCC>

@@ -62,4 +62,25 @@ void ViewColumnBorder::drawImpl(QPainter* painter, const GuiContext& ctx, const 
     painter->setPen(oldPen);
 }
 
+ViewRectBorder::ViewRectBorder()
+{
+}
+
+QSize ViewRectBorder::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+{
+    return QSize(0, 0);
+}
+
+void ViewRectBorder::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
+{
+    validateGridColor(m_gridColor, ctx);
+
+    QPen oldPen = painter->pen();
+    painter->setPen(m_gridColor);
+
+    painter->drawRect(cache.cacheView.rect());
+
+    painter->setPen(oldPen);
+}
+
 } // end namespace Qi

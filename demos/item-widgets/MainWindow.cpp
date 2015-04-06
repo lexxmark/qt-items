@@ -6,12 +6,14 @@
 #include "items/checkbox/Check.h"
 #include "items/radiobutton/Radio.h"
 #include "items/text/Text.h"
+#include "items/rating/Rating.h"
 
 using namespace Qi;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_rating(3)
 {
     ui->setupUi(this);
 
@@ -70,29 +72,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->radioButton2->spaceItem().addSchema(schema);
     ui->radioButton3->spaceItem().addSchema(schema);
 
-    /*
-    view = new ViewText();
-    layout = new LayoutAll();
-    ui->checkBox1->addViewSchema(layout, view);
-    ui->checkBox2->addViewSchema(layout, view);
-    ui->checkBox3->addViewSchema(layout, view);
+    schema.layout = makeLayoutClient();
+    auto modelRating = QSharedPointer<ModelRatingCallback>::create();
+    modelRating->getValueFunction = [this](const ItemID&) { return m_rating; };
+    modelRating->setValueFunction = [this](const ItemID&, int rating) {
+        m_rating = rating;
+        return true;
+    };
+    schema.view = QSharedPointer<ViewRating>::create(modelRating, QPixmap(":/img/img/likeOn.png"), QPixmap(":/img/img/likeOff.png"));
 
-    ui->radioButton1->setItemID(ItemID(0, 0));
-    ui->radioButton2->setItemID(ItemID(1, 0));
-    ui->radioButton3->setItemID(ItemID(2, 0));
-
-    view = new ViewRadio();
-    layout = new LayoutLeft();
-    ui->radioButton1->addViewSchema(layout, view);
-    ui->radioButton2->addViewSchema(layout, view);
-    ui->radioButton3->addViewSchema(layout, view);
-
-    view = new ViewText();
-    layout = new LayoutAll();
-    ui->radioButton1->addViewSchema(layout, view);
-    ui->radioButton2->addViewSchema(layout, view);
-    ui->radioButton3->addViewSchema(layout, view);
-    */
+    ui->rating->spaceItem().addSchema(schema);
 }
 
 MainWindow::~MainWindow()

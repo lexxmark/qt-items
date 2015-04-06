@@ -13,6 +13,7 @@ class QI_EXPORT CacheItemFactory
 
 public:
     CacheItemFactory(const Space& space, ViewApplicationMask viewApplicationMask);
+    virtual ~CacheItemFactory();
 
     CacheItemInfo create(const ItemID& visibleItem) const;
     void updateSchema(CacheItemInfo& info) const;

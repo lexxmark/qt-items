@@ -4,6 +4,33 @@
 namespace Qi
 {
 
+class RangeByType: public Range
+{
+public:
+    RangeByType(const SpaceScene* scene, int type)
+        : m_scene(scene),
+          m_type(type)
+    {
+    }
+
+protected:
+    bool hasItemImpl(const ItemID &item) const override
+    {
+        return m_scene->itemType(item) == m_type;
+    }
+    bool hasRowImpl(int /*row*/) const override { return false; }
+    bool hasColumnImpl(int /*column*/) const { return false; }
+
+private:
+    const SpaceScene* m_scene;
+    int m_type;
+};
+
+QSharedPointer<Range> makeRangeByType(const SpaceScene* scene, int type)
+{
+    return QSharedPointer<RangeByType>::create(scene, type);
+}
+
 class CacheItemFactorySameSchemaByType: public CacheItemFactory
 {
 public:

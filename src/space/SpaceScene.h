@@ -6,7 +6,6 @@
 namespace Qi
 {
 
-
 enum SpaceSceneHint
 {
     SpaceSceneHintNone = 0x0000,
@@ -47,6 +46,9 @@ private:
     mutable bool m_sizeIsValid;
     mutable QSize m_size;
 };
+
+QI_EXPORT QSharedPointer<Range> makeRangeByType(const SpaceScene* scene, int type);
+
 
 class SceneElement;
 

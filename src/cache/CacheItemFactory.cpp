@@ -11,6 +11,10 @@ CacheItemFactory::CacheItemFactory(const Space& space, ViewApplicationMask viewA
 {
 }
 
+CacheItemFactory::~CacheItemFactory()
+{
+}
+
 CacheItemInfo CacheItemFactory::create(const ItemID& visibleItem) const
 {
     CacheItemInfo info;

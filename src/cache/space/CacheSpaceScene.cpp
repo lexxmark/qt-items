@@ -51,7 +51,7 @@ void CacheSpaceScene::validateItemsCacheImpl() const
             continue;
 
         QSharedPointer<CacheItem> newItem;
-        while ((*it)->item.column <= item.column)
+        while ((it != m_items.end()) && ((*it)->item.column <= item.column))
         {
             if ((*it)->item.column == item.column)
             {

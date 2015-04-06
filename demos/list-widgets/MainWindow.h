@@ -5,6 +5,7 @@
 #include <QEasingCurve>
 #include "items/image/Pixmap.h"
 #include "items/text/Text.h"
+#include "items/rating/Rating.h"
 
 class QAbstractAnimation;
 
@@ -39,6 +40,7 @@ private slots:
     void on_fadeBttn_clicked();
 
 private:
+    void initData();
     void shuffleRows();
     void playAnimation(Qi::CacheSpaceAnimationAbstract* animation, const QEasingCurve & easing = QEasingCurve::OutCirc);
 
@@ -52,8 +54,8 @@ private:
     QSharedPointer<Qi::ModelPixmap> m_images;
     QSharedPointer<Qi::ModelText> m_names;
     QSharedPointer<Qi::ModelText> m_descriptions;
+    QSharedPointer<Qi::ModelRating> m_rates;
     QSharedPointer<Qi::View> m_wikiView;
-    QSharedPointer<Qi::View> m_ratingView;
     QSharedPointer<Qi::ListColumnsResizer> m_resizer;
 
     QPointer<Qi::CacheSpaceAnimationAbstract> m_animation;

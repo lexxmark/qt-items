@@ -2,7 +2,7 @@ include(../../common.pri)
 
 QT += core gui widgets
 
-TARGET = qi-demos-item-widgets
+TARGET = qi-demos-scene-widgets
 TEMPLATE = app
 DESTDIR = $$OUT_PWD/../../bin/
 
@@ -20,6 +20,3 @@ LIBS += -L$$DESTDIR -lqt-items
 #} else:unix {
 #    QMAKE_LFLAGS += -Wl,-rpath,$$BIN_DIR
 #}
-
-RESOURCES += \
-    item-widgets.qrc

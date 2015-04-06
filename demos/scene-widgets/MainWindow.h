@@ -7,6 +7,10 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace Qi {
+class SpaceSceneElements;
+}
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -16,12 +20,11 @@ public:
     ~MainWindow();
 
 private slots:
-
     void on_pushButton_clicked();
-    
+
 private:
     Ui::MainWindow *ui;
-    int m_rating;
+    QSharedPointer<Qi::SpaceSceneElements> m_scene;
 };
 
 #endif // MAINWINDOW_H
