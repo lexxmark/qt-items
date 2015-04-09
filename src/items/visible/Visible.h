@@ -17,6 +17,8 @@ public:
 
     std::function<bool(const ItemID&)> isItemVisible;
 
+    void notifyVisibilityChanged();
+
 protected:
     void addViewImpl(const ItemID& item, QVector<const View*>& views) const override;
     CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
@@ -24,6 +26,7 @@ protected:
 
 private:
     bool safeIsItemVisible(const ItemID& item) const;
+    void onSourceViewChanged(const View* view, ChangeReason reason);
 
     QSharedPointer<View> m_sourceView;
     bool m_reserveSize;

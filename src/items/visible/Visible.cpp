@@ -9,6 +9,12 @@ ViewVisible::ViewVisible(const QSharedPointer<View>& sourceView, bool reserveSiz
       m_reserveSize(reserveSize)
 {
     Q_ASSERT(m_sourceView);
+    connect(m_sourceView.data(), &View::viewChanged, this, &ViewVisible::onSourceViewChanged);
+}
+
+void ViewVisible::notifyVisibilityChanged()
+{
+    emit viewChanged(this, ChangeReasonViewSize);
 }
 
 void ViewVisible::addViewImpl(const ItemID& item, QVector<const View*>& views) const
@@ -44,6 +50,14 @@ QSize ViewVisible::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeM
 bool ViewVisible::safeIsItemVisible(const ItemID& item) const
 {
     return isItemVisible ? isItemVisible(item) : false;
+}
+
+void ViewVisible::onSourceViewChanged(const View* view, ChangeReason reason)
+{
+    Q_UNUSED(view);
+    Q_ASSERT(view == m_sourceView.data());
+
+    emit viewChanged(this, reason);
 }
 
 ControllerMouseVisible::ControllerMouseVisible(const QSharedPointer<ViewVisible>& view)

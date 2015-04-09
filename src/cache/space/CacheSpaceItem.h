@@ -13,7 +13,7 @@ class QI_EXPORT CacheSpaceItem : public CacheSpace
     Q_DISABLE_COPY(CacheSpaceItem)
 
 public:
-    explicit CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow = false, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
     ~CacheSpaceItem();
 
     const QSharedPointer<SpaceItem>& spaceItem() const { return m_spaceItem; }
@@ -24,6 +24,8 @@ private:
     bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
     const CacheItem* cacheItemImpl(const ItemID& visibleItem) const override;
     const CacheItem* cacheItemByPositionImpl(const QPoint& point) const override;
+
+    void onCacheChanged(const CacheSpace* cache, ChangeReason reason);
 
     QSharedPointer<SpaceItem> m_spaceItem;
     mutable QSharedPointer<CacheItem> m_item;

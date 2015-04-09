@@ -47,8 +47,26 @@ MainWindow::MainWindow(QWidget *parent) :
     m_resizer = QSharedPointer<Qi::ListColumnsResizer>::create(ui->listWidget);
 
     auto& grid = *ui->listWidget->grid();
+    grid.columns()->setCount(1);
 
-    initData();
+    m_images = QSharedPointer<ModelStorageColumn<QPixmap>>::create(grid.rows());
+    m_names = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
+    m_descriptions = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
+    m_rates = QSharedPointer<ModelStorageColumn<int>>::create(grid.rows());
+
+    {
+        auto textView = QSharedPointer<ViewText>::create(QSharedPointer<ModelTextValue>::create("Load"));
+        auto imageView = QSharedPointer<ViewPixmap>::create(QSharedPointer<ModelPixmapValue>::create(QPixmap("://img/Download.png")));
+
+        QVector<ViewSchema> subViews;
+        subViews.append(ViewSchema(makeLayoutLeft(), imageView));
+        subViews.append(ViewSchema(makeLayoutClient(), textView));
+
+        auto bttnView = QSharedPointer<ViewButton>::create(QSharedPointer<ViewComposite>::create(subViews));
+        bttnView->action = memFunction(this, &MainWindow::onLoadBttnPressed);
+        bttnView->setMargins(QMargins(10, 10, 10, 10));
+        ui->listWidget->installEmptyView(bttnView, makeLayoutCenter());
+    }
 
     QFont boldFont = ui->listWidget->font();
     boldFont.setBold(true);
@@ -81,16 +99,9 @@ MainWindow::MainWindow(QWidget *parent) :
         grid.addSchema(makeRangeColumn(0), QSharedPointer<ViewComposite>::create(subViews), makeLayoutBottom());
     }
 
-    // set row heights as 1st item height
-    auto cacheItem = QSharedPointer<CacheItem>::create(ui->listWidget->cacheGrid()->cacheItemFactory().create(ItemID(0, 0)));
-    Q_ASSERT(cacheItem);
-    cacheItem->validateCacheView(ui->listWidget->guiContext());
-    QSize itemSize = cacheItem->calculateItemSize(ui->listWidget->guiContext());
-    grid.rows()->setLineSizeAll(itemSize.height());
-
-    // initial animation
-    m_animation = new CacheSpaceAnimationShiftViewsRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data());
-    m_animation->setEasingCurve(QEasingCurve::OutCirc);
+    // show load button animation
+    m_animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), &ui->listWidget->rMainCacheSpace(), CacheSpaceAnimationShiftTop);
+    m_animation->setEasingCurve(QEasingCurve::OutBack);
     m_animation->start();
 }
 
@@ -102,17 +113,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::initData()
+void MainWindow::loadData()
 {
     auto& grid = *ui->listWidget->grid();
 
     grid.rows()->setCount(20);
-    grid.columns()->setCount(1);
-
-    m_images = QSharedPointer<ModelStorageColumn<QPixmap>>::create(grid.rows());
-    m_names = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
-    m_descriptions = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
-    m_rates = QSharedPointer<ModelStorageColumn<int>>::create(grid.rows());
 
     m_images->setValue(0, 0, QPixmap("://img/afghan-hound_01_sm.jpg"));
     m_names->setValue(0, 0, "Afghan Hound");
@@ -213,6 +218,31 @@ void MainWindow::initData()
     m_names->setValue(19, 0, "Siberian Husky");
     m_descriptions->setValue(19, 0, "The Siberian Husky is a medium size, dense-coat working dog breed that originated in north-eastern Siberia. The breed belongs to the Spitz genetic family. It is recognizable by its thickly furred double coat, erect triangular ears, and distinctive markings.");
     m_rates->setValue(19, 0, 2);
+
+    // set row heights as 1st item height
+    auto cacheItem = QSharedPointer<CacheItem>::create(ui->listWidget->cacheGrid()->cacheItemFactory().create(ItemID(0, 0)));
+    Q_ASSERT(cacheItem);
+    cacheItem->validateCacheView(ui->listWidget->guiContext());
+    QSize itemSize = cacheItem->calculateItemSize(ui->listWidget->guiContext());
+    grid.rows()->setLineSizeAll(itemSize.height());
+
+    // show items animation
+    m_animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data(), CacheSpaceAnimationShiftRight);
+    m_animation->setEasingCurve(QEasingCurve::OutCirc);
+    m_animation->start();
+}
+
+void MainWindow::onLoadBttnPressed(const Qi::ItemID&, const Qi::ControllerContext&, const Qi::ViewButton*)
+{
+    // hide load button animation
+    m_animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), &ui->listWidget->rMainCacheSpace(), CacheSpaceAnimationShiftBottom);
+    m_animation->setEasingCurve(QEasingCurve::OutBack);
+
+    connect(m_animation.data(), &CacheSpaceAnimationAbstract::stopped, [this](){
+        loadData();
+    });
+
+    m_animation->start(QAbstractAnimation::Backward);
 }
 
 void MainWindow::shuffleRows()
@@ -231,7 +261,7 @@ void MainWindow::playAnimation(Qi::CacheSpaceAnimationAbstract* animation, const
 
         shuffleRows();
 
-        // don't delete while m_animation is emitting stopped signal
+        // don't delete while old m_animation is emitting stopped signal
         m_animation->deleteLater();
 
         // change to new animation
@@ -253,12 +283,12 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_shiftRightBttn_clicked()
 {
-    playAnimation(new CacheSpaceAnimationShiftViewsRight(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data()));
+    playAnimation(new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data(), CacheSpaceAnimationShiftRight));
 }
 
 void MainWindow::on_shiftLeftBttn_clicked()
 {
-    playAnimation(new CacheSpaceAnimationShiftViewsLeft(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data()), QEasingCurve::InOutQuart);
+    playAnimation(new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data(), CacheSpaceAnimationShiftLeft), QEasingCurve::InOutQuart);
 }
 
 void MainWindow::on_shiftRandomBttn_clicked()
@@ -545,4 +575,23 @@ void MainWindow::on_fadeBttn_clicked()
     animation->animationFactory = memFunction(this, &MainWindow::createFadeAnimation);
 
     playAnimation(animation);
+}
+
+void MainWindow::on_clearData_clicked()
+{
+    auto animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), &ui->listWidget->rMainCacheSpace(), CacheSpaceAnimationShiftTop);
+    connect(m_animation.data(), &CacheSpaceAnimationAbstract::stopped, [this]() {
+        ui->listWidget->grid()->setRowsCount(0);
+    });
+    playAnimation(animation, QEasingCurve::OutBack);
+}
+
+void MainWindow::on_alphabetOrderBttn_clicked()
+{
+    ui->listWidget->grid()->sortColumnByModel(0, m_names, true, false);
+}
+
+void MainWindow::on_starsOrderBttn_clicked()
+{
+    ui->listWidget->grid()->sortColumnByModel(0, m_rates, false, false);
 }

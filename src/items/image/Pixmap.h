@@ -3,6 +3,7 @@
 
 #include "core/ext/ViewModeled.h"
 #include "core/ext/ModelCallback.h"
+#include "core/ext/ModelStore.h"
 #include <QPixmap>
 
 namespace Qi
@@ -15,10 +16,18 @@ namespace Private
     {
         return 0;
     }
+
+    class NotEqPixmaps: std::binary_function<QPixmap, QPixmap, bool>
+    {
+    public:
+        bool operator()(const QPixmap&, const QPixmap&) const
+        { return false; }
+    };
 }
 
 typedef ModelTyped<QPixmap> ModelPixmap;
 typedef ModelCallback<QPixmap> ModelPixmapCallback;
+typedef ModelStorageValue<QPixmap, QPixmap, Private::NotEqPixmaps> ModelPixmapValue;
 
 class QI_EXPORT ViewPixmap: public ViewModeled<ModelPixmap>
 {

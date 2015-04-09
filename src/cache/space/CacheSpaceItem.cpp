@@ -7,14 +7,23 @@ namespace Qi
 {
 
 
-CacheSpaceItem::CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, ViewApplicationMask viewApplicationMask)
+CacheSpaceItem::CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow, ViewApplicationMask viewApplicationMask)
     : CacheSpace(spaceItem, viewApplicationMask),
       m_spaceItem(spaceItem)
 {
+    if (syncSpaceSizeWithWindow)
+        connect(this, &CacheSpace::cacheChanged, this, &CacheSpaceItem::onCacheChanged);
 }
 
 CacheSpaceItem::~CacheSpaceItem()
 {
+}
+
+void CacheSpaceItem::onCacheChanged(const CacheSpace* cache, ChangeReason reason)
+{
+    Q_ASSERT(cache == this);
+    if (reason & ChangeReasonCacheFrame)
+        m_spaceItem->setSize(window().size());
 }
 
 void CacheSpaceItem::clearItemsCacheImpl() const

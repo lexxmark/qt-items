@@ -42,6 +42,27 @@
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
+       <widget class="QCommandLinkButton" name="clearData">
+        <property name="text">
+         <string>Clear data</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCommandLinkButton" name="alphabetOrderBttn">
+        <property name="text">
+         <string>Sort by name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCommandLinkButton" name="starsOrderBttn">
+        <property name="text">
+         <string>Sort by stars</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label">
         <property name="text">
          <string>View Animations:</string>

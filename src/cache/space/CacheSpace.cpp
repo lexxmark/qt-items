@@ -37,7 +37,8 @@ void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
     if (reason & ChangeReasonSpaceStructure)
     {
         // invalidate all items
-        clear();
+        clearItemsCache();
+        invalidateItemsCache(reason|ChangeReasonCacheItems);
     }
     else if (reason & (ChangeReasonSpaceHint | ChangeReasonSpaceItemsStructure))
     {
@@ -73,7 +74,7 @@ void CacheSpace::setWindow(const QRect& window)
     m_sizeDelta += (_window.size() - m_window.size());
     m_window = _window;
 
-    invalidateItemsCache(ChangeReasonCacheItems);
+    invalidateItemsCache(ChangeReasonCacheItems|ChangeReasonCacheFrame);
 }
 
 void CacheSpace::setScrollOffset(const QPoint& scrollOffset)
@@ -85,7 +86,7 @@ void CacheSpace::setScrollOffset(const QPoint& scrollOffset)
     m_scrollDelta += offset;
     m_scrollOffset = scrollOffset;
 
-    invalidateItemsCache(ChangeReasonCacheItems);
+    invalidateItemsCache(ChangeReasonCacheItems|ChangeReasonCacheFrame);
 }
 
 void CacheSpace::set(const QRect& window, const QPoint& scrollOffset)

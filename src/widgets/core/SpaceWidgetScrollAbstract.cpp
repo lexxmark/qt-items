@@ -23,9 +23,40 @@ SpaceWidgetScrollAbstract::~SpaceWidgetScrollAbstract()
 {
 }
 
+bool SpaceWidgetScrollAbstract::initSpaceWidgetScrollable(const QSharedPointer<CacheSpace>& mainCacheSpace, const QSharedPointer<CacheSpace>& scrollableCacheSpace)
+{
+    // one time initialization allowed
+    if(!m_scrollableCacheSpace.isNull())
+    {
+        Q_ASSERT(false);
+        return false;
+    }
+
+    Q_ASSERT(!scrollableCacheSpace.isNull());
+
+    m_scrollableCacheSpace = scrollableCacheSpace;
+    connect(m_scrollableCacheSpace.data(), &CacheSpace::cacheChanged, this, &SpaceWidgetScrollAbstract::onScrollCacheSpaceChanged);
+
+    return initSpaceWidgetCore(mainCacheSpace);
+}
+
+void SpaceWidgetScrollAbstract::onScrollCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason)
+{
+    Q_UNUSED(cache);
+    Q_ASSERT(cache == m_scrollableCacheSpace.data());
+
+    if (reason & ChangeReasonSpaceStructure)
+    {
+        invalidateCacheItemsLayout();
+        updateScrollbars();
+        // request to recalculate layout
+        updateGeometry();
+    }
+}
+
 void SpaceWidgetScrollAbstract::ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
 {
-    if (cacheSpace != &mainCacheSpace())
+    if (cacheSpace != m_scrollableCacheSpace.data())
     {
         // should be implemented by descendant class
         Q_ASSERT(false);
@@ -40,7 +71,7 @@ void SpaceWidgetScrollAbstract::ensureVisibleImpl(const ItemID& visibleItem, con
         return;
 
     QPoint scrollPos(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    QRect itemRect = mainSpace().itemRect(visibleItem);
+    QRect itemRect = cacheSpace->space().itemRect(visibleItem);
 
     if ((itemRect.width() >= visibleSize.width()) || (itemRect.left() < scrollPos.x()))
         scrollPos.rx() = itemRect.left();
@@ -124,7 +155,7 @@ void SpaceWidgetScrollAbstract::scrollContentsBy(int dx, int dy)
 
 QSize SpaceWidgetScrollAbstract::viewportSizeHint() const
 {
-    return mainSpace().size();
+    return calculateVirtualSizeImpl();
 }
 
 void SpaceWidgetScrollAbstract::updateScrollbars()
@@ -159,7 +190,11 @@ void SpaceWidgetScrollAbstract::updateScrollbars()
 
 QSize SpaceWidgetScrollAbstract::calculateVirtualSizeImpl() const
 {
-    return mainSpace().size();
+    Q_ASSERT(!m_scrollableCacheSpace.isNull());
+    if (m_scrollableCacheSpace.isNull())
+        return QSize(0, 0);
+
+    return m_scrollableCacheSpace->space().size();
 }
 
 QSize SpaceWidgetScrollAbstract::calculateScrollableSizeImpl() const
@@ -172,8 +207,12 @@ void SpaceWidgetScrollAbstract::updateCacheScrollOffsetImpl()
     // get scroll positions
     QPoint scrollPos(horizontalScrollBar()->value(), verticalScrollBar()->value());
 
-    // update main cache scroll position
-    rMainCacheSpace().setScrollOffset(scrollPos);
+    // update scrollable cache scroll position
+    Q_ASSERT(!m_scrollableCacheSpace.isNull());
+    if (m_scrollableCacheSpace.isNull())
+        return;
+
+    m_scrollableCacheSpace->setScrollOffset(scrollPos);
 }
 
 void SpaceWidgetScrollAbstract::validateCacheItemsLayoutImpl()

@@ -84,32 +84,30 @@ protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
 };
 
-class QI_EXPORT CacheSpaceAnimationShiftViewsRight : public CacheSpaceAnimationAbstract
+enum CacheSpaceAnimationShiftDirection
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsRight)
-
-public:
-    CacheSpaceAnimationShiftViewsRight(QWidget* widget, CacheSpace* cacheSpace)
-        : CacheSpaceAnimationAbstract(widget, cacheSpace)
-    {}
-
-protected:
-    QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
+    CacheSpaceAnimationShiftLeft,
+    CacheSpaceAnimationShiftRight,
+    CacheSpaceAnimationShiftTop,
+    CacheSpaceAnimationShiftBottom
 };
 
-class QI_EXPORT CacheSpaceAnimationShiftViewsLeft : public CacheSpaceAnimationAbstract
+class QI_EXPORT CacheSpaceAnimationShiftViews : public CacheSpaceAnimationAbstract
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceAnimationShiftViewsLeft)
+    Q_DISABLE_COPY(CacheSpaceAnimationShiftViews)
 
 public:
-    CacheSpaceAnimationShiftViewsLeft(QWidget* widget, CacheSpace* cacheSpace)
-        : CacheSpaceAnimationAbstract(widget, cacheSpace)
-    {}
+    CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View* viewToApply = nullptr);
 
 protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
+
+private:
+    void moveToStart(const CacheSpace* cacheSpace, QRect& rect) const;
+
+    CacheSpaceAnimationShiftDirection m_direction;
+    const View* m_viewToApply;
 };
 
 class QI_EXPORT CacheSpaceAnimationShiftViewsRandom : public CacheSpaceAnimationAbstract

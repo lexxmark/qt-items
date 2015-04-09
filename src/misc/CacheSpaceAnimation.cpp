@@ -174,13 +174,25 @@ QAbstractAnimation* CacheSpaceAnimationCallback::createAnimationImpl(CacheSpace*
     return animationFactory(this, cacheSpace, painter, ctx);
 }
 
-QAbstractAnimation* CacheSpaceAnimationShiftViewsRight::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
+CacheSpaceAnimationShiftViews::CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View* viewToApply)
+    : CacheSpaceAnimationAbstract(widget, cacheSpace),
+      m_direction(direction),
+      m_viewToApply(viewToApply)
+{
+}
+
+QAbstractAnimation* CacheSpaceAnimationShiftViews::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
 {
     cacheSpace->validate(ctx);
 
     auto animation = new QParallelAnimationGroup(this);
-    // init
+
+    // enumerate all cache views
     cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
+
+        // skip non target views
+        if (m_viewToApply && (m_viewToApply != info.cacheView->view()))
+            return true;
 
         auto subAnimation = new QSequentialAnimationGroup(animation);
 
@@ -188,7 +200,7 @@ QAbstractAnimation* CacheSpaceAnimationShiftViewsRight::createAnimationImpl(Cach
         rectAnimation->setDuration(1000);
         rectAnimation->setEasingCurve(easingCurve());
         QRect startRect = info.cacheView->rect();
-        startRect.moveTo(cacheSpace->window().left() - startRect.width(), startRect.top());
+        moveToStart(cacheSpace, startRect);
         rectAnimation->setStartValue(startRect);
         rectAnimation->setEndValue(info.cacheView->rect());
         CacheView* cv = info.cacheView;
@@ -211,41 +223,30 @@ QAbstractAnimation* CacheSpaceAnimationShiftViewsRight::createAnimationImpl(Cach
     return animation;
 }
 
-QAbstractAnimation* CacheSpaceAnimationShiftViewsLeft::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)
+void CacheSpaceAnimationShiftViews::moveToStart(const CacheSpace* cacheSpace, QRect& rect) const
 {
-    cacheSpace->validate(ctx);
+    switch (m_direction) {
 
-    auto animation = new QParallelAnimationGroup(this);
-    // init
-    cacheSpace->forEachCacheView([this, animation, cacheSpace](const CacheSpace::IterateInfo& info)->bool {
+    case CacheSpaceAnimationShiftRight:
+        rect.moveTo(cacheSpace->window().left() - rect.width(), rect.top());
+        break;
 
-        auto subAnimation = new QSequentialAnimationGroup(animation);
+    case CacheSpaceAnimationShiftLeft:
+        rect.moveTo(cacheSpace->window().right(), rect.top());
+        break;
 
-        auto rectAnimation = new QVariantAnimation(subAnimation);
-        rectAnimation->setDuration(1000);
-        rectAnimation->setEasingCurve(easingCurve());
-        QRect startRect = info.cacheView->rect();
-        startRect.moveTo(cacheSpace->window().right(), startRect.top());
-        rectAnimation->setStartValue(startRect);
-        rectAnimation->setEndValue(info.cacheView->rect());
-        CacheView* cv = info.cacheView;
-        connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
-            cv->rRect() = value.toRect();
-        });
-        subAnimation->addPause(info.cacheItemIndex*100);
-        subAnimation->addAnimation(rectAnimation);
+    case CacheSpaceAnimationShiftTop:
+        rect.moveTo(rect.left(), cacheSpace->window().top() - rect.height());
+        break;
 
-        animation->addAnimation(subAnimation);
+    case CacheSpaceAnimationShiftBottom:
+        rect.moveTo(rect.left(), cacheSpace->window().bottom());
+        break;
 
-        if (direction() == QAbstractAnimation::Forward)
-        {
-            info.cacheView->rRect() = startRect;
-        }
-
-        return true;
-    });
-
-    return animation;
+    default:
+        Q_ASSERT(false);
+        break;
+    }
 }
 
 QAbstractAnimation* CacheSpaceAnimationShiftViewsRandom::createAnimationImpl(CacheSpace* cacheSpace, QPainter* /*painter*/, const GuiContext& ctx)

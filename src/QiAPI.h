@@ -21,26 +21,26 @@ static const int InvalidIndex = -1;
     
 enum ChangeReasonFlag
 {
-    ChangeReasonLinesCount = 0x0001,
-    ChangeReasonLinesCountWeak = 0x0002,
-    ChangeReasonLinesVisibility = 0x0004,
-    ChangeReasonLinesSize = 0x0008,
-    ChangeReasonLinesOrder = 0x0010,
+    ChangeReasonLinesCount = 0x00001,
+    ChangeReasonLinesCountWeak = 0x00002,
+    ChangeReasonLinesVisibility = 0x00004,
+    ChangeReasonLinesSize = 0x00008,
+    ChangeReasonLinesOrder = 0x00010,
     
-    ChangeReasonRange = 0x0020,
-    ChangeReasonLayout = 0x0040,
-    ChangeReasonViewContent = 0x0080,
-    ChangeReasonViewController = 0x0100,
-    ChangeReasonViewSize = 0x0200,
+    ChangeReasonRange = 0x00020,
+    ChangeReasonLayout = 0x00040,
+    ChangeReasonViewContent = 0x00080,
+    ChangeReasonViewController = 0x00100,
+    ChangeReasonViewSize = 0x00200,
 
-    ChangeReasonSpaceStructure = 0x0400,
-    ChangeReasonSpaceHint = 0x0800,
-    ChangeReasonSpaceItemsStructure = 0x1000,
-    ChangeReasonSpaceItemsContent = 0x2000,
+    ChangeReasonSpaceStructure = 0x00400,
+    ChangeReasonSpaceHint = 0x00800,
+    ChangeReasonSpaceItemsStructure = 0x01000,
+    ChangeReasonSpaceItemsContent = 0x02000,
 
-//    ChangeReasonCacheFrame = 0x4000,
-    ChangeReasonCacheItems = 0x4000,
-    ChangeReasonCacheContent = 0x8000,
+    ChangeReasonCacheItems = 0x04000,
+    ChangeReasonCacheContent = 0x08000,
+    ChangeReasonCacheFrame = 0x10000,
 };
 
 Q_DECLARE_FLAGS(ChangeReason, ChangeReasonFlag)

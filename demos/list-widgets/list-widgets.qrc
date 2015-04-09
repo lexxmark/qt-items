@@ -22,5 +22,6 @@
         <file>img/vizsla_01_sm.jpg</file>
         <file>img/StarOff.png</file>
         <file>img/StarOn.png</file>
+        <file>img/Download.png</file>
     </qresource>
 </RCC>

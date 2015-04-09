@@ -4,6 +4,7 @@
 #include "ModelTyped.h"
 #include "space/SpaceGrid.h"
 #include <QSet>
+#include <functional>
 
 namespace Qi
 {
@@ -78,7 +79,7 @@ private:
     QMetaObject::Connection m_connection;
 };
 
-template <typename T, typename StorageT = typename std::decay<T>::type>
+template <typename T, typename StorageT = typename std::decay<T>::type, typename NotEq = typename std::not_equal_to<T>>
 class ModelStorageValue: public ModelTyped<T>
 {
 public:
@@ -95,7 +96,7 @@ protected:
 
     bool setValueImpl(const ItemID& /*item*/, T value) override
     {
-        if (m_value != value)
+        if (NotEq()(m_value, value))
         {
             m_value = value;
             return true;

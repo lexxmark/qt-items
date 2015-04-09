@@ -22,7 +22,7 @@ void SceneWidget::initScene(const QSharedPointer<SpaceScene>& scene)
     m_scene = scene;
     m_cacheScene = QSharedPointer<CacheSpaceScene>::create(m_scene);
 
-    initSpaceWidgetCore(m_cacheScene);
+    initSpaceWidgetScrollable(m_cacheScene, m_cacheScene);
 }
 
 

@@ -18,6 +18,7 @@ class CacheSpace;
 class GuiContext;
 class CacheSpaceAnimationAbstract;
 class ListColumnsResizer;
+class ViewButton;
 }
 
 class MainWindow : public QMainWindow
@@ -39,10 +40,17 @@ private slots:
     void on_shiftBottomRightBttn_clicked();
     void on_fadeBttn_clicked();
 
+    void on_clearData_clicked();
+
+    void on_alphabetOrderBttn_clicked();
+
+    void on_starsOrderBttn_clicked();
+
 private:
-    void initData();
+    void loadData();
     void shuffleRows();
     void playAnimation(Qi::CacheSpaceAnimationAbstract* animation, const QEasingCurve & easing = QEasingCurve::OutCirc);
+    void onLoadBttnPressed(const Qi::ItemID&, const Qi::ControllerContext&, const Qi::ViewButton*);
 
     QAbstractAnimation* createCircleViewAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
     QAbstractAnimation* createShiftRightItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;

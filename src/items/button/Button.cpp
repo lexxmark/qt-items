@@ -5,11 +5,11 @@
 namespace Qi
 {
 
-ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, bool useDefaultController)
+ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, ViewDefaultController createDefaultController)
     : ViewComposite(bttnContent, QMargins(1, 1, 1, 1)),
       m_pushableTracker(this)
 {
-    if (useDefaultController)
+    if (createDefaultController)
     {
         auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
         controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
@@ -50,18 +50,9 @@ void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheC
     painter->setPen(ctx.widget->palette().color(cg, QPalette::ButtonText));
     painter->setBackground(ctx.widget->palette().brush(cg, QPalette::Button));
 
-    // setup sub-view rect
-    // dirty code => should be rewritten
-    Q_ASSERT(cache.cacheView.subViews().size() == 1);
-    if (cache.cacheView.subViews().size() == 1)
-    {
-        auto& subView = const_cast<CacheView&>(cache.cacheView.subViews().back());
-        subView.rRect() = option.rect.marginsRemoved(margins());
-        if (option.state & QStyle::State_Sunken)
-        {
-            subView.rRect().adjust(1, 1, 0, 0);
-        }
-    }
+    // shift sub-view's origin if button has pressed
+    if (option.state & QStyle::State_Sunken)
+        painter->translate(QPoint(1, 1));
 
     ViewComposite::drawImpl(painter, ctx, cache, showTooltip);
 

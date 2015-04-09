@@ -45,7 +45,7 @@ GridWidget::GridWidget(QWidget* parent)
     // add sub-grid caches to main grid schema
     m_mainGrid->addSchema(makeRangeAll(), QSharedPointer<ViewCacheSpace>::create(modelCache), makeLayoutBackground());
 
-    initSpaceWidgetCore(mainCacheSpace);
+    initSpaceWidgetScrollable(mainCacheSpace, cacheSubGrid());
 }
 
 GridWidget::~GridWidget()
@@ -57,9 +57,9 @@ const QSharedPointer<SpaceGrid>& GridWidget::subGrid(const ItemID& subGridID) co
     return m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
 }
 
-CacheSpaceGrid& GridWidget::cacheSubGrid(const ItemID& subGridID)
+const QSharedPointer<CacheSpaceGrid>& GridWidget::cacheSubGrid(const ItemID& subGridID) const
 {
-    return *m_cacheSubGrids[subGridID.row][subGridID.column];
+    return m_cacheSubGrids[subGridID.row][subGridID.column];
 }
 
 void GridWidget::ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
@@ -157,23 +157,23 @@ void GridWidget::updateCacheScrollOffsetImpl()
 
     // non scrollable sub-grids (corner sub-grids)
     QPoint fixedScrollPos(0, 0);
-    cacheSubGrid(topLeftID).setScrollOffset(fixedScrollPos);
-    cacheSubGrid(topRightID).setScrollOffset(fixedScrollPos);
-    cacheSubGrid(bottomLeftID).setScrollOffset(fixedScrollPos);
-    cacheSubGrid(bottomRightID).setScrollOffset(fixedScrollPos);
+    cacheSubGrid(topLeftID)->setScrollOffset(fixedScrollPos);
+    cacheSubGrid(topRightID)->setScrollOffset(fixedScrollPos);
+    cacheSubGrid(bottomLeftID)->setScrollOffset(fixedScrollPos);
+    cacheSubGrid(bottomRightID)->setScrollOffset(fixedScrollPos);
 
     // horizontally scrollable sub-grids (top and bottom)
     QPoint horScrollPos(scrollPos.x(), 0);
-    cacheSubGrid(topID).setScrollOffset(horScrollPos);
-    cacheSubGrid(bottomID).setScrollOffset(horScrollPos);
+    cacheSubGrid(topID)->setScrollOffset(horScrollPos);
+    cacheSubGrid(bottomID)->setScrollOffset(horScrollPos);
 
     // vertically scrollable sub-grids (left and right)
     QPoint verScrollPos(0, scrollPos.y());
-    cacheSubGrid(leftID).setScrollOffset(verScrollPos);
-    cacheSubGrid(rightID).setScrollOffset(verScrollPos);
+    cacheSubGrid(leftID)->setScrollOffset(verScrollPos);
+    cacheSubGrid(rightID)->setScrollOffset(verScrollPos);
 
     // fully scrollable sub-grid - client
-    cacheSubGrid(clientID).setScrollOffset(scrollPos);
+    cacheSubGrid(clientID)->setScrollOffset(scrollPos);
 }
 
 void GridWidget::validateCacheItemsLayoutImpl()

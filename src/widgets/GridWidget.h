@@ -39,7 +39,7 @@ public:
     const QSharedPointer<SpaceGrid>& mainGrid() const { return m_mainGrid; }
 
     const QSharedPointer<SpaceGrid>& subGrid(const ItemID& subGridID = clientID) const;
-    CacheSpaceGrid& cacheSubGrid(const ItemID& subGridID);
+    const QSharedPointer<CacheSpaceGrid>& cacheSubGrid(const ItemID& subGridID = clientID) const;
 
     const QSharedPointer<Lines>& rows(int subRowsID) const { return m_rows[subRowsID]; }
     const QSharedPointer<Lines>& columns(int subColumnsID) const { return m_columns[subColumnsID]; }
