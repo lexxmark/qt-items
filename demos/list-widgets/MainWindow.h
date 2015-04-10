@@ -46,6 +46,8 @@ private slots:
 
     void on_starsOrderBttn_clicked();
 
+    void on_createImageBttn_clicked();
+
 private:
     void loadData();
     void shuffleRows();

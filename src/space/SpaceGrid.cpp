@@ -67,6 +67,48 @@ bool ItemsIteratorGrid::toNextImpl()
     return false;
 }
 
+
+ItemsIteratorGridVisible::ItemsIteratorGridVisible(const SpaceGrid& spaceGrid)
+    : m_spaceGrid(spaceGrid)
+{
+    atFirst();
+}
+
+bool ItemsIteratorGridVisible::atFirstImpl()
+{
+    if (m_spaceGrid.isEmptyVisible())
+    {
+        m_currentItem = ItemID();
+        m_currentItemVisible = ItemID();
+        return false;
+    }
+
+    m_currentItemVisible = ItemID(0, 0);
+    m_currentItem = m_spaceGrid.toAbsolute(m_currentItemVisible);
+    return true;
+}
+
+bool ItemsIteratorGridVisible::toNextImpl()
+{
+    if (!m_currentItemVisible.isValid())
+        return false;
+
+    ++m_currentItemVisible.column;
+
+    for (;m_currentItemVisible.row < m_spaceGrid.rowsVisibleCount(); ++m_currentItemVisible.row, m_currentItemVisible.column = 0)
+    {
+        if (m_currentItemVisible.column < m_spaceGrid.columnsVisibleCount())
+        {
+            m_currentItem = m_spaceGrid.toAbsolute(m_currentItemVisible);
+            return true;
+        }
+    }
+
+    m_currentItemVisible = ItemID();
+    m_currentItem = ItemID();
+    return false;
+}
+
 ItemsIteratorGridByColumn::ItemsIteratorGridByColumn(const SpaceGrid& spaceGrid, int column)
     : m_rows(*spaceGrid.rows()),
       m_currentItem(InvalidIndex, column)

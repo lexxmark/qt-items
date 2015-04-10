@@ -105,6 +105,24 @@ private:
     ItemID m_currentItem;
 };
 
+class QI_EXPORT ItemsIteratorGridVisible: public ItemsIterator
+{
+public:
+    explicit ItemsIteratorGridVisible(const SpaceGrid& spaceGrid);
+
+    ItemID itemVisible() const { return m_currentItemVisible; }
+
+protected:
+    ItemID itemImpl() const override { return m_currentItem; }
+    bool atFirstImpl() override;
+    bool toNextImpl() override;
+
+private:
+    const SpaceGrid& m_spaceGrid;
+    ItemID m_currentItemVisible;
+    ItemID m_currentItem;
+};
+
 class QI_EXPORT ItemsIteratorGridByColumn: public ItemsIterator
 {
 public:

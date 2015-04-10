@@ -192,4 +192,21 @@ void SpaceWidgetCore::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason 
     m_owner->update();
 }
 
+QPixmap SpaceWidgetCore::createPixmapImpl() const
+{
+    QPixmap resultImage(m_mainCacheSpace->window().size());
+    resultImage.fill(m_owner->palette().background().color());
+
+    {
+        QPainter painter(&resultImage);
+        painter.setWindow(m_mainCacheSpace->window());
+        painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
+        painter.setBackgroundMode(Qt::TransparentMode);
+
+        m_mainCacheSpace->drawRaw(&painter, guiContext());
+    }
+
+    return resultImage;
+}
+
 } // end namespace Qi

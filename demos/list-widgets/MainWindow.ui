@@ -63,6 +63,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCommandLinkButton" name="createImageBttn">
+        <property name="text">
+         <string>Copy to clipboard as image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label">
         <property name="text">
          <string>View Animations:</string>

@@ -38,7 +38,10 @@ public:
     // performs inplace editing for visibleItem
     bool doInplaceEdit(const ItemID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
 
+    // context which used for draw operations
     const GuiContext& guiContext() const { return m_guiContext; }
+
+    QPixmap createPixmap() const { return createPixmapImpl(); }
 
 protected:
     explicit SpaceWidgetCore(QWidget* owner);
@@ -53,6 +56,8 @@ protected:
 
     // scrolls widget to make visibleItem fully visible
     virtual void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) = 0;
+    // creates image of the widget
+    virtual QPixmap createPixmapImpl() const;
 
 private:
     void onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason);

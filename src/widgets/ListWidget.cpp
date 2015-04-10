@@ -1,6 +1,7 @@
 #include "ListWidget.h"
 #include "cache/space/CacheSpaceGrid.h"
 #include "cache/space/CacheSpaceItem.h"
+#include "cache/CacheItemFactory.h"
 #include "items/cache/ViewCacheSpace.h"
 #include "items/visible/Visible.h"
 #include "core/ext/Ranges.h"
@@ -66,6 +67,26 @@ bool ListWidget::installEmptyView(const QSharedPointer<View>& view, const QShare
     m_mainSpace->addSchema(makeRangeAll(), m_emptyView, layout);
 
     return true;
+}
+
+QPixmap ListWidget::createPixmapImpl() const
+{
+    if (m_grid->isEmptyVisible())
+        return SpaceWidgetScrollAbstract::createPixmapImpl();
+
+    QPixmap image(m_grid->size());
+    image.fill(palette().background().color());
+    {
+        QPainter painter(&image);
+
+        auto cacheItemFactory = m_grid->createCacheItemFactory(ViewApplicationCopyDraw);
+        for (ItemsIteratorGridVisible it(*m_grid); it.isValid(); it.toNext())
+        {
+            CacheItem cacheItem(cacheItemFactory->create(it.itemVisible()));
+            cacheItem.drawRaw(&painter, guiContext());
+        }
+    }
+    return image;
 }
 
 

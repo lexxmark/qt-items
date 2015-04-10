@@ -33,6 +33,7 @@
 #include <QPauseAnimation>
 #include <QVariantAnimation>
 #include <QPainterPath>
+#include <QClipboard>
 
 #include <cmath>
 
@@ -594,4 +595,11 @@ void MainWindow::on_alphabetOrderBttn_clicked()
 void MainWindow::on_starsOrderBttn_clicked()
 {
     ui->listWidget->grid()->sortColumnByModel(0, m_rates, false, false);
+}
+
+void MainWindow::on_createImageBttn_clicked()
+{
+    QPixmap pixmap = ui->listWidget->createPixmap();
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setImage(pixmap.toImage());
 }

@@ -31,6 +31,9 @@ public:
 
     bool installEmptyView(const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
 
+protected:
+    QPixmap createPixmapImpl() const;
+
 private:
     void onCacheSpaceGridChanged(const CacheSpace* cache, ChangeReason reason);
     void onSpaceGridChanged(const Space* space, ChangeReason reason);
