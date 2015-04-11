@@ -232,6 +232,16 @@ void MainWindow::loadData()
     m_animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), ui->listWidget->cacheGrid().data(), CacheSpaceAnimationShiftRight);
     m_animation->setEasingCurve(QEasingCurve::OutCirc);
     m_animation->start();
+
+    // enable buttons
+    ui->shiftRightBttn->setEnabled(true);
+    ui->shiftLeftBttn->setEnabled(true);
+    ui->shiftRandomBttn->setEnabled(true);
+    ui->circleImageBttn->setEnabled(true);
+    ui->shiftRightItemBttn->setEnabled(true);
+    ui->shiftDownItemBttn->setEnabled(true);
+    ui->shiftBottomRightBttn->setEnabled(true);
+    ui->fadeBttn->setEnabled(true);
 }
 
 void MainWindow::onLoadBttnPressed(const Qi::ItemID&, const Qi::ControllerContext&, const Qi::ViewButton*)
@@ -582,6 +592,16 @@ void MainWindow::on_clearData_clicked()
     auto animation = new CacheSpaceAnimationShiftViews(ui->listWidget->viewport(), &ui->listWidget->rMainCacheSpace(), CacheSpaceAnimationShiftTop);
     connect(m_animation.data(), &CacheSpaceAnimationAbstract::stopped, [this]() {
         ui->listWidget->grid()->setRowsCount(0);
+
+        // disable buttons
+        ui->shiftRightBttn->setDisabled(true);
+        ui->shiftLeftBttn->setDisabled(true);
+        ui->shiftRandomBttn->setDisabled(true);
+        ui->circleImageBttn->setDisabled(true);
+        ui->shiftRightItemBttn->setDisabled(true);
+        ui->shiftDownItemBttn->setDisabled(true);
+        ui->shiftBottomRightBttn->setDisabled(true);
+        ui->fadeBttn->setDisabled(true);
     });
     playAnimation(animation, QEasingCurve::OutBack);
 }
