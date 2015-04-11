@@ -6,6 +6,7 @@
 #include "items/visible/Visible.h"
 #include "core/ext/Ranges.h"
 #include "core/ext/Layouts.h"
+#include "utils/PainterState.h"
 
 namespace Qi
 {
@@ -75,9 +76,11 @@ QPixmap ListWidget::createPixmapImpl() const
         return SpaceWidgetScrollAbstract::createPixmapImpl();
 
     QPixmap image(m_grid->size());
-    image.fill(palette().background().color());
+    image.fill(viewport()->palette().color(viewport()->backgroundRole()));
+
     {
         QPainter painter(&image);
+        copyPainterState(viewport(), &painter);
 
         auto cacheItemFactory = m_grid->createCacheItemFactory(ViewApplicationCopyDraw);
         for (ItemsIteratorGridVisible it(*m_grid); it.isValid(); it.toNext())

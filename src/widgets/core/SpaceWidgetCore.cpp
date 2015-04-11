@@ -2,6 +2,7 @@
 #include "cache/space/CacheSpace.h"
 #include "cache/CacheControllerMouse.h"
 #include "core/ControllerKeyboard.h"
+#include "utils/PainterState.h"
 
 #include <QWidget>
 #include <QToolTip>
@@ -194,19 +195,18 @@ void SpaceWidgetCore::onCacheSpaceChanged(const CacheSpace* cache, ChangeReason 
 
 QPixmap SpaceWidgetCore::createPixmapImpl() const
 {
-    QPixmap resultImage(m_mainCacheSpace->window().size());
-    resultImage.fill(m_owner->palette().background().color());
+    QPixmap image(m_mainCacheSpace->window().size());
+    image.fill(m_owner->palette().color(m_owner->backgroundRole()));
 
     {
-        QPainter painter(&resultImage);
+        QPainter painter(&image);
+        copyPainterState(m_owner, &painter);
         painter.setWindow(m_mainCacheSpace->window());
-        painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
-        painter.setBackgroundMode(Qt::TransparentMode);
 
         m_mainCacheSpace->drawRaw(&painter, guiContext());
     }
 
-    return resultImage;
+    return image;
 }
 
 } // end namespace Qi

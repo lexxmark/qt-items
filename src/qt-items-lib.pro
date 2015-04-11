@@ -76,7 +76,8 @@ SOURCES += QiAPI.cpp \
     space/SpaceScene.cpp \
     widgets/SceneWidget.cpp \
     cache/space/CacheSpaceScene.cpp \
-    items/rating/Rating.cpp
+    items/rating/Rating.cpp \
+    utils/PainterState.cpp
 
 HEADERS +=  QiAPI.h \
     utils/Signal.h \
@@ -154,7 +155,8 @@ HEADERS +=  QiAPI.h \
     space/SpaceScene.h \
     widgets/SceneWidget.h \
     cache/space/CacheSpaceScene.h \
-    items/rating/Rating.h
+    items/rating/Rating.h \
+    utils/PainterState.h
 
 win32 {
     TARGET_EXT = .dll

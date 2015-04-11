@@ -27,6 +27,7 @@
 #include "cache/CacheItem.h"
 #include "cache/CacheItemFactory.h"
 #include "utils/MemFunction.h"
+#include "utils/PainterState.h"
 
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
@@ -385,9 +386,8 @@ QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpa
             QPixmap itemPixmap(cacheItem->rect.size());
             itemPixmap.fill(Qt::transparent);
             QPainter itemPainter(&itemPixmap);
+            copyPainterState(painter, &itemPainter);
             itemPainter.setWindow(cacheItem->rect);
-            itemPainter.setRenderHints(painter->renderHints());
-            itemPainter.setBackgroundMode(painter->backgroundMode());
 
             cacheItem->draw(&itemPainter, ctx, &cacheSpace->window());
 
@@ -453,9 +453,8 @@ QAbstractAnimation* MainWindow::createShiftDownItemAnimation(const Qi::CacheSpac
             QPixmap itemPixmap(cacheItem->rect.size());
             itemPixmap.fill(Qt::transparent);
             QPainter itemPainter(&itemPixmap);
+            copyPainterState(painter, &itemPainter);
             itemPainter.setWindow(cacheItem->rect);
-            itemPainter.setRenderHints(painter->renderHints());
-            itemPainter.setBackgroundMode(painter->backgroundMode());
 
             cacheItem->draw(&itemPainter, ctx, &cacheSpace->window());
 
@@ -493,12 +492,12 @@ void MainWindow::on_shiftDownItemBttn_clicked()
 QAbstractAnimation* MainWindow::createShiftBottomRightAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
 {
     QPixmap cachePixmap(cacheSpace->window().size());
+    cachePixmap.fill(Qt::transparent);
+
     {
-        cachePixmap.fill(Qt::transparent);
         QPainter cachePainter(&cachePixmap);
+        copyPainterState(painter, &cachePainter);
         cachePainter.setWindow(cacheSpace->window());
-        cachePainter.setRenderHints(painter->renderHints());
-        cachePainter.setBackgroundMode(painter->backgroundMode());
 
         cacheSpace->drawRaw(&cachePainter, ctx);
     }
@@ -540,12 +539,12 @@ void MainWindow::on_shiftBottomRightBttn_clicked()
 QAbstractAnimation* MainWindow::createFadeAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const
 {
     QPixmap cachePixmap(cacheSpace->window().size());
+    cachePixmap.fill(Qt::transparent);
+
     {
-        cachePixmap.fill(Qt::transparent);
         QPainter cachePainter(&cachePixmap);
+        copyPainterState(painter, &cachePainter);
         cachePainter.setWindow(cacheSpace->window());
-        cachePainter.setRenderHints(painter->renderHints());
-        cachePainter.setBackgroundMode(painter->backgroundMode());
 
         cacheSpace->drawRaw(&cachePainter, ctx);
     }
