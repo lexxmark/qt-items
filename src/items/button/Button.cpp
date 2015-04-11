@@ -56,6 +56,10 @@ void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheC
 
     ViewComposite::drawImpl(painter, ctx, cache, showTooltip);
 
+    // restore sub-view's origin if button has pressed
+    if (option.state & QStyle::State_Sunken)
+        painter->translate(QPoint(-1, -1));
+
     painterState.restore(painter);
 }
 
