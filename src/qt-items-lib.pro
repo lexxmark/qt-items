@@ -4,7 +4,7 @@ QT += core gui widgets
 
 TARGET = qt-items
 TEMPLATE = lib
-VERSION = 0.0.1
+VERSION = 0.1.0
 
 DEFINES += QT_ITEMS_LIBRARY
 

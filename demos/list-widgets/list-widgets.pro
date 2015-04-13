@@ -20,10 +20,6 @@ win32 {
 } else:unix {
     QMAKE_LFLAGS += -Wl,-rpath,\'\$$ORIGIN\'
 }
-#win32 {
-#} else:unix {
-#    QMAKE_LFLAGS += -Wl,-rpath,$$BIN_DIR
-#}
 
 DISTFILES +=
 

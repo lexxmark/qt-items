@@ -16,10 +16,10 @@ FORMS    += MainWindow.ui
 INCLUDEPATH += $$ROOT_DIR/src/
 LIBS += -L$$DESTDIR -lqt-items
 
-#win32 {
-#} else:unix {
-#    QMAKE_LFLAGS += -Wl,-rpath,$$BIN_DIR
-#}
+win32 {
+} else:unix {
+    QMAKE_LFLAGS += -Wl,-rpath,\'\$$ORIGIN\'
+}
 
 RESOURCES += \
     item-widgets.qrc
