@@ -23,25 +23,25 @@
 namespace Qi
 {
 
-CacheItemInfo::CacheItemInfo()
+CacheItemInfo::CacheItemInfo(ID id)
+    : id(id)
 {
-}
-
-CacheItemInfo::CacheItemInfo(const CacheItemInfo& other)
-{
-    *this = other;
 }
 
 CacheItemInfo& CacheItemInfo::operator=(const CacheItemInfo& other)
 {
-    item = other.item;
+    if (this == &other)
+        return *this;
+
+    id = other.id;
     rect = other.rect;
     schema = other.schema;
     return *this;
 }
 
-CacheItem::CacheItem()
-    : m_isCacheViewValid(false),
+CacheItem::CacheItem(ID id)
+    : CacheItemInfo(id),
+      m_isCacheViewValid(false),
       m_isAnyFloatView(false)
 {
 }
@@ -128,7 +128,7 @@ QString CacheItem::text() const
     QString text;
 
     if (schema.view)
-        schema.view->text(item, text);
+        schema.view->text(id, text);
 
     return text;
 }
@@ -150,8 +150,8 @@ void CacheItem::drawRaw(QPainter *painter, const GuiContext& ctx, const QRect* v
 
     //*ctx.PreDrawCell(m_rect);
 
-    m_cacheView->draw(painter, ctx, item, rect, visibleRect);
-    m_cacheView->cleanupDraw(painter, ctx, item, rect, visibleRect);
+    m_cacheView->draw(painter, ctx, id, rect, visibleRect);
+    m_cacheView->cleanupDraw(painter, ctx, id, rect, visibleRect);
 
     //*ctx.PostDrawCell();
 }
@@ -192,7 +192,7 @@ void CacheItem::tryActivateControllers(const ControllerContext& context, const C
     // activate controllers in reversed order
     for (int i = itemControllersInfo.size() - 1; i >= 0; --i)
     {
-        itemControllersInfo[i].first->tryActivate(controllers, context, CacheContext(item, rect, *(itemControllersInfo[i].second), visibleRect), cacheSpace);
+        itemControllersInfo[i].first->tryActivate(controllers, context, CacheContext(id, rect, *(itemControllersInfo[i].second), visibleRect), cacheSpace);
 
         // if CacheCellEx was invalidated during TryActivate -> stop activate controllers
         if (!m_cacheView)
@@ -215,7 +215,7 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
         if (!cacheView->rect().contains(point))
             return true;
 
-        if (cacheView->tooltipText(item, tooltipInfo.text))
+        if (cacheView->tooltipText(id, tooltipInfo.text))
         {
             // save view rect
             tooltipInfo.rect = cacheView->rect();
@@ -226,7 +226,7 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
         }
         else
         {
-            if (cacheView->view()->tooltipByPoint(point, item, tooltipInfo))
+            if (cacheView->view()->tooltipByPoint(point, id, tooltipInfo))
             {
                 success = true;
                 // stop searching
@@ -264,7 +264,7 @@ void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRec
     {
         QRect itemRect = rect;
         QVector<CacheView> cacheViews;
-        CacheView* cacheView = schema.view->addCacheView(*schema.layout, ctx, item, cacheViews, itemRect, visibleItemRectPtr);
+        CacheView* cacheView = schema.view->addCacheView(*schema.layout, ctx, id, cacheViews, itemRect, visibleItemRectPtr);
         if (cacheView)
         {
             m_cacheView.reset(new CacheView(*cacheView));
@@ -290,7 +290,7 @@ void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRec
 QSize CacheItem::calculateItemSize(const GuiContext& ctx, ViewSizeMode sizeMode) const
 {
     if (schema.isValid())
-        return schema.view->size(ctx, item, sizeMode);
+        return schema.view->size(ctx, id, sizeMode);
 
     return QSize(0, 0);
 }

@@ -43,7 +43,7 @@ protected:
         else if (rate > m_viewRating->maxRate())
             rate = m_viewRating->maxRate();
 
-        m_viewRating->theModel()->setValue(state.item, rate);
+        m_viewRating->theModel()->setValue(state.id, rate);
     }
 
 private:
@@ -65,14 +65,14 @@ ViewRating::ViewRating(const QSharedPointer<ModelRating>& model, const QPixmap& 
     }
 }
 
-QSize ViewRating::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewRating::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     return QSize((m_rateImageOn.width()+imageGap)*m_maxRate, m_rateImageOn.size().height());
 }
 
 void ViewRating::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    int rating = theModel()->value(cache.item);
+    int rating = theModel()->value(cache.id);
 
     int rateImageWidth = m_rateImageOn.width() + imageGap;
     QPoint starPoint(cache.cacheView.rect().topLeft());

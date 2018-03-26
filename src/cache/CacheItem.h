@@ -31,11 +31,11 @@ struct TooltipInfo;
 class QI_EXPORT CacheItemInfo
 {
 public:
-    CacheItemInfo();
-    CacheItemInfo(const CacheItemInfo&);
+    CacheItemInfo(ID id);
+    CacheItemInfo(const CacheItemInfo&) = default;
     CacheItemInfo& operator=(const CacheItemInfo& other);
 
-    ItemID item;
+    ID id;
     QRect rect;
     ViewSchema schema;
 };
@@ -43,7 +43,7 @@ public:
 class QI_EXPORT CacheItem: public CacheItemInfo
 {
 public:
-    CacheItem();
+    CacheItem(ID id);
     explicit CacheItem(const CacheItemInfo& info);
     CacheItem(const CacheItem& other);
     CacheItem& operator=(const CacheItem& other);

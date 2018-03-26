@@ -1,5 +1,5 @@
 #include "test_lines.h"
-#include "space/Lines.h"
+#include "space/grid/Lines.h"
 #include "SignalSpy.h"
 #include <QtTest/QtTest>
 

@@ -65,15 +65,15 @@ CacheView& CacheView::operator=(const CacheView& other)
     return *this;
 }
 
-void CacheView::draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect *visibleRect) const
+void CacheView::draw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect *visibleRect) const
 {
     if (drawProxy)
-        drawProxy(this, painter, ctx, item, itemRect, visibleRect);
+        drawProxy(this, painter, ctx, id, itemRect, visibleRect);
     else
-        drawRaw(painter, ctx, item, itemRect, visibleRect);
+        drawRaw(painter, ctx, id, itemRect, visibleRect);
 }
 
-void CacheView::drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect *visibleRect) const
+void CacheView::drawRaw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect *visibleRect) const
 {
 #ifdef DEBUG_RECTS
     painter->save();
@@ -84,7 +84,7 @@ void CacheView::drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& 
     
     m_showTooltip = false;
 
-    m_view->draw(painter, ctx, CacheContext(item, itemRect, *this, visibleRect), &m_showTooltip);
+    m_view->draw(painter, ctx, CacheContext(id, itemRect, *this, visibleRect), &m_showTooltip);
 
     // exclude rect of float views because they can overlap other views
     if (m_layout->isFloat())
@@ -93,17 +93,17 @@ void CacheView::drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& 
     }
 }
 
-void CacheView::cleanupDraw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect) const
+void CacheView::cleanupDraw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect) const
 {
-    m_view->cleanupDraw(painter, ctx, CacheContext(item, itemRect, *this, visibleRect));
+    m_view->cleanupDraw(painter, ctx, CacheContext(id, itemRect, *this, visibleRect));
 }
 
-bool CacheView::tooltipText(const ItemID& item, QString& tooltipText) const
+bool CacheView::tooltipText(ID id, QString& tooltipText) const
 {
     if (!m_showTooltip)
         return false;
 
-    return m_view->tooltipText(item, tooltipText);
+    return m_view->tooltipText(id, tooltipText);
 }
 
 } // end namespace Qi

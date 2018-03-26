@@ -28,10 +28,9 @@ ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, ViewDefaultContr
     if (createDefaultController)
     {
         auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-        controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
-            Q_ASSERT(item.isValid());
+        controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
-                action(item, context, this);
+                action(id, context, this);
         };
         setController(controller);
     }
@@ -52,11 +51,11 @@ void ViewButton::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheC
     if (style->inherits("QWindowsVistaStyle"))
         option.styleObject = nullptr;
 
-    option.state |= m_pushableTracker.styleStateByItem(cache.item);
+    option.state |= m_pushableTracker.styleStateByItem(cache.id);
     option.rect = cache.cacheView.rect();
 
     if (tuneBttnState)
-        tuneBttnState(cache.item, option.state);
+        tuneBttnState(cache.id, option.state);
 
     // draw button
     style->drawControl(QStyle::CE_PushButtonBevel, &option, painter, ctx.widget);

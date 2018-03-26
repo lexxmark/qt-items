@@ -15,19 +15,18 @@
 */
 
 #include "ItemWidget.h"
-#include "cache/space/CacheSpaceItem.h"
+#include "space/item/CacheSpaceItem.h"
 #include "cache/CacheItem.h"
 #include <QResizeEvent>
 
 namespace Qi
 {
 
-ItemWidget::ItemWidget(QWidget* parent)
+ItemWidget::ItemWidget(QWidget* parent, ID id)
     : SpaceWidgetAbstract(parent),
       m_syncSpaceSizeWithContent(true)
 {
-
-    m_space = QSharedPointer<SpaceItem>::create(ItemID(0, 0));
+    m_space = QSharedPointer<SpaceItem>::create(id);
     initSpaceWidgetCore(QSharedPointer<CacheSpaceItem>::create(m_space));
 
     connect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
@@ -48,7 +47,7 @@ void ItemWidget::syncSpaceSizeWithContent(bool enable)
     if (m_syncSpaceSizeWithContent)
     {
         // shrink space size to fit item content
-        auto cacheItem = mainCacheSpace().cacheItem(m_space->item());
+        auto cacheItem = mainCacheSpace().cacheItem(m_space->id());
         Q_ASSERT(cacheItem);
         if (!cacheItem)
             m_space->setSize(QSize());
@@ -97,7 +96,7 @@ void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
         // shrink space size to fit item content
         if (m_syncSpaceSizeWithContent)
         {
-            auto cacheItem = mainCacheSpace().cacheItem(m_space->item());
+            auto cacheItem = mainCacheSpace().cacheItem(m_space->id());
             Q_ASSERT(cacheItem);
             if (!cacheItem)
                 m_space->setSize(QSize());

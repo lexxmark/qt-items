@@ -18,8 +18,8 @@
 #define QI_LIST_WIDGET_H
 
 #include "QiAPI.h"
-#include "space/SpaceItem.h"
-#include "space/SpaceGrid.h"
+#include "space/item/SpaceItem.h"
+#include "space/grid/SpaceGrid.h"
 #include "core/SpaceWidgetScrollAbstract.h"
 
 namespace Qi

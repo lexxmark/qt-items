@@ -30,14 +30,14 @@ struct TooltipInfo;
 class QI_EXPORT CacheControllerMouse: public ControllerContext
 {
 public:
-    CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, const QSharedPointer<CacheSpace>& cacheSpace);
+    CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, QSharedPointer<CacheSpace> cacheSpace);
     virtual ~CacheControllerMouse();
 
-    void addCacheSpace(const QSharedPointer<CacheSpace>& cacheSpace);
+    void addCacheSpace(QSharedPointer<CacheSpace> cacheSpace);
 
     bool isBusy() const { return m_isBusy; }
 
-    void updatePosition(const QPoint& point);
+    void updatePosition(QPoint point);
     void stopCapturing();
     bool isCapturing() const { return m_capturingController; }
 
@@ -56,7 +56,7 @@ public:
     bool processMouseMove(QMouseEvent* event);
     bool processContextMenu(QContextMenuEvent* event);
 
-    bool doInplaceEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view);
+    bool doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View* view);
 
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
 

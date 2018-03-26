@@ -73,9 +73,9 @@ class ModelEnum: public ModelTyped<EnumType>
 public:
     typedef typename ModelTyped<EnumType>::ValueType_t ValueType_t;
 
-    explicit ModelEnum(const QSharedPointer<EnumTraits<EnumType>>& enumTraits, const QSharedPointer<ModelTyped<EnumType>>& enumValues, bool ascendingDefault = true)
-        : m_enumTraits(enumTraits),
-          m_enumValues(enumValues)
+    explicit ModelEnum(QSharedPointer<EnumTraits<EnumType>> enumTraits, QSharedPointer<ModelTyped<EnumType>> enumValues, bool ascendingDefault = true)
+        : m_enumTraits(std::move(enumTraits)),
+          m_enumValues(std::move(enumValues))
     {
         Q_ASSERT(m_enumTraits && m_enumValues);
         ModelTyped<EnumType>::m_ascendingDefault = ascendingDefault;
@@ -84,23 +84,23 @@ public:
     const EnumTraits<EnumType>& enumTraits() const { return *m_enumTraits; }
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override
+    int compareImpl(ID left, ID right) const override
     {
         // compare enum values
         return m_enumTraits->compareValues(m_enumValues->value(left), m_enumValues->value(right));
     }
 
-    ValueType_t valueImpl(const ItemID& item) const override
+    ValueType_t valueImpl(ID id) const override
     {
-        return m_enumValues->value(item);
+        return m_enumValues->value(id);
     }
 
-    bool setValueImpl(const ItemID& item, ValueType_t value) override
+    bool setValueImpl(ID id, ValueType_t value) override
     {
-        return m_enumValues->setValue(item, value);
+        return m_enumValues->setValue(id, value);
     }
 
-    bool setValueMultipleImpl(ItemsIterator& itemsIterator, ValueType_t value) override
+    bool setValueMultipleImpl(IdIterator& itemsIterator, ValueType_t value) override
     {
         return m_enumValues->setValueMultiple(itemsIterator, value);
     }
@@ -117,34 +117,34 @@ class ModelEnumText: public ModelTyped<QString>
     Q_DISABLE_COPY(ModelEnumText)
 
 public:
-    explicit ModelEnumText(const QSharedPointer<ModelEnum<EnumType>>& modelEnum)
-        : m_modelEnum(modelEnum)
+    explicit ModelEnumText(QSharedPointer<ModelEnum<EnumType>> modelEnum)
+        : m_modelEnum(std::move(modelEnum))
     {
         Q_ASSERT(m_modelEnum);
     }
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override
+    int compareImpl(ID left, ID right) const override
     {
         return m_modelEnum->compare(left, right);
     }
-    bool isAscendingDefaultImpl(const ItemID& item) const override
+    bool isAscendingDefaultImpl(ID id) const override
     {
-        return m_modelEnum->isAscendingDefault(item);
+        return m_modelEnum->isAscendingDefault(id);
     }
 
-    ValueType_t valueImpl(const ItemID& item) const override
+    ValueType_t valueImpl(ID id) const override
     {
-        return m_modelEnum->enumTraits().valueText(m_modelEnum->value(item));
+        return m_modelEnum->enumTraits().valueText(m_modelEnum->value(id));
     }
 
-    bool setValueImpl(const ItemID& item, ValueType_t value) override
+    bool setValueImpl(ID id, ValueType_t value) override
     {
         validateText2Enum();
-        return m_modelEnum->setValue(item, m_text2Enum[value]);
+        return m_modelEnum->setValue(id, m_text2Enum[value]);
     }
 
-    bool setValueMultipleImpl(ItemsIterator& itemsIterator, ValueType_t value) override
+    bool setValueMultipleImpl(IdIterator& itemsIterator, ValueType_t value) override
     {
         validateText2Enum();
         return m_modelEnum->setValueMultiple(itemsIterator, m_text2Enum[value]);
@@ -170,21 +170,21 @@ class ViewEnumText: public ViewText
     Q_DISABLE_COPY(ViewEnumText)
 
 public:
-    ViewEnumText(const QSharedPointer<ModelEnum<EnumType>>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
+    ViewEnumText(QSharedPointer<ModelEnum<EnumType>> model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
         : ViewText(QSharedPointer<ModelEnumText<EnumType>>::create(model), createDefaultController, alignment, textElideMode),
-          m_model(model)
+          m_model(std::move(model))
     {
     }
 
 protected:
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override
     {
-        EnumType value = m_model->value(item);
+        EnumType value = m_model->value(id);
         auto it = m_sizes.find(value);
         if (it != m_sizes.end())
             return it.value();
 
-        return m_sizes[value] = ViewText::sizeImpl(ctx, item, sizeMode);
+        return m_sizes[value] = ViewText::sizeImpl(ctx, id, sizeMode);
     }
 
 private:

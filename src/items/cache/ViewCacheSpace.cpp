@@ -15,7 +15,7 @@
 */
 
 #include "ViewCacheSpace.h"
-#include "cache/space/CacheSpace.h"
+#include "space/CacheSpace.h"
 
 namespace Qi
 {
@@ -34,14 +34,14 @@ ViewCacheSpace::~ViewCacheSpace()
     disconnect(m_model.data(), &Model::modelChanged, this, &ViewCacheSpace::onModelChanged);
 }
 
-CacheView* ViewCacheSpace::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView* ViewCacheSpace::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    CacheView* result = View::addCacheViewImpl(layout, ctx, item, cacheViews, itemRect, visibleItemRect);
+    CacheView* result = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
 
     if (!result)
         return result;
 
-    const auto& cacheSpace = m_model->value(item);
+    const auto& cacheSpace = m_model->value(id);
     if (!cacheSpace)
         return result;
 
@@ -51,9 +51,9 @@ CacheView* ViewCacheSpace::addCacheViewImpl(const Layout& layout, const GuiConte
     return result;
 }
 
-QSize ViewCacheSpace::sizeImpl(const GuiContext& /*ctx*/, const ItemID& item, ViewSizeMode /*sizeMode*/) const
+QSize ViewCacheSpace::sizeImpl(const GuiContext& /*ctx*/, ID id, ViewSizeMode /*sizeMode*/) const
 {
-    const auto& cacheSpace = m_model->value(item);
+    const auto& cacheSpace = m_model->value(id);
 
     if (cacheSpace)
         return cacheSpace->space().size();
@@ -63,7 +63,7 @@ QSize ViewCacheSpace::sizeImpl(const GuiContext& /*ctx*/, const ItemID& item, Vi
 
 void ViewCacheSpace::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    const auto& cacheSpace = m_model->value(cache.item);
+    const auto& cacheSpace = m_model->value(cache.id);
 
     if (!cacheSpace)
         return;
@@ -71,7 +71,7 @@ void ViewCacheSpace::drawImpl(QPainter* painter, const GuiContext& ctx, const Ca
     cacheSpace->draw(painter, ctx);
 }
 
-bool ViewCacheSpace::tooltipByPointImpl(const QPoint& point, const ItemID& item, TooltipInfo& tooltipInfo) const
+bool ViewCacheSpace::tooltipByPointImpl(QPoint point, ID item, TooltipInfo& tooltipInfo) const
 {
     const auto& cacheSpace = m_model->value(item);
 
@@ -93,7 +93,7 @@ ControllerMouseCacheSpace::ControllerMouseCacheSpace(const QSharedPointer<ModelC
 
 void ControllerMouseCacheSpace::tryActivateImpl(QVector<ControllerMouse*>& activatedControllers, const ActivationInfo& activationInfo)
 {
-    const auto& cacheSpace = m_model->value(activationInfo.cache.item);
+    const auto& cacheSpace = m_model->value(activationInfo.cache.id);
 
     if (!cacheSpace)
         return;

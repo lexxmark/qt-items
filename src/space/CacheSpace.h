@@ -17,7 +17,7 @@
 #ifndef QI_CACHE_SPACE_H
 #define QI_CACHE_SPACE_H
 
-#include "space/Space.h"
+#include "Space.h"
 
 namespace Qi
 {
@@ -59,8 +59,8 @@ public:
     QPoint space2Window(const QPoint& spacePoint) const;
 
     void clear();
-    const CacheItem* cacheItem(const ItemID& visibleItem) const;
-    const CacheItem* cacheItemByPosition(const QPoint& point) const;
+    const CacheItem* cacheItem(ID visibleId) const;
+    const CacheItem* cacheItemByPosition(QPoint point) const;
 
     std::function<void(const CacheSpace*, QPainter* painter, const GuiContext& ctx)> drawProxy;
 
@@ -93,17 +93,17 @@ signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
 
 protected:
-    explicit CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpace(QSharedPointer<Space> space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
 
     void validateItemsCache() const;
     void clearItemsCache() const;
-    QSharedPointer<CacheItem> createCacheItem(const ItemID& visibleItem) const;
+    QSharedPointer<CacheItem> createCacheItem(ID visibleId) const;
 
     virtual void clearItemsCacheImpl() const = 0;
     virtual void validateItemsCacheImpl() const = 0;
     virtual bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const = 0;
-    virtual const CacheItem* cacheItemImpl(const ItemID& visibleItem) const = 0;
-    virtual const CacheItem* cacheItemByPositionImpl(const QPoint& point) const = 0;
+    virtual const CacheItem* cacheItemImpl(ID visibleId) const = 0;
+    virtual const CacheItem* cacheItemByPositionImpl(QPoint point) const = 0;
 
     // space
     QSharedPointer<Space> m_space;

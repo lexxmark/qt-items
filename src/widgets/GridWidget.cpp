@@ -15,7 +15,7 @@
 */
 
 #include "GridWidget.h"
-#include "cache/space/CacheSpaceGrid.h"
+#include "space/grid/CacheSpaceGrid.h"
 #include "cache/CacheItem.h"
 #include "items/cache/ViewCacheSpace.h"
 #include "core/ext/Ranges.h"
@@ -42,7 +42,7 @@ GridWidget::GridWidget(QWidget* parent)
 
     //initialize sub grids and caches
     auto modelCache = QSharedPointer<ModelStorageGrid<QSharedPointer<CacheSpace>>>::create(m_mainGrid);
-    for (ItemID subID = ItemID(0, 0); subID.row < 3; ++subID.row)
+    for (GridID subID = GridID(0, 0); subID.row < 3; ++subID.row)
     {
         for (subID.column = 0; subID.column < 3; ++subID.column)
         {
@@ -51,7 +51,7 @@ GridWidget::GridWidget(QWidget* parent)
             auto cacheSpace = QSharedPointer<CacheSpaceGrid>::create(subGrid);
 
             m_cacheSubGrids[subID.row][subID.column] = cacheSpace;
-            modelCache->setValue(subID, cacheSpace);
+            modelCache->setValueId(subID, cacheSpace);
 
             connect(subGrid.data(), &Space::spaceChanged, this, &GridWidget::onSubGridChanged);
             connect(cacheSpace.data(), &CacheSpace::cacheChanged, this, &GridWidget::onCacheSpaceChanged);
@@ -68,17 +68,17 @@ GridWidget::~GridWidget()
 {
 }
 
-const QSharedPointer<SpaceGrid>& GridWidget::subGrid(const ItemID& subGridID) const
+const QSharedPointer<SpaceGrid>& GridWidget::subGrid(GridID subGridID) const
 {
     return m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
 }
 
-const QSharedPointer<CacheSpaceGrid>& GridWidget::cacheSubGrid(const ItemID& subGridID) const
+const QSharedPointer<CacheSpaceGrid>& GridWidget::cacheSubGrid(GridID subGridID) const
 {
     return m_cacheSubGrids[subGridID.row][subGridID.column];
 }
 
-void GridWidget::ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
+void GridWidget::ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
 {
     auto cacheSpaceGrid = qobject_cast<const CacheSpaceGrid*>(cacheSpace);
     if (!cacheSpaceGrid)
@@ -91,7 +91,7 @@ void GridWidget::ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *
     // calculate scroll size and position if needed
     validateCacheItemsLayout();
 
-    QRect clientGridRect = m_mainGrid->itemRect(clientID);
+    QRect clientGridRect = m_mainGrid->itemRect(ID(clientID));
     if (clientGridRect.isEmpty())
         return;
 

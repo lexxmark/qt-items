@@ -17,7 +17,8 @@
 #ifndef QI_SPACE_GRID_H
 #define QI_SPACE_GRID_H
 
-#include "Space.h"
+#include "space/Space.h"
+#include "GridID.h"
 #include "Lines.h"
 #include "core/ItemsIterator.h"
 #include <QPoint>
@@ -41,16 +42,16 @@ class QI_EXPORT SpaceGrid: public Space
 
 public:
     SpaceGrid(SpaceGridHint hint = SpaceGridHintNone);
-    SpaceGrid(const QSharedPointer<Lines>& rows, const QSharedPointer<Lines>& columns, SpaceGridHint hint = SpaceGridHintNone);
+    SpaceGrid(QSharedPointer<Lines> rows, QSharedPointer<Lines> columns, SpaceGridHint hint = SpaceGridHintNone);
     ~SpaceGrid();
 
     SpaceGridHint hint() const { return m_hint; }
     void setHint(SpaceGridHint hint);
 
     QSize size() const override;
-    ItemID toAbsolute(const ItemID& visibleItem) const override { return ItemID(m_rows->toAbsoluteSafe(visibleItem.row), m_columns->toAbsoluteSafe(visibleItem.column)); }
-    ItemID toVisible(const ItemID& absoluteItem) const override { return ItemID(m_rows->toVisibleSafe(absoluteItem.row), m_columns->toVisibleSafe(absoluteItem.column)); }
-    QRect itemRect(const ItemID& visibleItem) const override;
+    ID toAbsolute(ID visibleItem) const override { return ID(toGridAbsolute(visibleItem.as<GridID>())); }
+    ID toVisible(ID absoluteItem) const override { return ID(toGridVisible(absoluteItem.as<GridID>())); }
+    QRect itemRect(ID visibleItem) const override;
     QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     bool isEmpty() const { return m_rows->isEmpty() || m_columns->isEmpty(); }
@@ -76,17 +77,17 @@ public:
     void unshareRows();
     void unshareColumns();
 
-    QSize itemSize(const ItemID& item) const;
+    GridID toGridAbsolute(GridID visibleItem) const;
+    GridID toGridVisible(GridID absoluteItem) const;
 
-    bool checkItem(const ItemID& item) const;
-    bool checkVisibleItem(const ItemID& item) const;
-    bool isItemVisible(const ItemID& item) const;
+    QSize itemSize(GridID id) const;
 
-    void sortColumnByModel(int column, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
-    void sortRowByModel(int row, const QSharedPointer<ModelComparable>& model, bool ascending, bool stable);
+    bool checkItem(GridID id) const;
+    bool checkVisibleItem(GridID id) const;
+    bool isItemVisible(GridID id) const;
 
-    void sortColumnByRangedModel(int column, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
-    void sortRowByRangedModel(int row, const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range, bool ascending, bool stable, bool outOfRangeIsSmall);
+    void sortColumnByModel(int column, const ModelComparable &model, bool ascending, bool stable);
+    void sortRowByModel(int row, const ModelComparable& model, bool ascending, bool stable);
 
 private slots:
     void onLinesChanged(const Lines* lines, ChangeReason reason);
@@ -95,8 +96,8 @@ private:
     void connectLines(const QSharedPointer<Lines>& lines);
     void disconnectLines(const QSharedPointer<Lines>& lines);
 
-    ItemID trimItem(const ItemID& item) const;
-    ItemID trimVisibleItem(const ItemID& item) const;
+    GridID trimItem(GridID item) const;
+    GridID trimVisibleItem(GridID item) const;
 
     QSharedPointer<Lines> m_rows;
     QSharedPointer<Lines> m_columns;
@@ -104,54 +105,68 @@ private:
     SpaceGridHint m_hint;
 };
 
-QI_EXPORT QSharedPointer<Range> createItemRangeRect(const SpaceGrid& grid, const ItemID& displayCorner1, const ItemID& displayCorner2);
+QI_EXPORT QSharedPointer<Range> makeRangeGridRect(const SpaceGrid& grid, GridID displayCorner1, GridID displayCorner2);
 
-class QI_EXPORT ItemsIteratorGrid: public ItemsIterator
+class QI_EXPORT IdIteratorGrid: public IdIterator
 {
 public:
-    explicit ItemsIteratorGrid(const SpaceGrid& spaceGrid);
+    GridID gridId() const { return gridIdImpl(); }
 
 protected:
-    ItemID itemImpl() const override { return m_currentItem; }
+    IdIteratorGrid() = default;
+
+    ID idImpl() const final { return ID(gridId()); }
+    bool isValidImpl() const final { return gridId().isValid(); }
+
+    virtual GridID gridIdImpl() const = 0;
+};
+
+class QI_EXPORT IdIteratorGridAll: public IdIteratorGrid
+{
+public:
+    explicit IdIteratorGridAll(const SpaceGrid& spaceGrid);
+
+protected:
+    GridID gridIdImpl() const override { return m_currentItem; }
     bool atFirstImpl() override;
     bool toNextImpl() override;
 
 private:
     const SpaceGrid& m_spaceGrid;
-    ItemID m_currentItem;
+    GridID m_currentItem;
 };
 
-class QI_EXPORT ItemsIteratorGridVisible: public ItemsIterator
+class QI_EXPORT ItemsIteratorGridVisible: public IdIteratorGrid
 {
 public:
     explicit ItemsIteratorGridVisible(const SpaceGrid& spaceGrid);
 
-    ItemID itemVisible() const { return m_currentItemVisible; }
+    GridID gridIdVisible() const { return m_currentItemVisible; }
 
 protected:
-    ItemID itemImpl() const override { return m_currentItem; }
+    GridID gridIdImpl() const override { return m_currentItem; }
     bool atFirstImpl() override;
     bool toNextImpl() override;
 
 private:
     const SpaceGrid& m_spaceGrid;
-    ItemID m_currentItemVisible;
-    ItemID m_currentItem;
+    GridID m_currentItemVisible;
+    GridID m_currentItem;
 };
 
-class QI_EXPORT ItemsIteratorGridByColumn: public ItemsIterator
+class QI_EXPORT ItemsIteratorGridByColumn: public IdIteratorGrid
 {
 public:
     explicit ItemsIteratorGridByColumn(const SpaceGrid& spaceGrid, int column = 0);
 
 protected:
-    ItemID itemImpl() const override { return m_currentItem; }
+    GridID gridIdImpl() const override { return m_currentItem; }
     bool atFirstImpl() override;
     bool toNextImpl() override;
 
 private:
     const Lines& m_rows;
-    ItemID m_currentItem;
+    GridID m_currentItem;
 };
 
 

@@ -16,7 +16,7 @@
 
 #include "ControllerMouse.h"
 #include "cache/CacheView.h"
-#include "cache/space/CacheSpace.h"
+#include "space/CacheSpace.h"
 #include <QDebug>
 
 namespace Qi
@@ -29,14 +29,14 @@ ControllerMouse::ActivationInfo::ActivationInfo(const ControllerContext& context
 {
 }
 
-const ItemID& ControllerMouse::ActivationInfo::item() const
+ID ControllerMouse::ActivationInfo::id() const
 {
-    return cache.item;
+    return cache.id;
 }
 
 ControllerMouse::ActivationState::ActivationState(const ControllerMouse::ActivationInfo& info)
     : context(info.context),
-      item(info.cache.item),
+      id(info.cache.id),
       cacheSpace(info.cacheSpace),
       itemRect(info.cache.itemRect),
       viewRect(info.cache.cacheView.rect()),
@@ -44,9 +44,9 @@ ControllerMouse::ActivationState::ActivationState(const ControllerMouse::Activat
 {
 }
 
-ItemID ControllerMouse::ActivationState::visibleItem() const
+ID ControllerMouse::ActivationState::visibleId() const
 {
-    return cacheSpace.space().toVisible(item);
+    return cacheSpace.space().toVisible(id);
 }
 
 ControllerMouse::ControllerMouse(ControllerMousePriority priority)
@@ -60,12 +60,12 @@ ControllerMouse::~ControllerMouse()
     Q_ASSERT(m_state == ControllerMouseStateInactive);
 }
 
-ItemID ControllerMouse::activeItem() const
+const ID *ControllerMouse::activeId() const
 {
     if (!isActive())
-        return ItemID();
+        return nullptr;
     else
-        return m_activationState->item;
+        return &m_activationState->id;
 }
 
 const ControllerMouse::ActivationState& ControllerMouse::activationState() const
@@ -170,7 +170,7 @@ bool ControllerMouse::needDeactivateImpl(const ActivationInfo& activationInfo) c
     Q_ASSERT(m_activationState.data());
 
     // should deactivate if contoller moved to another item
-    if (m_activationState->item != activationInfo.cache.item)
+    if (m_activationState->id != activationInfo.cache.id)
         return true;
 
     // or view's rect has changed
@@ -211,9 +211,9 @@ void ControllerMouse::stopCapturingImpl()
     m_state = ControllerMouseStateActive;
 }
 
-bool ControllerMouse::acceptInplaceEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
+bool ControllerMouse::acceptInplaceEdit(ID id, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const
 {
-    return acceptInplaceEditImpl(item, cacheSpace, keyEvent);
+    return acceptInplaceEditImpl(id, cacheSpace, keyEvent);
 }
 
 void ControllerMouse::doInplaceEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent)

@@ -33,14 +33,14 @@ public:
     {}
 
     std::function<void(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip)> drawFunction;
-    std::function<QSize(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode)> sizeFunction;
-    std::function<bool(const ItemID& item, QString& txt)> textFunction;
+    std::function<QSize(const GuiContext& ctx, ID id, ViewSizeMode sizeMode)> sizeFunction;
+    std::function<bool(ID id, QString& txt)> textFunction;
 
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
-    bool textImpl(const ItemID& item, QString& txt) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
+    bool textImpl(ID id, QString& txt) const override;
 };
 
 } // end namespace Qi

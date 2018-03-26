@@ -34,7 +34,7 @@ class QI_EXPORT ViewProgressBase: public ViewModeled<ModelProgress>
 public:
     ViewProgressBase(const QSharedPointer<ModelProgress>& model);
 
-    std::function<bool(float& value, const ItemID& item)> tuneValue;
+    std::function<bool(float& value, ID id)> tuneValue;
 };
 
 class QI_EXPORT ViewProgressContents: public ViewProgressBase

@@ -24,15 +24,15 @@ ViewImage::ViewImage(const QSharedPointer<ModelImage>& model)
 {
 }
 
-QSize ViewImage::sizeImpl(const GuiContext& /*ctx*/, const ItemID& item, ViewSizeMode /*sizeMode*/) const
+QSize ViewImage::sizeImpl(const GuiContext& /*ctx*/, ID id, ViewSizeMode /*sizeMode*/) const
 {
-    QImage image = theModel()->value(item);
+    QImage image = theModel()->value(id);
     return image.size();
 }
 
 void ViewImage::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    QImage image = theModel()->value(cache.item);
+    QImage image = theModel()->value(cache.id);
     QRect viewRect = cache.cacheView.rect();
     int x = viewRect.left() + (viewRect.width() - image.width()) / 2;
     int y = viewRect.top() + (viewRect.height() - image.height()) / 2;

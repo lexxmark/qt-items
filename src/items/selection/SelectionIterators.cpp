@@ -15,109 +15,107 @@
 */
 
 #include "SelectionIterators.h"
-#include "space/SpaceGrid.h"
 
 namespace Qi
 {
 
-ItemsIteratorSelectedVisible::ItemsIteratorSelectedVisible(const ModelSelection& selection)
+IdIteratorSelectedVisible::IdIteratorSelectedVisible(const ModelSelection& selection)
     : m_selection(selection),
       m_rows(nullptr),
       m_columns(nullptr)
 {
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_selection.space());
-    Q_ASSERT(spaceGrid);
-    m_rows = spaceGrid->rows().data();
-    m_columns = spaceGrid->columns().data();
+    const auto& spaceGrid = m_selection.space();
+    m_rows = spaceGrid.rows().data();
+    m_columns = spaceGrid.columns().data();
 
     atFirst();
 }
 
-bool ItemsIteratorSelectedVisible::atFirstImpl()
+bool IdIteratorSelectedVisible::atFirstImpl()
 {
     if (m_rows->isEmptyVisible() || m_columns->isEmptyVisible())
     {
-        m_currentAbsItem = ItemID();
+        m_currentAbsId = GridID();
         return false;
     }
 
-    m_currentVisibleItem = ItemID(0, 0);
-    m_currentAbsItem = ItemID(m_rows->toAbsolute(m_currentVisibleItem.row), m_columns->toAbsolute(m_currentVisibleItem.column));
+    m_currentVisibleId = GridID(0, 0);
+    m_currentAbsId = GridID(m_rows->toAbsolute(m_currentVisibleId.row), m_columns->toAbsolute(m_currentVisibleId.column));
 
-    if (m_selection.isItemSelected(m_currentAbsItem))
+    if (m_selection.isItemSelected(m_currentAbsId))
         return true;
 
-    return ItemsIteratorSelectedVisible::toNextImpl();
+    return IdIteratorSelectedVisible::toNextImpl();
 }
 
-bool ItemsIteratorSelectedVisible::toNextImpl()
+bool IdIteratorSelectedVisible::toNextImpl()
 {
-    if (!m_currentAbsItem.isValid())
+    if (!m_currentAbsId.isValid())
         return false;
 
-    ++m_currentVisibleItem.column;
+    ++m_currentVisibleId.column;
 
-    for (;m_currentVisibleItem.row < m_rows->visibleCount(); ++m_currentVisibleItem.row, m_currentVisibleItem.column = 0)
+    for (;m_currentVisibleId.row < m_rows->visibleCount(); ++m_currentVisibleId.row, m_currentVisibleId.column = 0)
     {
-        for (;m_currentVisibleItem.column < m_columns->visibleCount(); ++m_currentVisibleItem.column)
+        for (;m_currentVisibleId.column < m_columns->visibleCount(); ++m_currentVisibleId.column)
         {
-            m_currentAbsItem = ItemID(m_rows->toAbsolute(m_currentVisibleItem.row), m_columns->toAbsolute(m_currentVisibleItem.column));
-            if (m_selection.isItemSelected(m_currentAbsItem))
+            m_currentAbsId = GridID(m_rows->toAbsolute(m_currentVisibleId.row), m_columns->toAbsolute(m_currentVisibleId.column));
+            if (m_selection.isItemSelected(m_currentAbsId))
                 return true;
         }
     }
 
-    m_currentAbsItem = ItemID();
+    m_currentAbsId = GridID();
     return false;
 }
 
-ItemsIteratorSelectedVisibleByColumn::ItemsIteratorSelectedVisibleByColumn(const ModelSelection& selection, int absColumn)
+IdIteratorSelectedVisibleByColumn::IdIteratorSelectedVisibleByColumn(const ModelSelection& selection, int absColumn)
     : m_selection(selection),
       m_rows(nullptr)
 {
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_selection.space());
+    auto spaceGrid = &m_selection.space();
     Q_ASSERT(spaceGrid);
     m_rows = spaceGrid->rows().data();
 
-    m_currentAbsItem.column = absColumn;
+    m_currentAbsId.column = absColumn;
     if (absColumn != InvalidIndex)
-        m_currentVisibleItem.column = spaceGrid->columns()->toVisible(absColumn);
+        m_currentVisibleId.column = spaceGrid->columns()->toVisible(absColumn);
 
     atFirst();
 }
 
-bool ItemsIteratorSelectedVisibleByColumn::atFirstImpl()
+bool IdIteratorSelectedVisibleByColumn::atFirstImpl()
 {
-    if (m_rows->isEmptyVisible() || m_currentVisibleItem.column == InvalidIndex)
+    if (m_rows->isEmptyVisible() || m_currentVisibleId.column == InvalidIndex)
     {
-        m_currentAbsItem = ItemID();
+        m_currentAbsId = GridID();
         return false;
     }
 
-    m_currentVisibleItem.row = 0;
-    m_currentAbsItem.row = m_rows->toAbsolute(m_currentVisibleItem.row);
+    m_currentVisibleId.row = 0;
+    m_currentAbsId.row = m_rows->toAbsolute(m_currentVisibleId.row);
 
-    if (m_selection.isItemSelected(m_currentAbsItem))
+    if (m_selection.isItemSelected(m_currentAbsId))
         return true;
 
-    return ItemsIteratorSelectedVisibleByColumn::toNextImpl();
+    return IdIteratorSelectedVisibleByColumn::toNextImpl();
 }
 
-bool ItemsIteratorSelectedVisibleByColumn::toNextImpl()
+bool IdIteratorSelectedVisibleByColumn::toNextImpl()
 {
-    if (!m_currentAbsItem.isValid())
+    if (!m_currentAbsId.isValid())
         return false;
 
-    ++m_currentVisibleItem.row;
+    ++m_currentVisibleId.row;
 
-    for (;m_currentVisibleItem.row < m_rows->visibleCount(); ++m_currentVisibleItem.row)
+    for (;m_currentVisibleId.row < m_rows->visibleCount(); ++m_currentVisibleId.row)
     {
-        m_currentAbsItem.row = m_rows->toAbsolute(m_currentVisibleItem.row);
-        if (m_selection.isItemSelected(m_currentAbsItem))
+        m_currentAbsId.row = m_rows->toAbsolute(m_currentVisibleId.row);
+        if (m_selection.isItemSelected(m_currentAbsId))
             return true;
     }
 
-    m_currentAbsItem = ItemID();
+    m_currentAbsId = GridID();
     return false;
 }
 

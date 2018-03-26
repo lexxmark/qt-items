@@ -32,10 +32,10 @@ ViewProgressContents::ViewProgressContents(const QSharedPointer<ModelProgress>& 
 
 void ViewProgressContents::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    float value = theModel()->value(cache.item);
+    float value = theModel()->value(cache.id);
     if (tuneValue)
     {
-        if (!tuneValue(value, cache.item))
+        if (!tuneValue(value, cache.id))
             return;
     }
 
@@ -72,10 +72,10 @@ ViewProgressLabel::ViewProgressLabel(const QSharedPointer<ModelProgress>& model,
 
 void ViewProgressLabel::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    float value = theModel()->value(cache.item);
+    float value = theModel()->value(cache.id);
     if (tuneValue)
     {
-        if (!tuneValue(value, cache.item))
+        if (!tuneValue(value, cache.id))
             return;
     }
 
@@ -129,10 +129,10 @@ ViewProgressBox::ViewProgressBox(const QSharedPointer<ModelProgress>& model)
 
 void ViewProgressBox::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    float value = theModel()->value(cache.item);
+    float value = theModel()->value(cache.id);
     if (tuneValue)
     {
-        if (!tuneValue(value, cache.item))
+        if (!tuneValue(value, cache.id))
             return;
     }
 

@@ -52,7 +52,7 @@ private:
     void loadData();
     void shuffleRows();
     void playAnimation(Qi::CacheSpaceAnimationAbstract* animation, const QEasingCurve & easing = QEasingCurve::OutCirc);
-    void onLoadBttnPressed(const Qi::ItemID&, const Qi::ControllerContext&, const Qi::ViewButton*);
+    void onLoadBttnPressed(const Qi::ID&, const Qi::ControllerContext&, const Qi::ViewButton*);
 
     QAbstractAnimation* createCircleViewAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
     QAbstractAnimation* createShiftRightItemAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;

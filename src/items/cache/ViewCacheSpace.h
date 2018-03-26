@@ -41,10 +41,10 @@ public:
     virtual ~ViewCacheSpace();
 
 protected:
-    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
-    bool tooltipByPointImpl(const QPoint& point, const ItemID& item, TooltipInfo &tooltipInfo) const override;
+    bool tooltipByPointImpl(QPoint point, ID item, TooltipInfo &tooltipInfo) const override;
 
 private slots:
     void onModelChanged(const Model*);

@@ -31,7 +31,7 @@ public:
     CacheItemFactory(const Space& space, ViewApplicationMask viewApplicationMask);
     virtual ~CacheItemFactory();
 
-    CacheItemInfo create(const ItemID& visibleItem) const;
+    CacheItemInfo create(ID visibleId) const;
     void updateSchema(CacheItemInfo& info) const;
 
     const Space& space() const { return m_space; }
@@ -39,7 +39,7 @@ public:
 protected:
     virtual void initSchemaImpl(CacheItemInfo& info) const;
 
-    ViewSchema createViewSchema(const ItemID& absItem) const;
+    ViewSchema createViewSchema(ID absId) const;
 
 private:
     const Space& m_space;

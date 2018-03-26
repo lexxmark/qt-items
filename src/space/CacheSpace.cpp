@@ -24,8 +24,8 @@
 namespace Qi
 {
 
-CacheSpace::CacheSpace(const QSharedPointer<Space>& space, ViewApplicationMask viewApplicationMask)
-    : m_space(space),
+CacheSpace::CacheSpace(QSharedPointer<Space> space, ViewApplicationMask viewApplicationMask)
+    : m_space(std::move(space)),
       m_viewApplicationMask(viewApplicationMask),
       m_window(0, 0, 0, 0),
       m_scrollOffset(0, 0),
@@ -141,9 +141,9 @@ void CacheSpace::clearItemsCache() const
     clearItemsCacheImpl();
 }
 
-QSharedPointer<CacheItem> CacheSpace::createCacheItem(const ItemID& visibleItem) const
+QSharedPointer<CacheItem> CacheSpace::createCacheItem(ID visibleId) const
 {
-    return QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(visibleItem));
+    return QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(visibleId));
 }
 
 void CacheSpace::validateItemsCache() const
@@ -154,13 +154,13 @@ void CacheSpace::validateItemsCache() const
     validateItemsCacheImpl();
 }
 
-const CacheItem* CacheSpace::cacheItem(const ItemID& visibleItem) const
+const CacheItem* CacheSpace::cacheItem(ID visibleId) const
 {
     validateItemsCache();
-    return cacheItemImpl(visibleItem);
+    return cacheItemImpl(visibleId);
 }
 
-const CacheItem* CacheSpace::cacheItemByPosition(const QPoint& point) const
+const CacheItem* CacheSpace::cacheItemByPosition(QPoint point) const
 {
     validateItemsCache();
     return cacheItemByPositionImpl(point);
@@ -197,18 +197,6 @@ bool CacheSpace::forEachCacheView(const std::function<bool(const CacheSpace::Ite
         return result;
     });
 }
-/*
-bool CacheSpace::forEachCacheView(const std::function<bool(const QSharedPointer<CacheItem>&, CacheView*)>& visitor)
-{
-    Q_ASSERT(visitor);
-
-    return forEachCacheItem([&visitor](const QSharedPointer<CacheItem>& cacheItem)->bool {
-        return item->forEachCacheView([&visitor, &cacheItem](const CacheView* cacheView)->bool {
-                                          return visitor(cacheItem, cacheView);
-                                      });
-    });
-}
-*/
 
 void CacheSpace::validate(const GuiContext& ctx) const
 {

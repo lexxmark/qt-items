@@ -17,6 +17,7 @@
 #include "CacheItemFactory.h"
 #include "core/ext/Layouts.h"
 #include "core/ext/ViewComposite.h"
+#include "space/grid/GridID.h"
 
 namespace Qi
 {
@@ -31,35 +32,33 @@ CacheItemFactory::~CacheItemFactory()
 {
 }
 
-CacheItemInfo CacheItemFactory::create(const ItemID& visibleItem) const
+CacheItemInfo CacheItemFactory::create(ID visibleId) const
 {
-    CacheItemInfo info;
-    info.item = m_space.toAbsolute(visibleItem);
+    CacheItemInfo info(m_space.toAbsolute(visibleId));
     updateSchema(info);
-    info.rect = m_space.itemRect(visibleItem);
+    info.rect = m_space.itemRect(visibleId);
 
     return info;
 }
 
 void CacheItemFactory::updateSchema(CacheItemInfo& info) const
 {
-    Q_ASSERT(info.item.isValid());
     initSchemaImpl(info);
 }
 
 void CacheItemFactory::initSchemaImpl(CacheItemInfo& info) const
 {
-    info.schema = createViewSchema(info.item);
+    info.schema = createViewSchema(info.id);
 }
 
-ViewSchema CacheItemFactory::createViewSchema(const ItemID& absItem) const
+ViewSchema CacheItemFactory::createViewSchema(ID absId) const
 {
     QVector<ViewSchema> viewSchemas;
     auto viewApplicationMask = m_space.viewApplicationMask() | m_viewApplicationMask;
 
     for (const auto& schema : m_space.schemasOrdered())
     {
-        if (schema.range->hasItem(absItem) && schema.view->isApplicable(viewApplicationMask))
+        if (schema.range->hasItem(absId) && schema.view->isApplicable(viewApplicationMask))
         {
             viewSchemas.append(ViewSchema(schema.layout, schema.view));
         }
@@ -93,17 +92,19 @@ public:
 protected:
     void initSchemaImpl(CacheItemInfo& info) const
     {
-        if (m_item != info.item)
+        if (!m_initialized || m_id != info.id)
         {
-            m_schema = createViewSchema(info.item);
-            m_item = info.item;
+            m_schema = createViewSchema(info.id);
+            m_id = info.id;
+            m_initialized = true;
         }
 
         info.schema = m_schema;
     }
 
 private:
-    mutable ItemID m_item;
+    mutable bool m_initialized = false;
+    mutable ID m_id;
     mutable ViewSchema m_schema;
 };
 
@@ -122,15 +123,15 @@ public:
 protected:
     void initSchemaImpl(CacheItemInfo& info) const
     {
-        auto it = m_schemaByColumn.find(info.item.column);
+        auto it = m_schemaByColumn.find(column(info.id));
         if (it != m_schemaByColumn.end())
         {
             info.schema = it.value();
         }
         else
         {
-            ViewSchema& schema = m_schemaByColumn[info.item.column];
-            schema = createViewSchema(info.item);
+            ViewSchema& schema = m_schemaByColumn[column(info.id)];
+            schema = createViewSchema(info.id);
             info.schema = schema;
         }
     }
@@ -154,15 +155,15 @@ public:
 protected:
     void initSchemaImpl(CacheItemInfo& info) const
     {
-        auto it = m_schemaByRow.find(info.item.row);
+        auto it = m_schemaByRow.find(row(info.id));
         if (it != m_schemaByRow.end())
         {
             info.schema = it.value();
         }
         else
         {
-            ViewSchema& schema = m_schemaByRow[info.item.row];
-            schema = createViewSchema(info.item);
+            ViewSchema& schema = m_schemaByRow[row(info.id)];
+            schema = createViewSchema(info.id);
             info.schema = schema;
         }
     }

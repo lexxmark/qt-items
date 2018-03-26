@@ -20,8 +20,8 @@
 namespace Qi
 {
 
-SpaceItem::SpaceItem(const ItemID& item)
-    : m_item(item)
+SpaceItem::SpaceItem(ID id)
+    : m_id(id)
 {
 }
 
@@ -29,10 +29,10 @@ SpaceItem::~SpaceItem()
 {
 }
 
-QRect SpaceItem::itemRect(const ItemID& visibleItem) const
+QRect SpaceItem::itemRect(ID visibleId) const
 {
-    Q_UNUSED(visibleItem);
-    Q_ASSERT(m_item == visibleItem);
+    Q_UNUSED(visibleId);
+    Q_ASSERT(m_id == visibleId);
     return QRect(QPoint(0, 0), m_size);
 }
 
@@ -51,12 +51,12 @@ void SpaceItem::setSize(const QSize& size)
     emit spaceChanged(this, ChangeReasonSpaceStructure);
 }
 
-void SpaceItem::setItem(const ItemID& item)
+void SpaceItem::setId(ID id)
 {
-    if (m_item == item)
+    if (m_id == id)
         return;
 
-    m_item = item;
+    m_id = id;
 
     emit spaceChanged(this, ChangeReasonSpaceStructure);
 }

@@ -36,11 +36,11 @@ public:
     ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultController = true);
 
 protected:
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
 
 private:
-    QStyle::State styleState(const ItemID& item) const;
+    QStyle::State styleState(ID item) const;
 
     PushableTracker m_pushableTracker;
 };

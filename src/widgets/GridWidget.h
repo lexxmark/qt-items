@@ -17,7 +17,7 @@
 #ifndef QI_GRID_WIDGET_H
 #define QI_GRID_WIDGET_H
 
-#include "space/SpaceGrid.h"
+#include "space/grid/SpaceGrid.h"
 #include "core/SpaceWidgetScrollAbstract.h"
 
 namespace Qi
@@ -33,15 +33,15 @@ class CacheSpaceGrid;
 // |-----------------------------------------|
 // | bottomLeftID | bottomID | bottomRightID |
 // -------------------------------------------
-const ItemID topLeftID = ItemID(0, 0);
-const ItemID topID = ItemID(0, 1);
-const ItemID topRightID = ItemID(0, 2);
-const ItemID leftID = ItemID(1, 0);
-const ItemID clientID = ItemID(1, 1);
-const ItemID rightID = ItemID(1, 2);
-const ItemID bottomLeftID = ItemID(2, 0);
-const ItemID bottomID = ItemID(2, 1);
-const ItemID bottomRightID = ItemID(2, 2);
+const GridID topLeftID = GridID(0, 0);
+const GridID topID = GridID(0, 1);
+const GridID topRightID = GridID(0, 2);
+const GridID leftID = GridID(1, 0);
+const GridID clientID = GridID(1, 1);
+const GridID rightID = GridID(1, 2);
+const GridID bottomLeftID = GridID(2, 0);
+const GridID bottomID = GridID(2, 1);
+const GridID bottomRightID = GridID(2, 2);
 
 class QI_EXPORT GridWidget: public SpaceWidgetScrollAbstract
 {
@@ -54,8 +54,8 @@ public:
 
     const QSharedPointer<SpaceGrid>& mainGrid() const { return m_mainGrid; }
 
-    const QSharedPointer<SpaceGrid>& subGrid(const ItemID& subGridID = clientID) const;
-    const QSharedPointer<CacheSpaceGrid>& cacheSubGrid(const ItemID& subGridID = clientID) const;
+    const QSharedPointer<SpaceGrid>& subGrid(GridID subGridID = clientID) const;
+    const QSharedPointer<CacheSpaceGrid>& cacheSubGrid(GridID subGridID = clientID) const;
 
     const QSharedPointer<Lines>& rows(int subRowsID) const { return m_rows[subRowsID]; }
     const QSharedPointer<Lines>& columns(int subColumnsID) const { return m_columns[subColumnsID]; }
@@ -65,7 +65,7 @@ protected:
     QSize viewportSizeHint() const override;
 
     // SpaceWidgetCore implementation
-    void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
+    void ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
 
     // SpaceWidgetScrollAbstract implementation
     void validateCacheItemsLayoutImpl() override;

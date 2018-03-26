@@ -15,7 +15,8 @@
 */
 
 #include "ControllerMouseLinesResizer.h"
-#include "space/Lines.h"
+#include "space/grid/Lines.h"
+#include "space/grid/GridID.h"
 #include "cache/CacheView.h"
 
 #include <QRubberBand>
@@ -67,7 +68,7 @@ void ControllerMouseColumnsResizer::activateImpl(const ActivationInfo& activatio
 
     m_position = activationInfo.cache.itemRect.topLeft().x();
     m_trackPosition = activationInfo.context.point.x();
-    m_columnIndex = activationInfo.item().column;
+    m_columnIndex = column(activationInfo.id());
 
     activationState().context.pushCursor(Qt::SplitHCursor, this);
 }
@@ -161,7 +162,7 @@ void ControllerMouseRowsResizer::activateImpl(const ActivationInfo& activationIn
     m_delta = activationInfo.cache.cacheView.rect().bottom() - activationInfo.context.point.y();
     m_position = activationInfo.cache.itemRect.topLeft().y();
     m_trackPosition = activationInfo.context.point.y();
-    m_rowIndex = activationInfo.item().row;
+    m_rowIndex = row(activationInfo.id());
     activationState().context.pushCursor(Qt::SplitVCursor, this);
 }
 

@@ -39,12 +39,12 @@ public:
     void setMargins(const QMargins& margins);
 
 protected:
-    void addViewImpl(const ItemID& item, QVector<const View*>& views) const override;
-    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    void addViewImpl(ID id, QVector<const View*>& views) const override;
+    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
     //void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;
-    bool textImpl(const ItemID& item, QString& txt) const override;
+    bool textImpl(ID id, QString& txt) const override;
 
 private slots:
     void onSubViewChanged(const View* view, ChangeReason reason);

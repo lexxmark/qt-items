@@ -61,23 +61,23 @@ public:
     }
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override
+    int compareImpl(ID left, ID right) const override
     {
         // compare numeric values
         return Private::compareValues(m_modelNumeric->value(left), m_modelNumeric->value(right));
     }
 
-    ValueType_t valueImpl(const ItemID& item) const override
+    ValueType_t valueImpl(ID id) const override
     {
-        return Private::numericToText<NumericType>(m_modelNumeric->value(item));
+        return Private::numericToText<NumericType>(m_modelNumeric->value(id));
     }
 
-    bool setValueImpl(const ItemID& item, ValueType_t value) override
+    bool setValueImpl(ID id, ValueType_t value) override
     {
-        return m_modelNumeric->setValue(item, Private::textToNumeric<NumericType>(value));
+        return m_modelNumeric->setValue(id, Private::textToNumeric<NumericType>(value));
     }
 
-    bool setValueMultipleImpl(ItemsIterator& itemsIterator, ValueType_t value) override
+    bool setValueMultipleImpl(IdIterator& itemsIterator, ValueType_t value) override
     {
         return m_modelNumeric->setValueMultiple(itemsIterator, Private::textToNumeric<NumericType>(value));
     }
@@ -95,8 +95,8 @@ public:
     explicit ModelRowNumber(bool ascendingDefault = true);
 
 protected:
-    int valueImpl(const ItemID& item) const override;
-    bool setValueImpl(const ItemID& item, int value) override;
+    int valueImpl(ID id) const override;
+    bool setValueImpl(ID id, int value) override;
 };
 
 class QI_EXPORT ModelColumnNumber: public ModelTyped<int>
@@ -108,8 +108,8 @@ public:
     explicit ModelColumnNumber(bool ascendingDefault = true);
 
 protected:
-    ValueType_t valueImpl(const ItemID& item) const override;
-    bool setValueImpl(const ItemID& item, ValueType_t value) override;
+    ValueType_t valueImpl(ID id) const override;
+    bool setValueImpl(ID id, ValueType_t value) override;
 };
 
 } // end namespace Qi

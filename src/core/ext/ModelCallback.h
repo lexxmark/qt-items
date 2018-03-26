@@ -28,9 +28,9 @@ template <typename T, bool ascendingDefault = true>
 class ModelCallback: public ModelTyped<T>
 {
 public:
-    typedef std::function<T(const ItemID&)> GetValueFunction_t;
-    typedef std::function<bool(const ItemID&, T)> SetValueFunction_t;
-    typedef std::function<bool(ItemsIterator&, T)> SetMultipleValueFunction_t;
+    typedef std::function<T(ID)> GetValueFunction_t;
+    typedef std::function<bool(ID, T)> SetValueFunction_t;
+    typedef std::function<bool(IdIterator&, T)> SetMultipleValueFunction_t;
 
     ModelCallback(const GetValueFunction_t& getFunc = nullptr, const SetValueFunction_t& setFunc = nullptr, const SetMultipleValueFunction_t& setMultipleFunc = nullptr)
         : getValueFunction(getFunc),
@@ -45,35 +45,35 @@ public:
     SetMultipleValueFunction_t setMultipleValueFunction;
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueImpl(ID id) const override
     {
         if (!getValueFunction)
             throw std::logic_error("Get function is not set");
 
-        return getValueFunction(item);
+        return getValueFunction(id);
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueImpl(ID id, T value) override
     {
         if (setValueFunction)
-            return setValueFunction(item, value);
+            return setValueFunction(id, value);
         else
             return false;
     }
 
-    virtual bool setValueMultipleImpl(ItemsIterator& itemsIterator, T value) override
+    virtual bool setValueMultipleImpl(IdIterator& it, T value) override
     {
         if (setMultipleValueFunction)
-            return setMultipleValueFunction(itemsIterator, value);
+            return setMultipleValueFunction(it, value);
         else
-            return ModelTyped<T>::setValueMultipleImpl(itemsIterator, value);
+            return ModelTyped<T>::setValueMultipleImpl(it, value);
     }
 };
 
 class ModelCallbackComparable: public ModelComparable
 {
 public:
-    typedef std::function<int(const ItemID&, const ItemID&)> CompareFunction_t;
+    typedef std::function<int(const ID&, const ID&)> CompareFunction_t;
 
     ModelCallbackComparable(CompareFunction_t compareFunction = nullptr, bool ascendingDefault = true)
         : compareFunction(compareFunction),
@@ -84,11 +84,11 @@ public:
     CompareFunction_t compareFunction;
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override
+    int compareImpl(ID left, ID right) const override
     {
         return compareFunction(left, right);
     }
-    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override
+    bool isAscendingDefaultImpl(ID /*item*/) const override
     {
         return m_ascendingDefault;
     }

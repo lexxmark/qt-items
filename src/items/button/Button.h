@@ -31,8 +31,8 @@ class QI_EXPORT ViewButton: public ViewComposite
 public:
     ViewButton(const QSharedPointer<View>& bttnContent, ViewDefaultController createDefaultController = ViewDefaultControllerCreate);
 
-    std::function<void (const ItemID& item, QStyle::State& bttnState)> tuneBttnState;
-    std::function<void (const ItemID& item, const ControllerContext& context, const ViewButton* viewBttn)> action;
+    std::function<void (ID id, QStyle::State& bttnState)> tuneBttnState;
+    std::function<void (ID id, const ControllerContext& context, const ViewButton* viewBttn)> action;
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;

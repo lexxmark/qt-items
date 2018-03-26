@@ -25,6 +25,14 @@ ControllerMousePushable::ControllerMousePushable(ControllerMousePriority priorit
 {
 }
 
+MousePushState ControllerMousePushable::pushStateByItem(ID id) const
+{
+    if (auto activeID = activeId())
+        return (*activeID == id) ? pushState() : MousePushStateNone;
+    else
+        return MousePushStateNone;
+}
+
 void ControllerMousePushable::setPushState(MousePushState pushState)
 {
     if (m_pushState != pushState)
@@ -97,17 +105,17 @@ PushableTracker::~PushableTracker()
     QObject::disconnect(m_viewConnection);
 }
 
-MousePushState PushableTracker::pushStateByItem(const ItemID& item) const
+MousePushState PushableTracker::pushStateByItem(ID id) const
 {
     if (!m_controller)
         return MousePushStateNone;
 
-    return m_controller->pushStateByItem(item);
+    return m_controller->pushStateByItem(id);
 }
 
-QStyle::State PushableTracker::styleStateByItem(const ItemID& item) const
+QStyle::State PushableTracker::styleStateByItem(ID id) const
 {
-    switch (pushStateByItem(item))
+    switch (pushStateByItem(id))
     {
     case MousePushStateHot:
         return QStyle::State_MouseOver;

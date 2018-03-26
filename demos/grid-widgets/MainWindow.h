@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "core/ItemID.h"
+#include "core/ID.h"
 #include "items/color/Color.h"
 
 namespace Ui {
@@ -17,9 +17,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QImage image(const Qi::ItemID& item) const;
-    QPixmap pixmap(const Qi::ItemID& item) const;
-    bool pixmapTooltip(const Qi::ItemID& item, QString& text) const;
+    QImage image(Qi::ID id) const;
+    QPixmap pixmap(Qi::ID id) const;
+    bool pixmapTooltip(Qi::ID id, QString& text) const;
 
 private slots:
 

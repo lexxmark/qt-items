@@ -18,7 +18,7 @@
 #define QI_MODEL_STORE_H
 
 #include "ModelTyped.h"
-#include "space/SpaceGrid.h"
+#include "space/grid/SpaceGrid.h"
 #include <QSet>
 #include <functional>
 
@@ -26,7 +26,7 @@ namespace Qi
 {
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageGrid: public ModelTyped<T>
+class ModelStorageGrid: public ModelIdTyped<T, GridID>
 {
 public:
     ModelStorageGrid(const QSharedPointer<SpaceGrid>& grid)
@@ -46,18 +46,18 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueIdImpl(GridID id) const final
     {
-        int index = item.column * m_rowsCount + item.row;
+        int index = id.column * m_rowsCount + id.row;
         if (index >= m_values.size())
             throw std::logic_error("Cannot return value");
 
         return m_values[index];
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueIdImpl(GridID id, T value) final
     {
-        int index = item.column * m_rowsCount + item.row;
+        int index = id.column * m_rowsCount + id.row;
         if (index < m_values.size())
         {
             m_values[index] = value;
@@ -105,12 +105,12 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& /*item*/) const override
+    T valueImpl(ID /*item*/) const override
     {
         return m_value;
     }
 
-    bool setValueImpl(const ItemID& /*item*/, T value) override
+    bool setValueImpl(ID /*item*/, T value) override
     {
         if (NotEq()(m_value, value))
         {
@@ -126,7 +126,7 @@ private:
 };
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageColumns: public ModelTyped<T>
+class ModelStorageColumns: public ModelIdTyped<T, GridID>
 {
 public:
     ModelStorageColumns(const QSharedPointer<Lines>& rows, const QSet<int>& columns) { init(rows, columns); }
@@ -142,23 +142,23 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueIdImpl(GridID id) const override
     {
-        auto it = m_values.find(item.column);
+        auto it = m_values.find(id.column);
 
-        if (it == m_values.end() || item.row >= (*it).value().size())
+        if (it == m_values.end() || id.row >= (*it).value().size())
             throw std::logic_error("Cannot get value");
 
-        return (*it).value()[item.row];
+        return (*it).value()[id.row];
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueIdImpl(GridID id, T value) override
     {
-        auto it = m_values.find(item.column);
+        auto it = m_values.find(id.column);
 
-        if (it != m_values.end() && item.row < (*it).value().size())
+        if (it != m_values.end() && id.row < (*it).value().size())
         {
-            (*it).value()[item.row] = value;
+            (*it).value()[id.row] = value;
             return true;
         }
         else
@@ -221,7 +221,7 @@ private:
 };
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageColumn: public ModelTyped<T>
+class ModelStorageColumn: public ModelIdTyped<T, GridID>
 {
 public:
     ModelStorageColumn(const QSharedPointer<Lines>& rows)
@@ -254,19 +254,19 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueIdImpl(GridID id) const override
     {
-        if (item.row >= m_values.size())
+        if (id.row >= m_values.size())
             throw std::logic_error("Cannot return value");
 
-        return m_values[item.row];
+        return m_values[id.row];
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueIdImpl(GridID id, T value) override
     {
-        if (item.row < m_values.size())
+        if (id.row < m_values.size())
         {
-            m_values[item.row] = value;
+            m_values[id.row] = value;
             return true;
         }
         else
@@ -295,7 +295,7 @@ private:
 };
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageRow: public ModelTyped<T>
+class ModelStorageRow: public ModelIdTyped<T, GridID>
 {
 public:
     ModelStorageRow(const QSharedPointer<Lines>& columns)
@@ -328,19 +328,19 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueIdImpl(GridID id) const override
     {
-        if (item.column >= m_values.size())
+        if (id.column >= m_values.size())
             throw std::logic_error("Cannot return value");
 
-        return m_values[item.column];
+        return m_values[id.column];
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueIdImpl(GridID id, T value) override
     {
-        if (item.column < m_values.size())
+        if (id.column < m_values.size())
         {
-            m_values[item.column] = value;
+            m_values[id.column] = value;
             return true;
         }
         else
@@ -368,40 +368,9 @@ private:
     QVector<StorageT> m_values;
 };
 
-template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageCells: public ModelTyped<T>
-{
-public:
-    ModelStorageCells(const QSharedPointer<Range>& range = QSharedPointer<Range>())
-        : m_range(range)
-    {
-    }
-
-protected:
-    T valueImpl(const ItemID& item) const override
-    {
-        Q_ASSERT(!m_range || m_range->hasItem(item));
-        auto it = m_values.find(item);
-        if (it != m_values.end())
-            return (*it).value();
-        else
-            return T();
-    }
-
-    bool setValueImpl(const ItemID& item, T value) override
-    {
-        Q_ASSERT(!m_range || m_range->hasItem(item));
-        m_values[item] = value;
-        return true;
-    }
-
-private:
-    QSharedPointer<Range> m_range;
-    QMap<ItemID, StorageT> m_values;
-};
 
 template <typename T, typename StorageT = typename std::decay<T>::type>
-class ModelStorageVector: public ModelTyped<T>
+class ModelStorageVector: public ModelIdTyped<T, GridID>
 {
 public:
     ModelStorageVector()
@@ -427,19 +396,19 @@ public:
     }
 
 protected:
-    T valueImpl(const ItemID& item) const override
+    T valueIdImpl(GridID id) const override
     {
-        if (item.row >= m_values.size())
+        if (id.row >= m_values.size())
             throw std::logic_error("Cannot return value");
 
-        return m_values[item.row];
+        return m_values[id.row];
     }
 
-    bool setValueImpl(const ItemID& item, T value) override
+    bool setValueIdImpl(GridID id, T value) override
     {
-        if (item.row < m_values.size())
+        if (id.row < m_values.size())
         {
-            m_values[item.row] = value;
+            m_values[id.row] = value;
             return true;
         }
         else

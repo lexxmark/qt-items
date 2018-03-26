@@ -20,8 +20,8 @@
 namespace Qi
 {
 
-ViewVisible::ViewVisible(const QSharedPointer<View>& sourceView, bool reserveSize)
-    : m_sourceView(sourceView),
+ViewVisible::ViewVisible(QSharedPointer<View> sourceView, bool reserveSize)
+    : m_sourceView(std::move(sourceView)),
       m_reserveSize(reserveSize)
 {
     Q_ASSERT(m_sourceView);
@@ -33,28 +33,28 @@ void ViewVisible::notifyVisibilityChanged()
     emit viewChanged(this, ChangeReasonViewSize);
 }
 
-void ViewVisible::addViewImpl(const ItemID& item, QVector<const View*>& views) const
+void ViewVisible::addViewImpl(ID id, QVector<const View*>& views) const
 {
-    if (safeIsItemVisible(item))
-        m_sourceView->addView(item, views);
+     if (safeIsItemVisible(id))
+        m_sourceView->addView(id, views);
     else if (m_reserveSize)
-        View::addViewImpl(item, views);
+        View::addViewImpl(id, views);
 }
 
-CacheView* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    if (safeIsItemVisible(item))
-        return m_sourceView->addCacheView(layout, ctx, item, cacheViews, itemRect, visibleItemRect);
+    if (safeIsItemVisible(id))
+        return m_sourceView->addCacheView(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     else if (m_reserveSize)
-        return View::addCacheViewImpl(layout, ctx, item, cacheViews, itemRect, visibleItemRect);
+        return View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     else
         return nullptr;
 }
 
-QSize ViewVisible::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewVisible::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
 {
-    if (m_reserveSize || safeIsItemVisible(item))
-        return m_sourceView->size(ctx, item, sizeMode);
+    if (m_reserveSize || safeIsItemVisible(id))
+        return m_sourceView->size(ctx, id, sizeMode);
     else
     {
         // framework shouldn't ask for size in this case
@@ -63,9 +63,9 @@ QSize ViewVisible::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeM
     }
 }
 
-bool ViewVisible::safeIsItemVisible(const ItemID& item) const
+bool ViewVisible::safeIsItemVisible(ID id) const
 {
-    return isItemVisible ? isItemVisible(item) : false;
+    return isItemVisible ? isItemVisible(id) : false;
 }
 
 void ViewVisible::onSourceViewChanged(const View* view, ChangeReason reason)
@@ -84,15 +84,21 @@ ControllerMouseVisible::ControllerMouseVisible(const QSharedPointer<ViewVisible>
     if (m_view->isItemVisible)
     {
         auto callback = m_view->isItemVisible;
-        m_view->isItemVisible = [callback, this](const ItemID& item)->bool {
-            if (callback(item)) return true;
-            return (activeItem() == item);
+        m_view->isItemVisible = [callback, this](ID id)->bool {
+            if (callback(id)) return true;
+            if (auto aId = activeId())
+                return (*aId == id);
+            else
+                return false;
         };
     }
     else
     {
-        m_view->isItemVisible = [this](const ItemID& item)->bool {
-            return (activeItem() == item);
+        m_view->isItemVisible = [this](ID id)->bool {
+            if (auto aId = activeId())
+                return (*aId == id);
+            else
+                return false;
         };
     }
 }

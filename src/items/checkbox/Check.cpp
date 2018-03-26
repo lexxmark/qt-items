@@ -31,7 +31,7 @@ ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultCon
     }
 }
 
-QSize ViewCheck::sizeImpl(const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewCheck::sizeImpl(const GuiContext& ctx, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     auto style = ctx.style();
     return QSize(style->pixelMetric(QStyle::PM_IndicatorWidth),
@@ -50,7 +50,7 @@ void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
     if (style->inherits("QWindowsVistaStyle"))
         option.styleObject = nullptr;
 
-    option.state |= styleState(cache.item);
+    option.state |= styleState(cache.id);
     option.rect = cache.cacheView.rect();
     // correct rect
     option.rect = style->subElementRect(QStyle::SE_CheckBoxIndicator, &option, ctx.widget);
@@ -59,11 +59,11 @@ void ViewCheck::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
     style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &option, painter, ctx.widget);
 }
 
-QStyle::State ViewCheck::styleState(const ItemID& item) const
+QStyle::State ViewCheck::styleState(ID id) const
 {
-    Qt::CheckState check = theModel()->value(item);
+    Qt::CheckState check = theModel()->value(id);
 
-    QStyle::State state = m_pushableTracker.styleStateByItem(item);
+    QStyle::State state = m_pushableTracker.styleStateByItem(id);
 
     switch (check)
     {
@@ -84,10 +84,9 @@ QStyle::State ViewCheck::styleState(const ItemID& item) const
 QSharedPointer<ControllerMousePushable> createControllerMouseCheck(const QSharedPointer<ModelCheck>& model)
 {
     auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-    controller->onApply = [model] (const ItemID& item, const ControllerContext& /*context*/) {
-        Q_ASSERT(item.isValid());
-        Qt::CheckState check = model->value(item);
-        model->setValue(item, (check != Qt::Unchecked) ? Qt::Unchecked : Qt::Checked);
+    controller->onApply = [model] (ID id, const ControllerContext& /*context*/) {
+        Qt::CheckState check = model->value(id);
+        model->setValue(id, (check != Qt::Unchecked) ? Qt::Unchecked : Qt::Checked);
     };
     return controller;
 }

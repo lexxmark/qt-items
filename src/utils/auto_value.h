@@ -22,14 +22,14 @@ struct auto_value
 {
     auto_value(T& value, T newValue)
         : m_value(value),
-          m_oldValue(value)
+          m_oldValue(std::move(value))
     {
-        m_value = newValue;
+        m_value = std::move(newValue);
     }
 
     ~auto_value()
     {
-        m_value = m_oldValue;
+        m_value = std::move(m_oldValue);
     }
 
 private:

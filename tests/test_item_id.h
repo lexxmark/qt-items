@@ -1,7 +1,7 @@
 #ifndef TEST_ITEM_ID_H
 #define TEST_ITEM_ID_H
 
-#include "core/ItemID.h"
+#include <space/grid/GridID.h>
 #include <QObject>
 #include <QtTest/QtTest>
 
@@ -21,10 +21,10 @@ private slots:
 
 namespace QTest {
     template<>
-    inline char *toString(const Qi::ItemID &item)
+    inline char *toString(const Qi::GridID& id)
     {
-        QByteArray ba = "ItemID(";
-        ba += QByteArray::number(item.row) + ", " + QByteArray::number(item.column);
+        QByteArray ba = "ID(";
+        ba += QByteArray::number(id.row) + ", " + QByteArray::number(id.column);
         ba += ")";
         return qstrdup(ba.data());
     }

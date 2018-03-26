@@ -25,15 +25,15 @@ namespace Qi
 
 class Lines;
 
-class QI_EXPORT ItemsIteratorSelectedVisible: public ItemsIterator
+class QI_EXPORT IdIteratorSelectedVisible: public IdIterator
 {
 public:
-    explicit ItemsIteratorSelectedVisible(const ModelSelection& selection);
+    explicit IdIteratorSelectedVisible(const ModelSelection& selection);
 
-    ItemID visibleItem() const { return m_currentVisibleItem; }
+    GridID visibleId() const { return m_currentVisibleId; }
 
 protected:
-    ItemID itemImpl() const override { return m_currentAbsItem; }
+    ID idImpl() const override { return ID(m_currentAbsId); }
     bool atFirstImpl() override;
     bool toNextImpl() override;
 
@@ -41,27 +41,27 @@ private:
     const ModelSelection& m_selection;
     const Lines* m_rows;
     const Lines* m_columns;
-    ItemID m_currentVisibleItem;
-    ItemID m_currentAbsItem;
+    GridID m_currentVisibleId;
+    GridID m_currentAbsId;
 };
 
-class QI_EXPORT ItemsIteratorSelectedVisibleByColumn: public ItemsIterator
+class QI_EXPORT IdIteratorSelectedVisibleByColumn: public IdIterator
 {
 public:
-    explicit ItemsIteratorSelectedVisibleByColumn(const ModelSelection& selection, int absColumn = 0);
+    explicit IdIteratorSelectedVisibleByColumn(const ModelSelection& selection, int absColumn = 0);
 
-    ItemID visibleItem() const { return m_currentVisibleItem; }
+    GridID visibleId() const { return m_currentVisibleId; }
 
 protected:
-    ItemID itemImpl() const override { return m_currentAbsItem; }
+    ID idImpl() const override { return ID(m_currentAbsId); }
     bool atFirstImpl() override;
     bool toNextImpl() override;
 
 private:
     const ModelSelection& m_selection;
     const Lines* m_rows;
-    ItemID m_currentVisibleItem;
-    ItemID m_currentAbsItem;
+    GridID m_currentVisibleId;
+    GridID m_currentAbsId;
 };
 
 

@@ -17,8 +17,8 @@
 #ifndef QI_CACHE_SPACE_GRID_H
 #define QI_CACHE_SPACE_GRID_H
 
-#include "CacheSpace.h"
-#include "space/SpaceGrid.h"
+#include "space/CacheSpace.h"
+#include "SpaceGrid.h"
 
 namespace Qi
 {
@@ -35,26 +35,26 @@ public:
     const QSharedPointer<SpaceGrid>& spaceGrid() const { return m_grid; }
     bool isEmpty() const { return m_items.isEmpty(); }
 
-    bool isItemInFrame(const ItemID& visibleItem) const;
-    bool isItemInFrameStrict(const ItemID& visibleItem) const;
-    bool isItemAbsInFrame(const ItemID& absItem) const;
+    bool isItemInFrame(GridID visibleId) const;
+    bool isItemInFrameStrict(GridID visibleId) const;
+    bool isItemAbsInFrame(GridID absId) const;
 
-    void visibleItemsRange(ItemID& itemStart, ItemID& itemEnd) const;
-    ItemID visibleItemByPosition(const QPoint& point) const;
+    void visibleItemsRange(GridID& idStart, GridID& idEnd) const;
+    GridID visibleItemByPosition(QPoint point) const;
 
 private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
     bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
-    const CacheItem* cacheItemImpl(const ItemID& visibleItem) const override;
-    const CacheItem* cacheItemByPositionImpl(const QPoint& point) const override;
+    const CacheItem* cacheItemImpl(ID visibleId) const override;
+    const CacheItem* cacheItemByPositionImpl(QPoint point) const override;
 
     // source grid space
     QSharedPointer<SpaceGrid> m_grid;
 
     // visible item ids
-    mutable ItemID m_itemStart;
-    mutable ItemID m_itemEnd;
+    mutable GridID m_idStart;
+    mutable GridID m_idEnd;
     // caches items
     mutable QVector<QSharedPointer<CacheItem>> m_items;
 };

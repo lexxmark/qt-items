@@ -1,6 +1,3 @@
-#ifndef QI_CACHE_SPACE_ITEM_H
-#define QI_CACHE_SPACE_ITEM_H
-
 /*
    Copyright (c) 2008-1015 Alex Zhondin <qtinuum.team@gmail.com>
 
@@ -17,36 +14,41 @@
    limitations under the License.
 */
 
-#include "CacheSpace.h"
-#include "space/SpaceItem.h"
+#ifndef QI_CACHE_SPACE_SCENE_H
+#define QI_CACHE_SPACE_SCENE_H
+
+#include "space/CacheSpace.h"
+#include "SpaceScene.h"
 
 namespace Qi
 {
 
-class QI_EXPORT CacheSpaceItem : public CacheSpace
+class QI_EXPORT CacheSpaceScene: public CacheSpace
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheSpaceItem)
+    Q_DISABLE_COPY(CacheSpaceScene)
 
 public:
-    explicit CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow = false, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
-    ~CacheSpaceItem();
+    explicit CacheSpaceScene(const QSharedPointer<SpaceScene>& scene, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    ~CacheSpaceScene();
 
-    const QSharedPointer<SpaceItem>& spaceItem() const { return m_spaceItem; }
+    const QSharedPointer<SpaceScene>& spaceScene() const { return m_scene; }
+    bool isEmpty() const { return m_scene->count() == 0; }
 
 private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
     bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
-    const CacheItem* cacheItemImpl(const ItemID& visibleItem) const override;
-    const CacheItem* cacheItemByPositionImpl(const QPoint& point) const override;
+    const CacheItem* cacheItemImpl(ID visibleId) const override;
+    const CacheItem* cacheItemByPositionImpl(QPoint point) const override;
 
-    void onCacheChanged(const CacheSpace* cache, ChangeReason reason);
+    // source scene space
+    QSharedPointer<SpaceScene> m_scene;
 
-    QSharedPointer<SpaceItem> m_spaceItem;
-    mutable QSharedPointer<CacheItem> m_item;
+    // cache items
+    mutable QVector<QSharedPointer<CacheItem>> m_items;
 };
 
-} // end namespace Qi
+} // end namespace Qi 
 
-#endif // QI_CACHE_SPACE_H
+#endif // QI_CACHE_SPACE_SCENE_H

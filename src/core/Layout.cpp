@@ -22,12 +22,12 @@ namespace Qi
 
 QSize Layout::ViewInfo::size() const
 {
-    return view.size(ctx, item, sizeMode);
+    return view.size(ctx, id, sizeMode);
 }
 
-bool Layout::doLayout(const View& view, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const
+bool Layout::doLayout(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const
 {
-    ViewInfo vi(view, ctx, item, sizeMode);
+    ViewInfo vi(view, ctx, id, sizeMode);
     LayoutInfo li(viewRect, itemRect);
     if (!doLayoutImpl(vi, li))
         return false;
@@ -42,12 +42,12 @@ bool Layout::doLayout(const View& view, const GuiContext& ctx, const ItemID& ite
     return true;
 }
 
-void Layout::expandSize(const View& view, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode, QSize& size) const
+void Layout::expandSize(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const
 {
     if (isTransparent())
         return;
 
-    expandSizeImpl(ViewInfo(view, ctx, item, sizeMode), size);
+    expandSizeImpl(ViewInfo(view, ctx, id, sizeMode), size);
 }
 
 bool Layout::isFinal() const

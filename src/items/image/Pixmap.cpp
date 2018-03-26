@@ -24,15 +24,15 @@ ViewPixmap::ViewPixmap(const QSharedPointer<ModelPixmap>& model)
 {
 }
 
-QSize ViewPixmap::sizeImpl(const GuiContext& /*ctx*/, const ItemID& item, ViewSizeMode /*sizeMode*/) const
+QSize ViewPixmap::sizeImpl(const GuiContext& /*ctx*/, ID id, ViewSizeMode /*sizeMode*/) const
 {
-    QPixmap pixmap = theModel()->value(item);
+    QPixmap pixmap = theModel()->value(id);
     return pixmap.size();
 }
 
 void ViewPixmap::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    QPixmap pixmap = theModel()->value(cache.item);
+    QPixmap pixmap = theModel()->value(cache.id);
     QRect viewRect = cache.cacheView.rect();
     int x = viewRect.left() + (viewRect.width() - pixmap.width()) / 2;
     int y = viewRect.top() + (viewRect.height() - pixmap.height()) / 2;

@@ -22,9 +22,6 @@
 #include "items/progressbar/Progress.h"
 #include "items/enum/Enum.h"
 
-#include "misc/GridColumnsResizer.h"
-#include "cache/space/CacheSpaceGrid.h"
-
 #include <QMessageBox>
 
 #include <functional>

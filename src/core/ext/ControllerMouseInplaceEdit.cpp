@@ -15,7 +15,7 @@
 */
 
 #include "ControllerMouseInplaceEdit.h"
-#include "cache/space/CacheSpace.h"
+#include "space/CacheSpace.h"
 #include "utils/InplaceEditing.h"
 
 #include <QWidget>
@@ -74,7 +74,7 @@ void ControllerMouseInplaceEdit::updateInplaceEditLayoutImpl()
         return;
 
     const ActivationState& aState = activationState();
-    auto cacheItem = aState.cacheSpace.cacheItem(aState.visibleItem());
+    auto cacheItem = aState.cacheSpace.cacheItem(aState.visibleId());
     if (!cacheItem)
     {
         // item become invisible -> stop editor
@@ -111,7 +111,7 @@ bool ControllerMouseInplaceEdit::startInplaceEditor(const QKeyEvent* keyEvent)
     }
 
     const ActivationState& aState = activationState();
-    m_inplaceEditor = createInplaceEditorImpl(aState.item, editorRect(), aState.context.widget, keyEvent);
+    m_inplaceEditor = createInplaceEditorImpl(aState.id, editorRect(), aState.context.widget, keyEvent);
 
     if (!m_inplaceEditor)
     {
@@ -122,7 +122,7 @@ bool ControllerMouseInplaceEdit::startInplaceEditor(const QKeyEvent* keyEvent)
 
     connect(m_inplaceEditor, &QObject::destroyed, this, &ControllerMouseInplaceEdit::onInplaceEditorDestroyed);
 
-    emit inplaceEditStarted(aState.item, m_inplaceEditor);
+    emit inplaceEditStarted(aState.id, m_inplaceEditor);
 
     if (!m_inplaceEditor)
     {
@@ -159,7 +159,7 @@ void ControllerMouseInplaceEdit::onInplaceEditorDestroyed(QObject* obj)
     if (isCapturing())
         stopCapturing();
 
-    emit inplaceEditFinished(activationState().item);
+    emit inplaceEditFinished(activationState().id);
 }
 
 } // end namespace Qi

@@ -27,10 +27,9 @@ ViewLink::ViewLink(const QSharedPointer<ModelText>& model, ViewDefaultController
     if (createDefaultController)
     {
         auto controller = QSharedPointer<ControllerMouseLink>::create();
-        controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
-            Q_ASSERT(item.isValid());
+        controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
-                action(item, context, this);
+                action(id, context, this);
         };
         setController(controller);
     }
@@ -41,15 +40,14 @@ ViewLink::ViewLink(const QSharedPointer<ModelText>& model, const QSharedPointer<
       m_pushableTracker(this)
 {
     auto controller = QSharedPointer<ControllerMouseLink>::create();
-    controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
-        Q_ASSERT(item.isValid());
+    controller->onApply = [this] (ID id, const ControllerContext& context) {
         if (action)
-            action(item, context, this);
+            action(id, context, this);
     };
     setController(controller);
 
-    action = [modelUrl](const ItemID& item, const ControllerContext& /*context*/, const ViewLink* /*viewLink*/) {
-        QDesktopServices::openUrl(modelUrl->value(item));
+    action = [modelUrl](ID id, const ControllerContext& /*context*/, const ViewLink* /*viewLink*/) {
+        QDesktopServices::openUrl(modelUrl->value(id));
     };
 }
 
@@ -59,7 +57,7 @@ void ViewLink::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCon
     pState.save(painter);
 
     QColor linkColor = ctx.palette().color(ctx.colorGroup(), QPalette::Link);
-    MousePushState state = m_pushableTracker.pushStateByItem(cache.item);
+    MousePushState state = m_pushableTracker.pushStateByItem(cache.id);
     switch (state)
     {
     case MousePushStateHot:
@@ -76,8 +74,8 @@ void ViewLink::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCon
     painter->setPen(linkColor);
 
     QRect rect = cache.cacheView.rect();
-    QString text = theModel()->value(cache.item);
-    Qt::TextElideMode elideMode = textElideMode(cache.item);
+    QString text = theModel()->value(cache.id);
+    Qt::TextElideMode elideMode = textElideMode(cache.id);
     if (elideMode != Qt::ElideNone)
     {
         QString elidedText = painter->fontMetrics().elidedText(text, elideMode, rect.width());
@@ -92,7 +90,7 @@ void ViewLink::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCon
             *showTooltip = (painter->fontMetrics().width(text) > rect.width());
     }
 
-    painter->drawText(rect, alignment(cache.item), text);
+    painter->drawText(rect, alignment(cache.id), text);
 
     pState.restore(painter);
 }

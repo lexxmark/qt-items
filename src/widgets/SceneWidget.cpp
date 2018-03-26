@@ -15,7 +15,7 @@
 */
 
 #include "SceneWidget.h"
-#include "cache/space/CacheSpaceScene.h"
+#include "space/scene/CacheSpaceScene.h"
 #include "cache/CacheItem.h"
 
 namespace Qi

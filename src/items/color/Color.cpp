@@ -33,7 +33,7 @@ ViewColor::ViewColor(const QSharedPointer<ModelColor>& model, bool useDefaultCon
 
 void ViewColor::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
-    QColor color = theModel()->value(cache.item);
+    QColor color = theModel()->value(cache.id);
     if (!color.isValid())
         return;
 
@@ -64,12 +64,11 @@ void ViewColor::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cac
 QSharedPointer<ControllerMousePushable> createControllerMouseColor(const QSharedPointer<ModelColor>& model)
 {
     auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-    controller->onApply = [model] (const ItemID& item, const ControllerContext& context) {
-        Q_ASSERT(item.isValid());
-        QColorDialog dlg(model->value(item), context.widget);
+    controller->onApply = [model] (ID id, const ControllerContext& context) {
+        QColorDialog dlg(model->value(id), context.widget);
         if (dlg.exec() == QDialog::Accepted)
         {
-            model->setValue(item, dlg.currentColor());
+            model->setValue(id, dlg.currentColor());
         }
     };
     return controller;

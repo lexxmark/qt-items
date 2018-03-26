@@ -17,7 +17,7 @@
 #ifndef QI_ITEMS_ITERATOR_H
 #define QI_ITEMS_ITERATOR_H
 
-#include "ItemID.h"
+#include "ID.h"
 
 namespace Qi
 {
@@ -25,34 +25,36 @@ namespace Qi
 // interface class to iterate through items
 // it can be used right after creation (no need call atFirst)
 // the common usage is
-// for (ItemsIteratorDerived cit(...); cit.isValid(); cit.toNext())
+// for (IdIteratorDerived cit(...); cit.isValid(); cit.toNext())
 // {
 //    cit.item();
 // }
 
-class QI_EXPORT ItemsIterator
+class QI_EXPORT IdIterator
 {
-    Q_DISABLE_COPY(ItemsIterator)
+    Q_DISABLE_COPY(IdIterator)
 
 public:
-    virtual ~ItemsIterator() {}
+    virtual ~IdIterator() = default;
 
-    ItemID item() const { return itemImpl(); }
+    ID id() const { return idImpl(); }
     bool atFirst() { return atFirstImpl(); }
     bool toNext() { return toNextImpl(); }
 
-    bool isValid() const { return item().isValid(); }
+    bool isValid() const { return isValidImpl(); }
 
 protected:
-    ItemsIterator() {}
+    IdIterator() = default;
 
-    virtual ItemID itemImpl() const = 0;
+    virtual ID idImpl() const = 0;
     virtual bool atFirstImpl() = 0;
     virtual bool toNextImpl() = 0;
+    virtual bool isValidImpl() const = 0;
 };
 
+/*
 template <typename Iterator>
-class ItemsIteratorRange: public ItemsIterator
+class ItemsIteratorRange: public IdIterator
 {
 public:
     ItemsIteratorRange(Iterator begin, Iterator end)
@@ -64,10 +66,10 @@ public:
     {}
 
 protected:
-    ItemID itemImpl() const override
+    ID itemImpl() const override
     {
         if (m_current == m_end)
-            return ItemID();
+            return ID();
         else
             return *m_current;
     }
@@ -100,7 +102,7 @@ ItemsIteratorRange<typename Container::const_iterator> createItemsIteratorFromCo
 {
     return ItemsIteratorRange<typename Container::const_iterator>(container.begin(), container.end());
 }
-
+*/
 } // end namespace Qi
 
 #endif // QI_ITEMS_ITERATOR_H

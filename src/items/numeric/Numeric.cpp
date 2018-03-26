@@ -15,6 +15,7 @@
 */
 
 #include "Numeric.h"
+#include "space/grid/GridID.h"
 
 namespace Qi
 {
@@ -24,12 +25,12 @@ ModelRowNumber::ModelRowNumber(bool ascendingDefault)
     m_ascendingDefault = ascendingDefault;
 }
 
-int ModelRowNumber::valueImpl(const ItemID& item) const
+int ModelRowNumber::valueImpl(ID id) const
 {
-    return item.row;
+    return row(id);
 }
 
-bool ModelRowNumber::setValueImpl(const ItemID& /*item*/, ValueType_t /*value*/)
+bool ModelRowNumber::setValueImpl(ID /*id*/, ValueType_t /*value*/)
 {
     // not applicable
     return false;
@@ -40,12 +41,12 @@ ModelColumnNumber::ModelColumnNumber(bool ascendingDefault)
     m_ascendingDefault = ascendingDefault;
 }
 
-int ModelColumnNumber::valueImpl(const ItemID& item) const
+int ModelColumnNumber::valueImpl(ID id) const
 {
-    return item.column;
+    return column(id);
 }
 
-bool ModelColumnNumber::setValueImpl(const ItemID& /*item*/, ValueType_t /*value*/)
+bool ModelColumnNumber::setValueImpl(ID /*id*/, ValueType_t /*value*/)
 {
     // not applicable
     return false;

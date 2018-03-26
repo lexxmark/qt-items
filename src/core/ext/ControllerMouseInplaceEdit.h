@@ -40,13 +40,13 @@ public:
     void setEditLayoutMode(InplaceEditLayoutMode layoutMode) { m_layoutMode = layoutMode; }
 
 signals:
-    void inplaceEditStarted(const ItemID& item, QWidget* editor);
-    void inplaceEditFinished(const ItemID& item);
+    void inplaceEditStarted(ID id, QWidget* editor);
+    void inplaceEditFinished(ID id);
 
 protected:
     ControllerMouseInplaceEdit(ControllerMousePriority priority = ControllerMousePriorityNormal);
 
-    virtual QWidget* createInplaceEditorImpl(const ItemID& item, const QRect& rect, QWidget* parent, const QKeyEvent* keyEvent) = 0;
+    virtual QWidget* createInplaceEditorImpl(ID id, const QRect& rect, QWidget* parent, const QKeyEvent* keyEvent) = 0;
 
     bool processLButtonDown(QMouseEvent* event) override;
     bool processLButtonDblClick(QMouseEvent* event) override;

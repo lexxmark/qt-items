@@ -46,20 +46,20 @@ public:
     void setController(QSharedPointer<ControllerMouse> controller);
     void addController(QSharedPointer<ControllerMouse> controller);
 
-    std::function<bool(const ItemID& item, QString& text)> tooltipTextCallback;
+    std::function<bool(ID id, QString& text)> tooltipTextCallback;
     void setTooltipText(const QString& text);
 
     // adds self to views
-    void addView(const ItemID& item, QVector<const View*>& views) const
-    { addViewImpl(item, views); }
+    void addView(ID id, QVector<const View*>& views) const
+    { addViewImpl(id, views); }
 
     // adds self CacheView to cacheViews
-    CacheView* addCacheView(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
-    { return addCacheViewImpl(layout, ctx, item, cacheViews, itemRect, visibleItemRect); }
+    CacheView* addCacheView(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+    { return addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect); }
 
     // returns size of the view
-    QSize size(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
-    { return sizeImpl(ctx, item, sizeMode); }
+    QSize size(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
+    { return sizeImpl(ctx, id, sizeMode); }
 
     // draws view content
     void draw(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const;
@@ -68,12 +68,12 @@ public:
     { cleanupDrawImpl(painter, ctx, cache); }
 
     // returns text representation of the view
-    bool text(const ItemID& item, QString& txt) const { return textImpl(item, txt); }
+    bool text(ID id, QString& txt) const { return textImpl(id, txt); }
     // returns tooltip text of the view
-    bool tooltipText(const ItemID& item, QString& text) const;
+    bool tooltipText(ID id, QString& text) const;
     // returns tooltip under the point
-    bool tooltipByPoint(const QPoint& point, const ItemID& item, TooltipInfo& tooltipInfo) const
-    { return tooltipByPointImpl(point, item, tooltipInfo); }
+    bool tooltipByPoint(QPoint point, ID id, TooltipInfo& tooltipInfo) const
+    { return tooltipByPointImpl(point, id, tooltipInfo); }
 
     // returns represented model
     Model* model() { return modelImpl(); }
@@ -86,22 +86,22 @@ signals:
 
 protected:
     // adds View to views
-    virtual void addViewImpl(const ItemID& item, QVector<const View*>& views) const;
+    virtual void addViewImpl(ID id, QVector<const View*>& views) const;
     // adds CacheView
-    virtual CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
+    virtual CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
     // returns size of the view
-    virtual QSize sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const;
+    virtual QSize sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const;
     // draws view content
     virtual void drawImpl(QPainter* /*painter*/, const GuiContext& /*ctx*/, const CacheContext& /*cache*/, bool* /*showTooltip*/) const { }
     // cleanups drawing attributes
     virtual void cleanupDrawImpl(QPainter* /*painter*/, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const { }
 
     // returns text representation of the view
-    virtual bool textImpl(const ItemID& /*item*/, QString& /*txt*/) const { return false; }
+    virtual bool textImpl(ID /*id*/, QString& /*txt*/) const { return false; }
     // returns tooltip text of the view
-    virtual bool tooltipTextImpl(const ItemID& item, QString& txt) const { return text(item, txt); }
+    virtual bool tooltipTextImpl(ID id, QString& txt) const { return text(id, txt); }
     // returns tooltip under the point
-    virtual bool tooltipByPointImpl(const QPoint& /*point*/, const ItemID& /*item*/, TooltipInfo& /*tooltipInfo*/) const { return false; }
+    virtual bool tooltipByPointImpl(QPoint /*point*/, ID /*id*/, TooltipInfo& /*tooltipInfo*/) const { return false; }
 
     // returns represented model
     virtual Model* modelImpl() { return nullptr; }

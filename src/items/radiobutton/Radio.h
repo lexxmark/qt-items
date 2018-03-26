@@ -31,17 +31,17 @@ class QI_EXPORT ModelRadio: public ModelComparable
     Q_DISABLE_COPY(ModelRadio)
 
 public:
-    bool isRadioItem(const ItemID& item) const { return isRadioItemImpl(item); }
-    bool setRadioItem(const ItemID& item) { return setRadioItemImpl(item); }
+    bool isRadioItem(ID id) const { return isRadioItemImpl(id); }
+    bool setRadioItem(ID id) { return setRadioItemImpl(id); }
 
 protected:
     ModelRadio() {}
 
-    int compareImpl(const ItemID& left, const ItemID& right) const override;
-    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return false; }
+    int compareImpl(ID left, ID right) const override;
+    bool isAscendingDefaultImpl(ID /*id*/) const override { return false; }
 
-    virtual bool isRadioItemImpl(const ItemID& item) const = 0;
-    virtual bool setRadioItemImpl(const ItemID& item) = 0;
+    virtual bool isRadioItemImpl(ID id) const = 0;
+    virtual bool setRadioItemImpl(ID id) = 0;
 };
 
 class QI_EXPORT ModelRadioCallback: public ModelRadio
@@ -52,12 +52,12 @@ class QI_EXPORT ModelRadioCallback: public ModelRadio
 public:
     ModelRadioCallback() {}
 
-    std::function<bool(const ItemID&)> isRadioItem;
-    std::function<bool(const ItemID&)> setRadioItem;
+    std::function<bool(ID)> isRadioItem;
+    std::function<bool(ID)> setRadioItem;
 
 protected:
-    bool isRadioItemImpl(const ItemID& item) const override;
-    bool setRadioItemImpl(const ItemID& item) override;
+    bool isRadioItemImpl(ID id) const override;
+    bool setRadioItemImpl(ID id) override;
 };
 
 class QI_EXPORT ModelRadioStorage: public ModelRadio
@@ -66,16 +66,16 @@ class QI_EXPORT ModelRadioStorage: public ModelRadio
     Q_DISABLE_COPY(ModelRadioStorage)
 
 public:
-    ModelRadioStorage(const ItemID& radioItem = ItemID(0, 0));
+    ModelRadioStorage(ID radioId);
 
-    const ItemID& radioItem() const { return m_radioItem; }
+    ID radioItem() const { return m_radioId; }
 
 protected:
-    bool isRadioItemImpl(const ItemID& item) const override;
-    bool setRadioItemImpl(const ItemID& item) override;
+    bool isRadioItemImpl(ID id) const override;
+    bool setRadioItemImpl(ID id) override;
 
 private:
-    ItemID m_radioItem;
+    ID m_radioId;
 };
 
 class QI_EXPORT ViewRadio: public ViewModeled<ModelRadio>
@@ -87,16 +87,16 @@ public:
     ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultController = true);
 
 protected:
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
 
 private:
-    QStyle::State styleState(const ItemID& item) const;
+    QStyle::State styleState(ID id) const;
 
     PushableTracker m_pushableTracker;
 };
 
-QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseRadio(const QSharedPointer<ModelRadio>& model);
+QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseRadio(QSharedPointer<ModelRadio> model);
 
 } // end namespace Qi
 

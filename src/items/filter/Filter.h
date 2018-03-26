@@ -17,7 +17,7 @@
 #ifndef QI_FILTER_H
 #define QI_FILTER_H
 
-#include "core/ItemID.h"
+#include "core/ID.h"
 #include <QObject>
 
 namespace Qi
@@ -34,7 +34,7 @@ public:
     virtual ~ItemsFilter();
 
     const QSharedPointer<Model>& modelToFilter() const { return m_modelToFilter; }
-    bool isItemPassFilter(const ItemID& item) const { return isItemPassFilterImpl(item); }
+    bool isItemPassFilter(ID id) const { return isItemPassFilterImpl(id); }
 
 signals:
     void filterChanged(const ItemsFilter*);
@@ -42,7 +42,7 @@ signals:
 protected:
     ItemsFilter(const QSharedPointer<Model>& modelToFilter);
 
-    virtual bool isItemPassFilterImpl(const ItemID& item) const = 0;
+    virtual bool isItemPassFilterImpl(ID id) const = 0;
 
 private:
     void onModelToFilterChanged(const Model*);

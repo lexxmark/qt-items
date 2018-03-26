@@ -28,16 +28,15 @@ ViewStyleStandardPixmap::ViewStyleStandardPixmap(QStyle::StandardPixmap standard
     if (useDefaultController)
     {
         auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-        controller->onApply = [this] (const ItemID& item, const ControllerContext& context) {
-            Q_ASSERT(item.isValid());
+        controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
-                action(item, context, this);
+                action(id, context, this);
         };
         setController(controller);
     }
 }
 
-QSize ViewStyleStandardPixmap::sizeImpl(const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewStyleStandardPixmap::sizeImpl(const GuiContext& ctx, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     auto style = ctx.style();
     QIcon standardIcon = style->standardIcon(m_standardPixmap, nullptr, ctx.widget);
@@ -60,7 +59,7 @@ void ViewStyleStandardPixmap::drawImpl(QPainter* painter, const GuiContext& ctx,
     if (style->inherits("QWindowsVistaStyle"))
         option.styleObject = nullptr;
 
-    option.state |= m_pushableTracker.styleStateByItem(cache.item);
+    option.state |= m_pushableTracker.styleStateByItem(cache.id);
     option.rect = cache.cacheView.rect();
 
     // draw button

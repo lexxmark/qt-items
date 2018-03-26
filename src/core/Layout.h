@@ -17,7 +17,7 @@
 #ifndef QI_LAYOUT_H
 #define QI_LAYOUT_H
 
-#include "ItemID.h"
+#include "ID.h"
 #include <QRect>
 
 namespace Qi
@@ -44,9 +44,9 @@ public:
     virtual ~Layout() {}
 
     // perform layout
-    bool doLayout(const View& view, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const;
+    bool doLayout(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const;
     // expand size
-    void expandSize(const View& view, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode, QSize& size) const;
+    void expandSize(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const;
     // is final (eats all available item space)
     bool isFinal() const;
 
@@ -65,15 +65,15 @@ protected:
     class QI_EXPORT ViewInfo
     {
     public:
-        ViewInfo(const View& view, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode)
-            : view(view), ctx(ctx), item(item), sizeMode(sizeMode)
+        ViewInfo(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode)
+            : view(view), ctx(ctx), id(id), sizeMode(sizeMode)
         {}
 
         QSize size() const;
 
         const View& view;
         const GuiContext& ctx;
-        const ItemID& item;
+        ID id;
         ViewSizeMode sizeMode;
     };
 

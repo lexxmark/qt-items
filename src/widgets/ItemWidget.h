@@ -17,7 +17,7 @@
 #ifndef QI_ITEM_WIDGET_H
 #define QI_ITEM_WIDGET_H
 
-#include "space/SpaceItem.h"
+#include "space/item/SpaceItem.h"
 #include "core/SpaceWidgetAbstract.h"
 
 namespace Qi
@@ -29,8 +29,8 @@ class QI_EXPORT ItemWidget: public SpaceWidgetAbstract
     Q_DISABLE_COPY(ItemWidget)
 
 public:
-    explicit ItemWidget(QWidget *parent = nullptr);
-    virtual ~ItemWidget();
+    ItemWidget(QWidget *parent = nullptr, ID id = ID());
+    ~ItemWidget() override;
 
     const SpaceItem& spaceItem() const { return *m_space; }
     SpaceItem& spaceItem() { return *m_space; }

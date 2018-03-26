@@ -29,7 +29,7 @@ void ControllerMousePushableCallback::applyImpl()
     emitOnApply();
 }
 
-bool ControllerMousePushableCallback::acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
+bool ControllerMousePushableCallback::acceptInplaceEditImpl(ID /*id*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
 {
     return keyEvent && (keyEvent->type() == QEvent::KeyPress) && (keyEvent->key() == Qt::Key_Space);
 }
@@ -50,7 +50,8 @@ void ControllerMousePushableCallback::emitOnApply()
     if (!onApply)
         return;
 
-    onApply(activeItem(), activationState().context);
+    if (auto id = activeId())
+        onApply(*id, activationState().context);
 }
 
 } // end namespace Qi

@@ -31,10 +31,10 @@ class QI_EXPORT ViewStyleStandardPixmap: public View
 public:
     ViewStyleStandardPixmap(QStyle::StandardPixmap standardPixmap, bool useDefaultController = true);
 
-    std::function<void (const ItemID& item, const ControllerContext& context, const ViewStyleStandardPixmap* view)> action;
+    std::function<void (ID id, const ControllerContext& context, const ViewStyleStandardPixmap* view)> action;
 
 protected:
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
 
 private:

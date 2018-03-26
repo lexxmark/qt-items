@@ -17,7 +17,7 @@
 #ifndef QI_CACHE_SPACE_ANIMATION_H
 #define QI_CACHE_SPACE_ANIMATION_H
 
-#include "cache/space/CacheSpace.h"
+#include "space/CacheSpace.h"
 #include <QAbstractAnimation>
 #include <QEasingCurve>
 #include <functional>

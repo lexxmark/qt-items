@@ -15,8 +15,8 @@
 */
 
 #include "ListWidget.h"
-#include "cache/space/CacheSpaceGrid.h"
-#include "cache/space/CacheSpaceItem.h"
+#include "space/grid/CacheSpaceGrid.h"
+#include "space/item/CacheSpaceItem.h"
 #include "cache/CacheItemFactory.h"
 #include "items/cache/ViewCacheSpace.h"
 #include "items/visible/Visible.h"
@@ -37,7 +37,7 @@ ListWidget::ListWidget(QWidget* parent)
     connect(m_cacheGrid.data(), &CacheSpace::cacheChanged, this, &ListWidget::onCacheSpaceGridChanged);
 
     // initialize main item space
-    m_mainSpace = QSharedPointer<SpaceItem>::create(ItemID(0, 0));
+    m_mainSpace = QSharedPointer<SpaceItem>::create(ID(GridID(0, 0)));
     m_mainCache = QSharedPointer<CacheSpaceItem>::create(m_mainSpace, true);
 
     // add grid cache to main schema
@@ -76,7 +76,7 @@ bool ListWidget::installEmptyView(const QSharedPointer<View>& view, const QShare
         return false;
 
     m_emptyView = QSharedPointer<ViewVisible>::create(view);
-    m_emptyView->isItemVisible = [this](const ItemID&)->bool {
+    m_emptyView->isItemVisible = [this](const ID&)->bool {
         return m_grid->isEmptyVisible();
     };
     connect(m_grid.data(), &Space::spaceChanged, this, &ListWidget::onSpaceGridChanged);
@@ -101,7 +101,7 @@ QPixmap ListWidget::createPixmapImpl() const
         auto cacheItemFactory = m_grid->createCacheItemFactory(ViewApplicationCopyDraw);
         for (ItemsIteratorGridVisible it(*m_grid); it.isValid(); it.toNext())
         {
-            CacheItem cacheItem(cacheItemFactory->create(it.itemVisible()));
+            CacheItem cacheItem(cacheItemFactory->create(ID(it.gridIdVisible())));
             cacheItem.drawRaw(&painter, guiContext());
         }
     }

@@ -26,18 +26,18 @@ void ViewCallback::drawImpl(QPainter* painter, const GuiContext& ctx, const Cach
     drawFunction(painter, ctx, cache, showTooltip);
 }
 
-QSize ViewCallback::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewCallback::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
 {
     if (sizeFunction)
-        return sizeFunction(ctx, item, sizeMode);
-    return View::sizeImpl(ctx, item, sizeMode);
+        return sizeFunction(ctx, id, sizeMode);
+    return View::sizeImpl(ctx, id, sizeMode);
 }
 
-bool ViewCallback::textImpl(const ItemID& item, QString& txt) const
+bool ViewCallback::textImpl(ID id, QString& txt) const
 {
     if (textFunction)
-        return textFunction(item, txt);
-    return View::textImpl(item, txt);
+        return textFunction(id, txt);
+    return View::textImpl(id, txt);
 }
 
 } // end namespace Qi

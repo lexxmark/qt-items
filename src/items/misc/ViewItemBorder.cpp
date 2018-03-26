@@ -38,7 +38,7 @@ ViewRowBorder::ViewRowBorder()
 {
 }
 
-QSize ViewRowBorder::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewRowBorder::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     return QSize(0, 1);
 }
@@ -60,7 +60,7 @@ ViewColumnBorder::ViewColumnBorder()
 {
 }
 
-QSize ViewColumnBorder::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewColumnBorder::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     return QSize(1, 0);
 }
@@ -82,7 +82,7 @@ ViewRectBorder::ViewRectBorder()
 {
 }
 
-QSize ViewRectBorder::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewRectBorder::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     return QSize(0, 0);
 }

@@ -61,15 +61,15 @@ void CacheSpaceScene::validateItemsCacheImpl() const
 
     QVector<QSharedPointer<CacheItem>> newItems;
 
-    for (ItemID item(0, 0); item.column < count; ++item.column)
+    for (int id(0); id < count; ++id)
     {
-        if (!cacheRect.intersects(m_scene->itemRect(item)))
+        if (!cacheRect.intersects(m_scene->itemRect(ID(id))))
             continue;
 
         QSharedPointer<CacheItem> newItem;
-        while ((it != m_items.end()) && ((*it)->item.column <= item.column))
+        while ((it != m_items.end()) && (index((*it)->id) <= id))
         {
-            if ((*it)->item.column == item.column)
+            if (index((*it)->id) == id)
             {
                 (*it)->correctRectangles(m_scrollDelta);
                 newItem = *it;
@@ -81,7 +81,7 @@ void CacheSpaceScene::validateItemsCacheImpl() const
 
         if (newItem.isNull())
         {
-            newItem = createCacheItem(item);
+            newItem = createCacheItem(ID(id));
             // correct rectangle
             newItem->rect.translate(origin);
         }
@@ -108,18 +108,18 @@ bool CacheSpaceScene::forEachCacheItemImpl(const std::function<bool(const QShare
     return true;
 }
 
-const CacheItem* CacheSpaceScene::cacheItemImpl(const ItemID& visibleItem) const
+const CacheItem* CacheSpaceScene::cacheItemImpl(ID visibleId) const
 {
     for (const auto& cacheItem : m_items)
     {
-        if (cacheItem->item == visibleItem)
+        if (cacheItem->id == visibleId)
             return cacheItem.data();
     }
 
     return nullptr;
 }
 
-const CacheItem* CacheSpaceScene::cacheItemByPositionImpl(const QPoint& point) const
+const CacheItem* CacheSpaceScene::cacheItemByPositionImpl(QPoint point) const
 {
     validateItemsCache();
 

@@ -73,7 +73,7 @@ int Space::addSchema(const ItemSchema& schema)
     return m_schemas.size() - 1;
 }
 
-int Space::insertSchema(int index, const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
+int Space::insertSchema(int index, QSharedPointer<Range> range, QSharedPointer<View> view, QSharedPointer<Layout> layout)
 {
     ItemSchema schema(range, layout, view);
 
@@ -87,7 +87,7 @@ int Space::insertSchema(int index, const QSharedPointer<Range>& range, const QSh
     return index;
 }
 
-void Space::removeSchema(const QSharedPointer<View>& view)
+void Space::removeSchema(QSharedPointer<View> view)
 {
     for (int i = 0; i < m_schemas.size(); ++i)
     {

@@ -36,7 +36,7 @@ bool SpaceWidgetAbstract::event(QEvent* event)
     return result;
 }
 
-void SpaceWidgetAbstract::ensureVisibleImpl(const ItemID& /*visibleItem*/, const CacheSpace* /*cacheSpace*/, bool /*validateItem*/)
+void SpaceWidgetAbstract::ensureVisibleImpl(const ID& /*visibleItem*/, const CacheSpace* /*cacheSpace*/, bool /*validateItem*/)
 {
     // not applicable
 }

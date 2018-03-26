@@ -30,12 +30,10 @@ public:
     }
 
 protected:
-    bool hasItemImpl(const ItemID &item) const override
+    bool hasItemImpl(ID id) const override
     {
-        return m_scene->itemType(item) == m_type;
+        return m_scene->itemType(index(id)) == m_type;
     }
-    bool hasRowImpl(int /*row*/) const override { return false; }
-    bool hasColumnImpl(int /*column*/) const { return false; }
 
 private:
     const SpaceScene* m_scene;
@@ -58,15 +56,16 @@ public:
 protected:
     void initSchemaImpl(CacheItemInfo& info) const
     {
-        auto it = m_schemaByType.find(m_spaceScene.itemType(info.item));
+        auto type = m_spaceScene.itemType(index(info.id));
+        auto it = m_schemaByType.find(type);
         if (it != m_schemaByType.end())
         {
             info.schema = it.value();
         }
         else
         {
-            ViewSchema& schema = m_schemaByType[info.item.column];
-            schema = createViewSchema(info.item);
+            ViewSchema& schema = m_schemaByType[type];
+            schema = createViewSchema(info.id);
             info.schema = schema;
         }
     }
@@ -102,9 +101,9 @@ QSize SpaceScene::size() const
 
     m_size = QSize(0, 0);
     int count = countImpl();
-    for (ItemID item(0, 0); item.column < count; ++item.column)
+    for (int id(0); id < count; ++id)
     {
-        QRect rect = itemRect(item);
+        QRect rect = itemRect(ID(id));
         m_size.rwidth() = qMax(m_size.width(), rect.right());
         m_size.rheight() = qMax(m_size.height(), rect.bottom());
     }
@@ -156,14 +155,14 @@ void SpaceSceneElements::setElements(const QVector<QSharedPointer<SceneElement>>
     notifyCountChanged();
 }
 
-QRect SpaceSceneElements::elementRectImpl(const ItemID& item) const
+QRect SpaceSceneElements::elementRectImpl(int id) const
 {
-    return m_elements[item.column]->rect();
+    return m_elements[id]->rect();
 }
 
-int SpaceSceneElements::elementTypeImpl(const ItemID& item) const
+int SpaceSceneElements::elementTypeImpl(int id) const
 {
-    return m_elements[item.column]->type();
+    return m_elements[id]->type();
 }
 
 SceneElementAnchor::SceneElementAnchor(const QSharedPointer<SceneElement>& sourceElement, Anchor anchor, int type)

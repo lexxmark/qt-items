@@ -15,14 +15,12 @@ LIBS += -L$$DESTDIR -lqt-items
 TEMPLATE = app
 
 HEADERS +=  SignalSpy.h\
-    test_signal.h \
     test_item_id.h \
     test_ranges.h \
     test_lines.h \
     test_grid.h
 
 SOURCES +=  main.cpp \
-    test_signal.cpp \
     test_item_id.cpp \
     test_ranges.cpp \
     test_lines.cpp \

@@ -15,7 +15,7 @@
 */
 
 #include "SpaceWidgetScrollAbstract.h"
-#include "cache/space/CacheSpace.h"
+#include "space/CacheSpace.h"
 #include "cache/CacheItem.h"
 
 #include <QScrollBar>
@@ -70,7 +70,7 @@ void SpaceWidgetScrollAbstract::onScrollCacheSpaceChanged(const CacheSpace* cach
     }
 }
 
-void SpaceWidgetScrollAbstract::ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
+void SpaceWidgetScrollAbstract::ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem)
 {
     if (cacheSpace != m_scrollableCacheSpace.data())
     {

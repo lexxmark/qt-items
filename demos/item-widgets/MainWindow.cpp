@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // setup checkboxes
-    ui->checkBox1->spaceItem().setItem(ItemID(0, 0));
-    ui->checkBox2->spaceItem().setItem(ItemID(1, 0));
-    ui->checkBox3->spaceItem().setItem(ItemID(2, 0));
+    ui->checkBox1->spaceItem().setId(ID(0));
+    ui->checkBox2->spaceItem().setId(ID(1));
+    ui->checkBox3->spaceItem().setId(ID(2));
 
     auto modelChecks = QSharedPointer<ModelStorageVector<Qt::CheckState>>::create();
     modelChecks->setValueAll(Qt::Checked, 3);
@@ -32,14 +32,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->checkBox3->spaceItem().addSchema(schema);
 
     auto modelText = QSharedPointer<ModelTextCallback>::create();
-    modelText->getValueFunction = [](const ItemID& item) -> QString {
-        return QString("Checkbox #%1").arg(item.row);
+    modelText->getValueFunction = [](ID id) -> QString {
+        return QString("Checkbox #%1").arg(id.as<int>());
     };
 
     schema.layout = makeLayoutClient();
     schema.view = QSharedPointer<ViewText>::create(modelText, ViewDefaultControllerNone, Qt::AlignLeft, Qt::ElideRight);
     schema.view->setController(controller);
-    schema.view->tooltipTextCallback = [](const ItemID& /*item*/, QString& text)->bool {
+    schema.view->tooltipTextCallback = [](ID /*id*/, QString& text)->bool {
         text = "Click me";
         return true;
     };
@@ -49,12 +49,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->checkBox3->spaceItem().addSchema(schema);
 
     // setup radio buttons
-    ui->radioButton1->spaceItem().setItem(ItemID(0, 0));
-    ui->radioButton2->spaceItem().setItem(ItemID(1, 0));
-    ui->radioButton3->spaceItem().setItem(ItemID(2, 0));
+    ui->radioButton1->spaceItem().setId(ID(0));
+    ui->radioButton2->spaceItem().setId(ID(1));
+    ui->radioButton3->spaceItem().setId(ID(2));
 
     schema.layout = makeLayoutLeft();
-    auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
+    auto modelRadio = QSharedPointer<ModelRadioStorage>::create(ID(0));
     schema.view = QSharedPointer<ViewRadio>::create(modelRadio);
 
     ui->radioButton1->spaceItem().addSchema(schema);
@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     schema.layout = makeLayoutClient();
     modelText = QSharedPointer<ModelTextCallback>::create();
-    modelText->getValueFunction = [](const ItemID& item) -> QString {
-        return QString("RadioButton #%1").arg(item.row);
+    modelText->getValueFunction = [](ID id) -> QString {
+        return QString("RadioButton #%1").arg(id.as<int>());
     };
     schema.view = QSharedPointer<ViewText>::create(modelText, ViewDefaultControllerNone, Qt::AlignLeft, Qt::ElideMiddle);
 
@@ -74,8 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     schema.layout = makeLayoutClient();
     auto modelRating = QSharedPointer<ModelRatingCallback>::create();
-    modelRating->getValueFunction = [this](const ItemID&) { return m_rating; };
-    modelRating->setValueFunction = [this](const ItemID&, int rating) {
+    modelRating->getValueFunction = [this](ID) { return m_rating; };
+    modelRating->setValueFunction = [this](ID, int rating) {
         m_rating = rating;
         return true;
     };

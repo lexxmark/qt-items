@@ -34,7 +34,7 @@ public:
     ViewLink(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerCreate, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
     ViewLink(const QSharedPointer<ModelText>& model, const QSharedPointer<ModelUrl>& modelUrl, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
-    std::function<void (const ItemID& item, const ControllerContext& context, const ViewLink* viewLink)> action;
+    std::function<void (ID id, const ControllerContext& context, const ViewLink* viewLink)> action;
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;

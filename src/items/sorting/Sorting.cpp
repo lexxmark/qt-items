@@ -15,63 +15,63 @@
 */
 
 #include "Sorting.h"
-#include "space/SpaceGrid.h"
+#include "space/grid/SpaceGrid.h"
 
 namespace Qi
 {
 
-ModelGridSortingBase::ModelGridSortingBase(const QSharedPointer<SpaceGrid>& grid)
-    : m_grid(grid),
+ModelGridSortingBase::ModelGridSortingBase(QSharedPointer<SpaceGrid> grid)
+    : m_grid(std::move(grid)),
       m_ascending(false),
       m_sortingExpired(false)
 {
 }
 
-void ModelGridSortingBase::clearActiveSortingItem()
+void ModelGridSortingBase::clearActiveSortingId()
 {
-    m_activeSortingItem = ItemID();
+    m_activeSortingId = GridID();
     emit modelChanged(this);
 }
 
-void ModelGridSortingBase::setSorting(const ItemID& item, bool ascending)
+void ModelGridSortingBase::setSorting(GridID id, bool ascending)
 {
-    if (!item.isValid())
+    if (!id.isValid())
         return;
 
-    m_activeSortingItem = item;
+    m_activeSortingId = id;
     m_ascending = ascending;
     m_sortingExpired = true;
 }
 
 bool ModelGridSortingBase::sort()
 {
-    return sortByItem(m_activeSortingItem, m_ascending);
+    return sortByItem(m_activeSortingId, m_ascending);
 }
 
-bool ModelGridSortingBase::sortByItem(const ItemID& item)
+bool ModelGridSortingBase::sortByItem(GridID id)
 {
-    if (m_activeSortingItem == item)
-        return sortByItem(item, m_sortingExpired ? m_ascending : !m_ascending);
+    if (m_activeSortingId == id)
+        return sortByItem(id, m_sortingExpired ? m_ascending : !m_ascending);
     else
-        return defaultSortByItem(item);
+        return defaultSortByItem(id);
 }
 
-bool ModelGridSortingBase::defaultSortByItem(const ItemID& item)
+bool ModelGridSortingBase::defaultSortByItem(GridID id)
 {
-    auto model = sortingModel(item);
+    auto model = sortingModel(id);
     if (!model)
         return false;
 
-    if (!item.isValid())
+    if (!id.isValid())
         return false;
 
-    m_activeSortingItem = item;
-    m_ascending = model->isAscendingDefault(item);
+    m_activeSortingId = id;
+    m_ascending = model->isAscendingDefault(ID(id));
     m_sortingExpired = false;
 
     emit willSortItems(this);
 
-    m_grid->sortColumnByModel(item.column, model, m_ascending, true);
+    m_grid->sortColumnByModel(id.column, *model, m_ascending, true);
 
     emit didSortItems(this);
     emit modelChanged(this);
@@ -79,22 +79,22 @@ bool ModelGridSortingBase::defaultSortByItem(const ItemID& item)
     return true;
 }
 
-bool ModelGridSortingBase::sortByItem(const ItemID& item, bool ascending)
+bool ModelGridSortingBase::sortByItem(GridID id, bool ascending)
 {
-    auto model = sortingModel(item);
+    auto model = sortingModel(id);
     if (!model)
         return false;
 
-    if (!item.isValid())
+    if (!id.isValid())
         return false;
 
-    m_activeSortingItem = item;
+    m_activeSortingId = id;
     m_ascending = ascending;
     m_sortingExpired = false;
 
     emit willSortItems(this);
 
-    m_grid->sortColumnByModel(item.column, model, m_ascending, true);
+    m_grid->sortColumnByModel(id.column, *model, m_ascending, true);
 
     emit didSortItems(this);
     emit modelChanged(this);
@@ -114,18 +114,18 @@ void ModelGridSortingBase::disconnectModel(const Model* model)
 
 void ModelGridSortingBase::onSortingModelChanged(const Model* model)
 {
-    if (!m_activeSortingItem.isValid())
+    if (!m_activeSortingId.isValid())
         return;
 
-    if (sortingModel(m_activeSortingItem).data() == model)
+    if (sortingModel(m_activeSortingId).data() == model)
     {
         // mark sorting as expired
         m_sortingExpired = true;
     }
 }
 
-ModelGridSorting::ModelGridSorting(const QSharedPointer<SpaceGrid>& grid)
-    : ModelGridSortingBase(grid)
+ModelGridSorting::ModelGridSorting(QSharedPointer<SpaceGrid> grid)
+    : ModelGridSortingBase(std::move(grid))
 {
 }
 
@@ -134,20 +134,20 @@ ModelGridSorting::~ModelGridSorting()
     clear();
 }
 
-void ModelGridSorting::addSortingModel(const ItemID& item, const QSharedPointer<ModelComparable>& model)
+void ModelGridSorting::addSortingModel(GridID id, const QSharedPointer<ModelComparable>& model)
 {
     Q_ASSERT(model);
 
-    if (!m_modelsToSort.contains(item))
+    if (!m_modelsToSort.contains(id))
     {
-        m_modelsToSort.insert(item, model);
+        m_modelsToSort.insert(id, model);
         connectModel(model.data());
     }
 }
 
 void ModelGridSorting::addSortingModel(int column, const QSharedPointer<ModelComparable>& model)
 {
-    addSortingModel(ItemID(0, column), model);
+    addSortingModel(GridID(0, column), model);
 }
 
 void ModelGridSorting::clear()
@@ -160,17 +160,17 @@ void ModelGridSorting::clear()
     m_modelsToSort.clear();
 }
 
-QSharedPointer<ModelComparable> ModelGridSorting::sortingModelImpl(const ItemID& item) const
+QSharedPointer<ModelComparable> ModelGridSorting::sortingModelImpl(GridID id) const
 {
-    auto it = m_modelsToSort.find(item);
+    auto it = m_modelsToSort.find(id);
     if (it == m_modelsToSort.end())
         return QSharedPointer<ModelComparable>();
 
     return it.value();
 }
 
-ModelGridSortingByRanges::ModelGridSortingByRanges(const QSharedPointer<SpaceGrid> &grid)
-    : ModelGridSortingBase(grid)
+ModelGridSortingByRanges::ModelGridSortingByRanges(QSharedPointer<SpaceGrid> grid)
+    : ModelGridSortingBase(std::move(grid))
 {
 }
 
@@ -198,11 +198,11 @@ void ModelGridSortingByRanges::clear()
     m_modelsToSort.clear();
 }
 
-QSharedPointer<ModelComparable> ModelGridSortingByRanges::sortingModelImpl(const ItemID& item) const
+QSharedPointer<ModelComparable> ModelGridSortingByRanges::sortingModelImpl(GridID id) const
 {
     for (const auto& info : m_modelsToSort)
     {
-        if (info.range->hasItem(item))
+        if (info.range->hasItem(ID(id)))
             return info.model;
     }
 
@@ -239,11 +239,11 @@ void SortingHub::addSorting(const QSharedPointer<ModelGridSortingBase>& sorting)
     m_sortings.append(info);
 }
 
-void SortingHub::clearActiveSortingItem()
+void SortingHub::clearActiveSortingId()
 {
     for (const auto& info : m_sortings)
     {
-        info.sorting->clearActiveSortingItem();
+        info.sorting->clearActiveSortingId();
     }
 }
 
@@ -260,7 +260,7 @@ void SortingHub::onDidSortItems(const ModelGridSortingBase* activeSorting)
     for (const auto& info : m_sortings)
     {
         if (info.sorting.data() != activeSorting)
-            info.sorting->clearActiveSortingItem();
+            info.sorting->clearActiveSortingId();
     }
 }
 
@@ -271,19 +271,9 @@ RangeGridSorting::RangeGridSorting(const QSharedPointer<ModelGridSortingBase>& m
     Q_ASSERT(m_model);
 }
 
-bool RangeGridSorting::hasItemImpl(const ItemID &item) const
+bool RangeGridSorting::hasItemImpl(ID id) const
 {
-    return m_row ==item.row && !m_model->sortingModel(item).isNull();
-}
-
-bool RangeGridSorting::hasRowImpl(int row) const
-{
-    return m_row == row;
-}
-
-bool RangeGridSorting::hasColumnImpl(int column) const
-{
-    return !m_model->sortingModel(ItemID(m_row, column)).isNull();
+    return m_row == row(id) && !m_model->sortingModel(id.as<GridID>()).isNull();
 }
 
 ViewGridSorting::ViewGridSorting(const QSharedPointer<ModelGridSortingBase>& model, bool useDefaultController)
@@ -301,7 +291,7 @@ void ViewGridSorting::drawImpl(QPainter* painter, const GuiContext& ctx, const C
     rect.adjust(4, 4, -4, -4);
     painter->drawRoundedRect(rect, 20.f, 20.f, Qt::RelativeSize);
 
-    if (theModel()->activeSortingItem() == cache.item)
+    if (theModel()->activeSortingId() == cache.id.as<GridID>())
     {
         QStyleOptionHeader option;
         ctx.initStyleOption(option);
@@ -314,9 +304,9 @@ void ViewGridSorting::drawImpl(QPainter* painter, const GuiContext& ctx, const C
     if (showTooltip) *showTooltip = true;
 }
 
-bool ViewGridSorting::tooltipTextImpl(const ItemID& item, QString& txt) const
+bool ViewGridSorting::tooltipTextImpl(ID id, QString& txt) const
 {
-    if (theModel()->activeSortingItem() == item)
+    if (theModel()->activeSortingId() == id.as<GridID>())
     {
         txt = theModel()->isAscending() ? "Ascending" : "Descending";
     }
@@ -335,7 +325,7 @@ ControllerMouseGridSorting::ControllerMouseGridSorting(const QSharedPointer<Mode
 
 void ControllerMouseGridSorting::applyImpl()
 {
-    m_model->sortByItem(activationState().item);
+    m_model->sortByItem(activationState().id.as<GridID>());
 }
 
 } // end namespace Qi

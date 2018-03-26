@@ -1,4 +1,3 @@
-#include "test_signal.h"
 #include "test_item_id.h"
 #include "test_ranges.h"
 #include "test_lines.h"
@@ -15,7 +14,6 @@ int main(int argc, char* argv[])
     QList<const QMetaObject*> tests;
 
     // register tests
-    tests.append(&TestSignal::staticMetaObject);
     tests.append(&TestItemID::staticMetaObject);
     tests.append(&TestRanges::staticMetaObject);
     tests.append(&TestLines::staticMetaObject);

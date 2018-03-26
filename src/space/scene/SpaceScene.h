@@ -17,7 +17,7 @@
 #ifndef QI_SPACE_SCENE_H
 #define QI_SPACE_SCENE_H
 
-#include "Space.h"
+#include "space/Space.h"
 
 namespace Qi
 {
@@ -43,17 +43,17 @@ public:
     int count() const { return countImpl(); }
 
     QSize size() const override;
-    ItemID toAbsolute(const ItemID& visibleItem) const override { return visibleItem; }
-    ItemID toVisible(const ItemID& absoluteItem) const override { return absoluteItem; }
-    QRect itemRect(const ItemID& visibleItem) const override { return elementRectImpl(visibleItem); }
+    ID toAbsolute(ID visibleId) const override { return visibleId; }
+    ID toVisible(ID absoluteId) const override { return absoluteId; }
+    QRect itemRect(ID visibleId) const override { return elementRectImpl(index(visibleId)); }
     QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
-    int itemType(const ItemID &visibleItem) const { return elementTypeImpl(visibleItem); }
+    int itemType(int id) const { return elementTypeImpl(id); }
 
 protected:
     virtual int countImpl() const = 0;
-    virtual QRect elementRectImpl(const ItemID& item) const = 0;
-    virtual int elementTypeImpl(const ItemID& item) const = 0;
+    virtual QRect elementRectImpl(int id) const = 0;
+    virtual int elementTypeImpl(int id) const = 0;
 
     void notifyCountChanged();
 
@@ -83,8 +83,8 @@ public:
 
 protected:
     int countImpl() const override { return m_elements.size(); }
-    QRect elementRectImpl(const ItemID& item) const override;
-    int elementTypeImpl(const ItemID& item) const override;
+    QRect elementRectImpl(int id) const override;
+    int elementTypeImpl(int id) const override;
 
 private:
     QVector<QSharedPointer<SceneElement>> m_elements;

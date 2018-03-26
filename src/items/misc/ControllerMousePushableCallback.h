@@ -32,11 +32,11 @@ class QI_EXPORT ControllerMousePushableCallback: public ControllerMousePushable
 public:
     ControllerMousePushableCallback(ControllerMousePriority priority = ControllerMousePriorityNormal, bool processDblClick = true);
 
-    std::function<void (const ItemID& item, const ControllerContext& context)> onApply;
+    std::function<void (ID id, const ControllerContext& context)> onApply;
 
 protected:
     void applyImpl() override;
-    bool acceptInplaceEditImpl(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
+    bool acceptInplaceEditImpl(ID id, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent) const override;
     void doInplaceEditImpl(const QKeyEvent* keyEvent) override;
 
 private:

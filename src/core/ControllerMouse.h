@@ -18,7 +18,7 @@
 #define QI_CONTROLLER_MOUSE_H
 
 #include "core/misc/ControllerMouseAuxiliary.h"
-#include "ItemID.h"
+#include "ID.h"
 #include <QObject>
 
 #include <QMouseEvent>
@@ -44,7 +44,7 @@ public:
     ControllerMousePriority priority() const { return m_priority; }
     bool isCapturing() const { return m_state == ControllerMouseStateCapturing; }
     bool isActive() const { return m_state != ControllerMouseStateInactive; }
-    ItemID activeItem() const;
+    const ID* activeId() const;
 
     void tryActivate(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace);
     void deactivate();
@@ -58,7 +58,7 @@ public:
     virtual bool processMouseMove(QMouseEvent* /*event*/) { return false; }
     virtual bool processContextMenu(QContextMenuEvent* /*event*/) { return false; }
 
-    bool acceptInplaceEdit(const ItemID& item, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr) const;
+    bool acceptInplaceEdit(ID id, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr) const;
     void doInplaceEdit(QVector<ControllerMouse*>& activatedControllers, const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace, const QKeyEvent* keyEvent = nullptr);
     void updateInplaceEditLayout();
 
@@ -81,8 +81,8 @@ protected:
     public:
         ActivationInfo(const ControllerContext& context, const CacheContext& cache, const CacheSpace& cacheSpace);
 
-        const ItemID& item() const;
-        const QPoint& point() const { return context.point; }
+        ID id() const;
+        QPoint point() const { return context.point; }
 
         const ControllerContext& context;
         const CacheContext& cache;
@@ -97,10 +97,10 @@ protected:
         explicit ActivationState(const ActivationInfo& info);
 
         const QPoint& point() const { return context.point; }
-        ItemID visibleItem() const;
+        ID visibleId() const;
 
         const ControllerContext& context;
-        const ItemID item;
+        const ID id;
         const CacheSpace& cacheSpace;
 
         // these members can be out of sync
@@ -122,7 +122,7 @@ protected:
     virtual void startCapturingImpl();
     virtual void stopCapturingImpl();
 
-    virtual bool acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const { return false; }
+    virtual bool acceptInplaceEditImpl(ID /*id*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const { return false; }
     virtual void doInplaceEditImpl(const QKeyEvent* /*keyEvent*/) {}
     virtual void updateInplaceEditLayoutImpl() {}
 

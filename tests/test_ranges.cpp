@@ -2,6 +2,7 @@
 #include "core/ext/Ranges.h"
 #include "SignalSpy.h"
 #include <QtTest/QtTest>
+#include "space/grid/RangeGrid.h"
 
 using namespace Qi;
 
@@ -10,16 +11,16 @@ void TestRanges::testRangeNone()
     {
         RangeNone r;
         QVERIFY(!r.parent());
-        QVERIFY(!r.hasItem(ItemID()));
-        QVERIFY(!r.hasItem(1, 1));
+        QVERIFY(!r.hasItem(ID(0)));
+        QVERIFY(!r.hasItem(makeID<GridID>(1, 1)));
     }
     
     {
         QSharedPointer<Range> r = makeRangeNone();
         QVERIFY(r.data());
         QVERIFY(!r->parent());
-        QVERIFY(!r->hasItem(3, 4));
-        QVERIFY(!r->hasItem(0, 0));
+        QVERIFY(!r->hasItem(makeID<GridID>(3, 4)));
+        QVERIFY(!r->hasItem(makeID<GridID>(0, 0)));
     }
 }
 
@@ -28,23 +29,23 @@ void TestRanges::testRangeAll()
     {
         RangeAll r;
         QVERIFY(!r.parent());
-        QVERIFY(r.hasItem(ItemID()));
-        QVERIFY(r.hasItem(1, 1));
+        QVERIFY(r.hasItem(ID(0)));
+        QVERIFY(r.hasItem(makeID<GridID>(1, 1)));
     }
     
     {
-        QSharedPointer<RangeAll> r(makeRangeAll());
+        auto r = makeRangeAll();
         QVERIFY(r.data());
         QVERIFY(!r->parent());
-        QVERIFY(r->hasItem(3, 4));
-        QVERIFY(r->hasItem(0, 0));
+        QVERIFY(r->hasItem(makeID<GridID>(3, 4)));
+        QVERIFY(r->hasItem(makeID<GridID>(0, 0)));
     }
 }
 
 void TestRanges::testRangeColumn()
 {
     {
-        RangeColumn r(0);
+        RangeGridColumn r(0);
         QVERIFY(!r.parent());
         QVERIFY(r.hasItem(0, 0));
         QVERIFY(!r.hasItem(0, 1));
@@ -53,7 +54,7 @@ void TestRanges::testRangeColumn()
     }
     
     {
-        QSharedPointer<RangeColumn> r = makeRangeColumn(4);
+        auto r = makeRangeGridColumn(4);
         QVERIFY(r.data());
         QVERIFY(!r->parent());
         QCOMPARE(r->column(), 4);
@@ -78,7 +79,7 @@ void TestRanges::testRangeColumns()
 {
     {
         QSet<int> columns;
-        RangeColumns r(columns);
+        RangeGridColumns r(columns);
         QVERIFY(!r.parent());
         QCOMPARE(r.columns(), QSet<int>());
         QVERIFY(!r.hasItem(0, 0));
@@ -87,13 +88,13 @@ void TestRanges::testRangeColumns()
     {
         QSet<int> columns;
         columns << 1 << 3;
-        RangeColumns r(columns);
+        RangeGridColumns r(columns);
         QVERIFY(r.hasItem(1, 1));
         QVERIFY(!r.hasItem(2, 2));
     }
     
     {
-        RangeColumns r(3, 6);
+        RangeGridColumns r(3, 6);
         QVERIFY(!r.parent());
         QVERIFY(!r.hasItem(0, 2));
         QVERIFY(r.hasItem(0, 3));
@@ -103,7 +104,7 @@ void TestRanges::testRangeColumns()
     }
     
     {
-        QSharedPointer<RangeColumns> r(makeRangeColumns(0, 10));
+        QSharedPointer<RangeGridColumns> r(makeRangeGridColumns(0, 10));
         QVERIFY(r.data());
         QSet<int> columns;
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -127,7 +128,7 @@ void TestRanges::testRangeColumns()
     {
         QSet<int> columns;
         columns << 0 << 10;
-        QSharedPointer<RangeColumns> r(makeRangeColumns(columns));
+        QSharedPointer<RangeGridColumns> r(makeRangeGridColumns(columns));
         QVERIFY(r.data());
         QVERIFY(r->columns() == columns);
         QVERIFY(r->hasItem(9, 10));
@@ -138,7 +139,7 @@ void TestRanges::testRangeColumns()
 void TestRanges::testRangeRow()
 {
     {
-        RangeRow r(0);
+        RangeGridRow r(0);
         QVERIFY(!r.parent());
         QVERIFY(r.hasItem(0, 0));
         QVERIFY(r.hasItem(0, 1));
@@ -147,7 +148,7 @@ void TestRanges::testRangeRow()
     }
     
     {
-        QSharedPointer<RangeRow> r(makeRangeRow(4));
+        QSharedPointer<RangeGridRow> r(makeRangeGridRow(4));
         QVERIFY(r.data());
         QVERIFY(!r->parent());
         QCOMPARE(r->row(), 4);
@@ -172,7 +173,7 @@ void TestRanges::testRangeRows()
 {
     {
         QSet<int> rows;
-        RangeRows r(rows);
+        RangeGridRows r(rows);
         QVERIFY(!r.parent());
         QCOMPARE(r.rows(), QSet<int>());
         QVERIFY(!r.hasItem(0, 0));
@@ -181,13 +182,13 @@ void TestRanges::testRangeRows()
     {
         QSet<int> rows;
         rows << 1 << 3;
-        RangeRows r(rows);
+        RangeGridRows r(rows);
         QVERIFY(r.hasItem(1, 1));
         QVERIFY(!r.hasItem(2, 2));
     }
     
     {
-        RangeRows r(3, 6);
+        RangeGridRows r(3, 6);
         QVERIFY(!r.parent());
         QVERIFY(!r.hasItem(2, 0));
         QVERIFY(r.hasItem(3, 0));
@@ -197,7 +198,7 @@ void TestRanges::testRangeRows()
     }
     
     {
-        QSharedPointer<RangeRows> r(makeRangeRows(0, 10));
+        QSharedPointer<RangeGridRows> r(makeRangeGridRows(0, 10));
         QVERIFY(r.data());
         QSet<int> rows;
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -221,7 +222,7 @@ void TestRanges::testRangeRows()
     {
         QSet<int> rows;
         rows << 0 << 10;
-        QSharedPointer<RangeRows> r(makeRangeRows(rows));
+        QSharedPointer<RangeGridRows> r(makeRangeGridRows(rows));
         QVERIFY(r.data());
         QVERIFY(r->rows() == rows);
         QVERIFY(r->hasItem(10, 9));

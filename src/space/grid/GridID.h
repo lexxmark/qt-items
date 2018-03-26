@@ -14,63 +14,76 @@
    limitations under the License.
 */
 
-#ifndef QI_ITEM_ID_H
-#define QI_ITEM_ID_H
+#ifndef QI_GRID_ID_H
+#define QI_GRID_ID_H
 
-#include "QiAPI.h"
-#include <QHash>
+#include "core/ID.h"
 
 namespace Qi
 {
 
-class QI_EXPORT ItemID
+class QI_EXPORT GridID
 {
 public:
-    int row;
-    int column;
+    int row = InvalidIndex;
+    int column = InvalidIndex;
 
-    ItemID()
-        : row(InvalidIndex), column(InvalidIndex)
-    {}
+    GridID() = default;
 
-    ItemID(int row, int column)
+    GridID(int row, int column)
         : row(row), column(column)
     {}
 
+/*    explicit GridID(ID id)
+        : GridID()
+    {
+        swap(id.as<GridID>());
+    }
+*/
     bool isValid() const { return row >= 0 && column >= 0; }
-    
-    void swap(ItemID& other)
+
+    void swap(GridID& other)
     {
         std::swap(row, other.row);
         std::swap(column, other.column);
     }
 };
 
-inline bool operator==(ItemID left, ItemID right)
+inline auto row(ID id)
+{
+    return id.as<GridID>().row;
+}
+
+inline auto column(ID id)
+{
+    return id.as<GridID>().column;
+}
+
+inline bool operator==(GridID left, GridID right)
 {
     return (left.row == right.row) && (left.column == right.column);
 }
 
-inline bool operator!=(ItemID left, ItemID right)
+inline bool operator!=(GridID left, GridID right)
 {
     return !(left == right);
 }
 
-inline ItemID operator+(ItemID left, ItemID right)
+inline GridID operator+(GridID left, GridID right)
 {
-    return ItemID(left.row+right.row, left.column+right.column);
+    return GridID(left.row+right.row, left.column+right.column);
 }
 
-inline ItemID operator-(ItemID left, ItemID right)
+inline GridID operator-(GridID left, GridID right)
 {
     Q_ASSERT(left.row >= right.row);
     Q_ASSERT(left.column >= right.column);
 
-    return ItemID(left.row-right.row, left.column-right.column);
+    return GridID(left.row-right.row, left.column-right.column);
 }
 
 // std::set/std::map support
-inline bool operator<(ItemID left, ItemID right)
+inline bool operator<(GridID left, GridID right)
 {
     if (left.row == right.row)
         return left.column < right.column;
@@ -79,11 +92,11 @@ inline bool operator<(ItemID left, ItemID right)
 }
 
 // QSet/QMap support
-inline uint qHash(ItemID key)
+inline uint qHash(GridID key)
 {
     return qHash(QPair<int, int>(key.row, key.column));
 }
 
-} // end namespace Qi
+} // end namespace Qi 
 
-#endif // QI_ITEM_ID_H
+#endif // QI_GRID_ID_H

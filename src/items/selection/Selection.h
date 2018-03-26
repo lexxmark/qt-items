@@ -22,10 +22,11 @@
 #include "core/ext/ControllerMousePushable.h"
 #include "core/ControllerKeyboard.h"
 
+#include <space/grid/SpaceGrid.h>
+
 namespace Qi
 {
 
-class Space;
 class WidgetDriver;
 class CacheSpace;
 
@@ -35,13 +36,13 @@ class QI_EXPORT ModelSelection: public ModelComparable
     Q_DISABLE_COPY(ModelSelection)
 
 public:
-    ModelSelection(const QSharedPointer<Space>& space);
+    ModelSelection(QSharedPointer<SpaceGrid> space);
     virtual ~ModelSelection();
 
-    const Space& space() const { return *m_space.data(); }
+    const SpaceGrid& space() const { return *m_space.data(); }
 
-    bool isItemSelected(const ItemID& item) const { return isItemSelectedImpl(item); }
-    bool isVisibleItemSelected(const ItemID& visibleItem) const;
+    bool isItemSelected(GridID id) const { return isItemSelectedImpl(id); }
+    bool isVisibleItemSelected(GridID visibleId) const;
 
     void addSelection(const QSharedPointer<Range>& range, bool exclude);
     void setSelection(const QSharedPointer<Range>& range);
@@ -50,10 +51,10 @@ public:
     const RangeSelection& selection() const { return m_selection; }
     void applySelection(const RangeSelection& selection);
 
-    const ItemID& activeItem() const { return m_activeItem; }
-    ItemID activeVisibleItem() const;
-    void setActiveItem(const ItemID& item);
-    void setActiveVisibleItem(const ItemID& visibleItem);
+    GridID activeId() const { return m_activeId; }
+    GridID activeVisibleId() const;
+    void setActiveId(GridID id);
+    void setActiveVisibleId(GridID visibleId);
 
     void startSelectionOperation();
     void stopSelectionOperation();
@@ -69,16 +70,16 @@ signals:
     void selectionOperationPerformed(const ModelSelection* selection, bool started);
 
 protected:
-    int compareImpl(const ItemID &left, const ItemID &right) const override;
-    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return false; }
+    int compareImpl(ID left, ID right) const override;
+    bool isAscendingDefaultImpl(ID /*id*/) const override { return false; }
 
-    virtual bool isItemSelectedImpl(const ItemID& item) const { return m_selection.hasItem(item); }
+    virtual bool isItemSelectedImpl(GridID id) const { return m_selection.hasItem(ID(id)); }
 
     void emitChangedSignals(ChangeReason changeReason);
 
     RangeSelection m_selection;
-    ItemID m_activeItem;
-    QWeakPointer<Space> m_space;
+    GridID m_activeId;
+    QWeakPointer<SpaceGrid> m_space;
     int m_selectionOperations;
 };
 
@@ -88,15 +89,15 @@ class QI_EXPORT ModelSelectionRows: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionRows)
 
 public:
-    ModelSelectionRows(const QSharedPointer<Space>& space)
+    ModelSelectionRows(QSharedPointer<SpaceGrid> space)
         : ModelSelection(space)
     {}
 
-    bool isRowSelected(int row) const { return m_selection.hasRow(row); }
+    bool isRowSelected(int row) const;
     void selectRows(const QSet<int>& rows);
 
 protected:
-    bool isItemSelectedImpl(const ItemID& item) const override { return isRowSelected(item.row); }
+    bool isItemSelectedImpl(GridID id) const override { return isRowSelected(id.row); }
 };
 
 class QI_EXPORT ModelSelectionRow: public ModelSelection
@@ -105,15 +106,15 @@ class QI_EXPORT ModelSelectionRow: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionRow)
 
 public:
-    ModelSelectionRow(const QSharedPointer<Space>& space)
+    ModelSelectionRow(QSharedPointer<SpaceGrid> space)
         : ModelSelection(space)
     {}
 
-    bool isRowSelected(int row) const { return activeItem().row == row; }
-    void selectRow(int row) { setActiveItem(ItemID(row, activeItem().column)); }
+    bool isRowSelected(int row) const { return activeId().row == row; }
+    void selectRow(int row) { setActiveId(GridID(row, activeId().column)); }
 
 protected:
-    bool isItemSelectedImpl(const ItemID& item) const override { return isRowSelected(item.row); }
+    bool isItemSelectedImpl(GridID id) const override { return isRowSelected(id.row); }
 };
 
 class QI_EXPORT ModelSelectionColumns: public ModelSelection
@@ -122,15 +123,15 @@ class QI_EXPORT ModelSelectionColumns: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionColumns)
 
 public:
-    ModelSelectionColumns(const QSharedPointer<Space>& space)
+    ModelSelectionColumns(QSharedPointer<SpaceGrid> space)
         : ModelSelection(space)
     {}
 
-    bool isColumnSelected(int column) const { return m_selection.hasColumn(column); }
+    bool isColumnSelected(int column) const { return activeId().column == column; }
     void selectColumns(const QSet<int>& columns);
 
 protected:
-    bool isItemSelectedImpl(const ItemID& item) const override { return isColumnSelected(item.column); }
+    bool isItemSelectedImpl(GridID id) const override { return isColumnSelected(id.column); }
 };
 
 class QI_EXPORT ViewSelectionClient: public ViewModeled<ModelSelection>
@@ -197,8 +198,8 @@ private:
 
     QSharedPointer<ModelSelection> m_model;
     RangeSelection m_selection;
-    ItemID m_startItem;
-    ItemID m_trackItem;
+    GridID m_startId;
+    GridID m_trackId;
     bool m_exclude;
 };
 
@@ -260,7 +261,7 @@ private:
     const CacheSpace* m_cacheSpace;
     SpaceWidgetCore* m_widgetCore;
 
-    ItemID m_trackItem;
+    GridID m_trackId;
     RangeSelection m_selection;
     QSet<int> m_pressedKeys;
 };

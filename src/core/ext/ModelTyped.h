@@ -25,7 +25,8 @@ namespace Qi
 
 namespace Private
 {
-    template<typename T> int compareValues(const T& leftValue, const T& rightValue)
+    template<typename T>
+    int compareValues(const T& leftValue, const T& rightValue)
     {
         if (leftValue < rightValue)
             return -1;
@@ -37,7 +38,8 @@ namespace Private
 }
 
 // typed Model - represents T values
-template <typename T> class ModelTyped : public ModelComparable
+template <typename T>
+class ModelTyped : public ModelComparable
 {
 protected:
     ModelTyped():
@@ -47,21 +49,19 @@ protected:
 public:
     typedef T ValueType_t;
 
-    ValueType_t value(const ItemID& item) const { return valueImpl(item); }
-    ValueType_t value(int row, int column) const { return value(ItemID(row, column)); }
+    ValueType_t value(ID id) const { return valueImpl(id); }
 
-    bool setValue(const ItemID& item, ValueType_t value)
+    bool setValue(ID id, ValueType_t value)
     {
-        if (setValueImpl(item, value))
+        if (setValueImpl(id, value))
         {
             emit modelChanged(this);
             return true;
         }
         return false;
     }
-    bool setValue(int row, int column, ValueType_t value) { return setValue(ItemID(row, column), value); }
 
-    bool setValueMultiple(ItemsIterator& itemsIterator, ValueType_t value)
+    bool setValueMultiple(IdIterator& itemsIterator, ValueType_t value)
     {
         if (setValueMultipleImpl(itemsIterator, value))
         {
@@ -72,18 +72,18 @@ public:
     }
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override { return Private::compareValues(value(left), value(right)); }
-    bool isAscendingDefaultImpl(const ItemID& /*item*/) const override { return m_ascendingDefault; }
+    int compareImpl(ID left, ID right) const override { return Private::compareValues(value(left), value(right)); }
+    bool isAscendingDefaultImpl(ID /*item*/) const override { return m_ascendingDefault; }
 
-    virtual ValueType_t valueImpl(const ItemID& item) const = 0;
-    virtual bool setValueImpl(const ItemID& item, ValueType_t value) = 0;
-    virtual bool setValueMultipleImpl(ItemsIterator& itemsIterator, ValueType_t value)
+    virtual ValueType_t valueImpl(ID id) const = 0;
+    virtual bool setValueImpl(ID id, ValueType_t value) = 0;
+    virtual bool setValueMultipleImpl(IdIterator& it, ValueType_t value)
     {
         bool result = false;
 
-        for (itemsIterator.atFirst(); itemsIterator.isValid(); itemsIterator.toNext())
+        for (it.atFirst(); it.isValid(); it.toNext())
         {
-            bool itemResult = setValueImpl(itemsIterator.item(), value);
+            bool itemResult = setValueImpl(it.id(), value);
             result |= itemResult;
         }
 
@@ -91,6 +91,32 @@ protected:
     }
 
     bool m_ascendingDefault;
+};
+
+template <typename T, typename ID_t>
+class ModelIdTyped : public ModelTyped<T>
+{
+public:
+    ValueType_t valueId(ID_t id) const { return valueIdImpl(id); }
+
+    bool setValueId(ID_t id, ValueType_t value)
+    {
+        if (setValueIdImpl(id, value))
+        {
+            emit modelChanged(this);
+            return true;
+        }
+        return false;
+    }
+
+protected:
+    ModelIdTyped() = default;
+
+    ValueType_t valueImpl(ID id) const final { return valueIdImpl(id.as<ID_t>()); }
+    bool setValueImpl(ID id, ValueType_t value) final { return setValueIdImpl(id.as<ID_t>(), value); }
+
+    virtual ValueType_t valueIdImpl(ID_t id) const = 0;
+    virtual bool setValueIdImpl(ID_t id, ValueType_t value) = 0;
 };
 
 // export already specialized ModelTyped classes

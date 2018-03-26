@@ -17,7 +17,7 @@
    limitations under the License.
 */
 
-#include "core/ItemID.h"
+#include "core/ID.h"
 #include <QVector>
 #include <QPainter>
 #include <functional>
@@ -47,16 +47,16 @@ public:
     QVector<CacheView>& rSubViews() { return m_subViews; }
     QRect& rRect() { return m_rect; }
 
-    std::function<void(const CacheView*, QPainter*, const GuiContext&, const ItemID&, const QRect&, const QRect*)> drawProxy;
+    std::function<void(const CacheView*, QPainter*, const GuiContext&, ID, const QRect&, const QRect*)> drawProxy;
 
     // draws view within m_rect
-    void draw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
-    void drawRaw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
+    void draw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
+    void drawRaw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
 
-    void cleanupDraw(QPainter* painter, const GuiContext &ctx, const ItemID& item, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
+    void cleanupDraw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
 
     // retruns tooltip text
-    bool tooltipText(const ItemID& item, QString& tooltipText) const;
+    bool tooltipText(ID id, QString& tooltipText) const;
 
     template <typename Pred>
     bool forEachCacheView(Pred pred)
@@ -100,13 +100,13 @@ protected:
 class QI_EXPORT CacheContext
 {
 public:
-    const ItemID& item;
+    const ID& id;
     const QRect& itemRect;
     const CacheView& cacheView;
     const QRect* visibleRect;
 
-    CacheContext(const ItemID& item, const QRect& itemRect, const CacheView& cacheView, const QRect* visibleRect)
-        : item(item),
+    CacheContext(const ID& id, const QRect& itemRect, const CacheView& cacheView, const QRect* visibleRect)
+        : id(id),
           itemRect(itemRect),
           cacheView(cacheView),
           visibleRect(visibleRect)

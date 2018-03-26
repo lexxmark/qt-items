@@ -29,19 +29,19 @@ class QI_EXPORT ViewVisible: public View
     Q_DISABLE_COPY(ViewVisible)
 
 public:
-    explicit ViewVisible(const QSharedPointer<View>& sourceView, bool reserveSize = false);
+    explicit ViewVisible(QSharedPointer<View> sourceView, bool reserveSize = false);
 
-    std::function<bool(const ItemID&)> isItemVisible;
+    std::function<bool(ID)> isItemVisible;
 
     void notifyVisibilityChanged();
 
 protected:
-    void addViewImpl(const ItemID& item, QVector<const View*>& views) const override;
-    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    void addViewImpl(ID id, QVector<const View*>& views) const override;
+    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
 
 private:
-    bool safeIsItemVisible(const ItemID& item) const;
+    bool safeIsItemVisible(ID id) const;
     void onSourceViewChanged(const View* view, ChangeReason reason);
 
     QSharedPointer<View> m_sourceView;

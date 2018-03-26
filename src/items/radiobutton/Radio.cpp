@@ -21,7 +21,7 @@
 namespace Qi
 {
 
-int ModelRadio::compareImpl(const ItemID &left, const ItemID &right) const
+int ModelRadio::compareImpl(ID left, ID right) const
 {
     if (isRadioItem(left))
         return 1;
@@ -31,17 +31,17 @@ int ModelRadio::compareImpl(const ItemID &left, const ItemID &right) const
         return 0;
 }
 
-bool ModelRadioCallback::isRadioItemImpl(const ItemID& item) const
+bool ModelRadioCallback::isRadioItemImpl(ID id) const
 {
     Q_ASSERT(isRadioItem);
-    return isRadioItem(item);
+    return isRadioItem(id);
 }
 
-bool ModelRadioCallback::setRadioItemImpl(const ItemID& item)
+bool ModelRadioCallback::setRadioItemImpl(ID id)
 {
     Q_ASSERT(setRadioItem);
 
-    if (setRadioItem(item))
+    if (setRadioItem(id))
     {
         emit modelChanged(this);
         return true;
@@ -50,22 +50,22 @@ bool ModelRadioCallback::setRadioItemImpl(const ItemID& item)
     return false;
 }
 
-ModelRadioStorage::ModelRadioStorage(const ItemID& radioItem)
-    : m_radioItem(radioItem)
+ModelRadioStorage::ModelRadioStorage(ID radioId)
+    : m_radioId(radioId)
 {
 }
 
-bool ModelRadioStorage::isRadioItemImpl(const ItemID& item) const
+bool ModelRadioStorage::isRadioItemImpl(ID id) const
 {
-    return m_radioItem ==item;
+    return m_radioId ==id;
 }
 
-bool ModelRadioStorage::setRadioItemImpl(const ItemID& item)
+bool ModelRadioStorage::setRadioItemImpl(ID id)
 {
-    if (m_radioItem == item)
+    if (m_radioId == id)
         return false;
 
-    m_radioItem = item;
+    m_radioId = id;
     emit modelChanged(this);
 
     return true;
@@ -81,7 +81,7 @@ ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultCon
     }
 }
 
-QSize ViewRadio::sizeImpl(const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewRadio::sizeImpl(const GuiContext& ctx, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     auto style = ctx.style();
     return QSize(style->pixelMetric(QStyle::PM_ExclusiveIndicatorWidth),
@@ -100,7 +100,7 @@ void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
     if (style->inherits("QWindowsVistaStyle"))
         option.styleObject = nullptr;
 
-    option.state |= styleState(cache.item);
+    option.state |= styleState(cache.id);
     option.rect = cache.cacheView.rect();
     // correct rect
     option.rect = style->subElementRect(QStyle::SE_RadioButtonIndicator, &option, ctx.widget);
@@ -109,21 +109,20 @@ void ViewRadio::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheCo
     style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &option, painter, ctx.widget);
 }
 
-QStyle::State ViewRadio::styleState(const ItemID& item) const
+QStyle::State ViewRadio::styleState(ID id) const
 {
-    bool isRadioItem = theModel()->isRadioItem(item);
+    bool isRadioItem = theModel()->isRadioItem(id);
 
-    QStyle::State state = m_pushableTracker.styleStateByItem(item);
+    QStyle::State state = m_pushableTracker.styleStateByItem(id);
     state |= (isRadioItem ? QStyle::State_On : QStyle::State_Off);
 
     return state;
 }
 
-QSharedPointer<ControllerMousePushable> createControllerMouseRadio(const QSharedPointer<ModelRadio>& model)
+QSharedPointer<ControllerMousePushable> createControllerMouseRadio(QSharedPointer<ModelRadio> model)
 {
     auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-    controller->onApply = [model] (const ItemID& item, const ControllerContext& /*context*/) {
-        Q_ASSERT(item.isValid());
+    controller->onApply = [model] (ID item, const ControllerContext& /*context*/) {
         model->setRadioItem(item);
     };
     return controller;

@@ -60,23 +60,23 @@ void ViewText::setMargins(const QMargins& margins)
     emitViewChanged(ChangeReasonViewSize);
 }
 
-QSize ViewText::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewText::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
 {
-    return sizeText(theModel()->value(item), ctx, item, sizeMode);
+    return sizeText(theModel()->value(id), ctx, id, sizeMode);
 }
 
 void ViewText::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
-    drawText(theModel()->value(cache.item), painter, ctx, cache, showTooltip);
+    drawText(theModel()->value(cache.id), painter, ctx, cache, showTooltip);
 }
 
-bool ViewText::textImpl(const ItemID& item, QString& txt) const
+bool ViewText::textImpl(ID id, QString& txt) const
 {
-    txt = theModel()->value(item);
+    txt = theModel()->value(id);
     return true;
 }
 
-QSize ViewText::sizeText(const QString& text, const GuiContext& ctx, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize ViewText::sizeText(const QString& text, const GuiContext& ctx, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     /*
     QStyleOptionViewItem option;
@@ -110,7 +110,7 @@ void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext
 
     QRect rect = cache.cacheView.rect().marginsRemoved(m_margins);
     QString textToDraw = text;
-    Qt::TextElideMode elideMode = textElideMode(cache.item);
+    Qt::TextElideMode elideMode = textElideMode(cache.id);
     if (elideMode != Qt::ElideNone)
     {
         QString elidedText = painter->fontMetrics().elidedText(textToDraw, elideMode, rect.width());
@@ -125,7 +125,7 @@ void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext
             *showTooltip = (painter->fontMetrics().width(text) > rect.width());
     }
 
-    painter->drawText(rect, alignment(cache.item), textToDraw);
+    painter->drawText(rect, alignment(cache.id), textToDraw);
 }
 
 
@@ -134,22 +134,22 @@ ViewTextOrHint::ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefau
 {
 }
 
-QSize ViewTextOrHint::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewTextOrHint::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
 {
-    if (isItemHint && isItemHint(item, theModel().data()))
+    if (isItemHint && isItemHint(id, theModel().data()))
     {
-        QString hintText = itemHintText ? itemHintText(item, theModel().data()) : QString();
-        return sizeText(hintText, ctx, item, sizeMode);
+        QString hintText = itemHintText ? itemHintText(id, theModel().data()) : QString();
+        return sizeText(hintText, ctx, id, sizeMode);
     }
     else
-        return ViewText::sizeImpl(ctx, item, sizeMode);
+        return ViewText::sizeImpl(ctx, id, sizeMode);
 }
 
 void ViewTextOrHint::drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const
 {
-    if (isItemHint && isItemHint(cache.item, theModel().data()))
+    if (isItemHint && isItemHint(cache.id, theModel().data()))
     {
-        QString hintText = itemHintText ? itemHintText(cache.item, theModel().data()) : QString();
+        QString hintText = itemHintText ? itemHintText(cache.id, theModel().data()) : QString();
         QPen oldPen = painter->pen();
         painter->setPen(ctx.widget->palette().color(QPalette::Disabled, QPalette::Text));
         drawText(hintText, painter, ctx, cache, showTooltip);
@@ -161,17 +161,17 @@ void ViewTextOrHint::drawImpl(QPainter* painter, const GuiContext& ctx, const Ca
         return ViewText::drawImpl(painter, ctx, cache, showTooltip);
 }
 
-bool ViewTextOrHint::tooltipTextImpl(const ItemID& item, QString& txt) const
+bool ViewTextOrHint::tooltipTextImpl(ID id, QString& txt) const
 {
-    if (isItemHint && isItemHint(item, theModel().data()))
+    if (isItemHint && isItemHint(id, theModel().data()))
     {
         if (itemHintTooltipText)
-            return itemHintTooltipText(item, theModel().data(), txt);
+            return itemHintTooltipText(id, theModel().data(), txt);
         else
             return false;
     }
     else
-        return ViewText::tooltipTextImpl(item, txt);
+        return ViewText::tooltipTextImpl(id, txt);
 }
 
 ViewTextFont::ViewTextFont(const QSharedPointer<ModelFont>& model)
@@ -187,7 +187,7 @@ ViewTextFont::ViewTextFont(const QFont& font)
 void ViewTextFont::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& cache, bool* /*showTooltip*/) const
 {
     m_oldFont = painter->font();
-    painter->setFont(theModel()->value(cache.item));
+    painter->setFont(theModel()->value(cache.id));
 }
 
 void ViewTextFont::cleanupDrawImpl(QPainter* painter, const GuiContext& /*ctx*/, const CacheContext& /*cache*/) const
@@ -208,16 +208,16 @@ void ControllerMouseText::enableLiveUpdate(bool enable)
     m_liveUpdate = enable;
 }
 
-bool ControllerMouseText::acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
+bool ControllerMouseText::acceptInplaceEditImpl(ID /*id*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* keyEvent) const
 {
     return !keyEvent || !keyEvent->text().isEmpty();
 }
 
-QWidget* ControllerMouseText::createInplaceEditorImpl(const ItemID& item, const QRect& rect, QWidget* parent, const QKeyEvent* /*keyEvent*/)
+QWidget* ControllerMouseText::createInplaceEditorImpl(ID id, const QRect& rect, QWidget* parent, const QKeyEvent* /*keyEvent*/)
 {
     QLineEdit* editor = new QLineEdit(parent);
     editor->setGeometry(rect);
-    editor->setText(m_model->value(item));
+    editor->setText(m_model->value(id));
 
     connect(editor, &QLineEdit::editingFinished, this, &ControllerMouseText::onEditingFinished);
     if (m_liveUpdate)
@@ -232,7 +232,7 @@ void ControllerMouseText::onEditingFinished()
     if (!editor)
         return;
 
-    m_model->setValue(activeItem(), editor->text());
+    m_model->setValue(*activeId(), editor->text());
 
     // stop edit
     stopInplaceEditor();
@@ -240,7 +240,7 @@ void ControllerMouseText::onEditingFinished()
 
 void ControllerMouseText::onTextEdited(const QString& text)
 {
-    m_model->setValue(activeItem(), text);
+    m_model->setValue(*activeId(), text);
 }
 
 

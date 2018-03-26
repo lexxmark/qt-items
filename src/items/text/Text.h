@@ -39,24 +39,24 @@ class QI_EXPORT ViewText: public ViewModeled<ModelText>
 public:
     ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
-    Qt::Alignment alignment(const ItemID& item) const { return alignmentImpl(item); }
+    Qt::Alignment alignment(ID id) const { return alignmentImpl(id); }
     void setAlignment(Qt::Alignment alignment);
 
-    Qt::TextElideMode textElideMode(const ItemID& item) const { return textElideModeImpl(item); }
+    Qt::TextElideMode textElideMode(ID id) const { return textElideModeImpl(id); }
     void setTextElideMode(Qt::TextElideMode textElideMode);
 
     const QMargins& margins() const { return m_margins; }
     void setMargins(const QMargins& margins);
 
 protected:
-    virtual Qt::Alignment alignmentImpl(const ItemID& /*item*/) const { return m_alignment; }
-    virtual Qt::TextElideMode textElideModeImpl(const ItemID& /*item*/) const { return m_textElideMode; }
+    virtual Qt::Alignment alignmentImpl(ID /*id*/) const { return m_alignment; }
+    virtual Qt::TextElideMode textElideModeImpl(ID /*id*/) const { return m_textElideMode; }
 
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
-    bool textImpl(const ItemID& item, QString& txt) const override;
+    bool textImpl(ID id, QString& txt) const override;
 
-    QSize sizeText(const QString& text, const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const;
+    QSize sizeText(const QString& text, const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const;
     void drawText(const QString& text, QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const;
 
 private:
@@ -73,14 +73,14 @@ class QI_EXPORT ViewTextOrHint: public ViewText
 public:
     ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
-    std::function<bool(const ItemID&, const ModelText*)> isItemHint;
-    std::function<QString(const ItemID&, const ModelText*)> itemHintText;
-    std::function<bool(const ItemID&, const ModelText*, QString&)> itemHintTooltipText;
+    std::function<bool(ID, const ModelText*)> isItemHint;
+    std::function<QString(ID, const ModelText*)> itemHintText;
+    std::function<bool(ID, const ModelText*, QString&)> itemHintTooltipText;
 
 protected:
-    QSize sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const override;
+    QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
-    bool tooltipTextImpl(const ItemID& item, QString& txt) const override;
+    bool tooltipTextImpl(ID id, QString& txt) const override;
 };
 
 typedef ModelTyped<QFont> ModelFont;
@@ -110,8 +110,8 @@ public:
     void enableLiveUpdate(bool enable = true);
 
 protected:
-    bool acceptInplaceEditImpl(const ItemID& /*item*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const override;
-    QWidget* createInplaceEditorImpl(const ItemID& item, const QRect& rect, QWidget* parent, const QKeyEvent* keyEvent) override;
+    bool acceptInplaceEditImpl(ID /*id*/, const CacheSpace& /*cacheSpace*/, const QKeyEvent* /*keyEvent*/) const override;
+    QWidget* createInplaceEditorImpl(ID id, const QRect& rect, QWidget* parent, const QKeyEvent* keyEvent) override;
 
 private:
     void onEditingFinished();

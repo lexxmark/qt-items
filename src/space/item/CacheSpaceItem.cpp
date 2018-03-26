@@ -56,7 +56,7 @@ void CacheSpaceItem::validateItemsCacheImpl() const
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
-    m_item = createCacheItem(m_spaceItem->item());
+    m_item = createCacheItem(m_spaceItem->id());
     m_item->rect.translate(originPos());
 
     // mark item as valid
@@ -93,15 +93,15 @@ void CacheSpaceItem::drawImpl(QPainter* painter, const GuiContext& ctx) const
     m_item->draw(painter, ctx, &m_window);
 }
 */
-const CacheItem* CacheSpaceItem::cacheItemImpl(const ItemID& visibleItem) const
+const CacheItem* CacheSpaceItem::cacheItemImpl(ID visibleId) const
 {
-    if (m_item->item == visibleItem)
+    if (m_item->id == visibleId)
         return m_item.data();
     else
         return nullptr;
 }
 
-const CacheItem* CacheSpaceItem::cacheItemByPositionImpl(const QPoint& point) const
+const CacheItem* CacheSpaceItem::cacheItemByPositionImpl(QPoint point) const
 {
     if (m_item && m_item->rect.contains(point))
         return m_item.data();

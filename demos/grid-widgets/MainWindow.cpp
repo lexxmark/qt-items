@@ -23,7 +23,8 @@
 #include "items/enum/Enum.h"
 
 #include "misc/GridColumnsResizer.h"
-#include "cache/space/CacheSpaceGrid.h"
+#include "space/grid/CacheSpaceGrid.h"
+#include "space/grid/RangeGrid.h"
 
 #include <QMessageBox>
 
@@ -87,13 +88,13 @@ MainWindow::MainWindow(QWidget *parent) :
     leftGrid->columns()->setLineSizeAll(40);
 
     auto selection = QSharedPointer<ModelSelection>::create(clientGrid);
-    selection->setActiveItem(ItemID(1, 1));
-    selection->setSelection(QSharedPointer<RangeColumn>::create(3));
+    selection->setActiveId(GridID(1, 1));
+    selection->setSelection(QSharedPointer<RangeGridColumn>::create(3));
 
     // setup items borders
     {
-        auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column < 5;
+        auto range = QSharedPointer<RangeGridCallback>::create([](GridID id)->bool{
+            return id.column < 5;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewRowBorder>::create(), makeLayoutBottom(LayoutBehaviorTransparent));
         clientGrid->addSchema(range, QSharedPointer<ViewColumnBorder>::create(), makeLayoutRight(LayoutBehaviorTransparent));
@@ -101,8 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup alternate background
     {
-        auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column >= 5;
+        auto range = QSharedPointer<RangeGridCallback>::create([](GridID id)->bool{
+            return id.column >= 5;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewAlternateBackground>::create(), makeLayoutBackground());
     }
@@ -151,8 +152,8 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         auto viewSorting = QSharedPointer<ViewGridSorting>::create(modelSorting);
         auto viewVisible = QSharedPointer<ViewVisible>::create(viewSorting);
-        viewVisible->isItemVisible = [modelSorting](const ItemID& item){
-            return modelSorting->activeSortingItem() == item;
+        viewVisible->isItemVisible = [modelSorting](ID id){
+            return modelSorting->activeSortingId() == id.as<GridID>();
         };
 
         auto view = QSharedPointer<View>::create();
@@ -167,9 +168,9 @@ MainWindow::MainWindow(QWidget *parent) :
     clientGrid->rows()->addLinesVisibility(filterByText);
     {
         auto view = makeViewRowsFilterByText(filterByText);
-        auto range = QSharedPointer<RangeCallback>::create();
-        range->hasItemCallback = [filterByText] (const ItemID& item)-> bool {
-            return item.row == 1 && !filterByText->filterByColumn(item.column).isNull();
+        auto range = QSharedPointer<RangeGridCallback>::create();
+        range->hasItemCallback = [filterByText] (GridID id)-> bool {
+            return id.row == 1 && !filterByText->filterByColumn(id.column).isNull();
         };
         topGrid->addSchema(range, view, makeLayoutClient());
     }
@@ -177,27 +178,27 @@ MainWindow::MainWindow(QWidget *parent) :
     // setup top fixed sub-grid
     {
         auto modelText = QSharedPointer<ModelTextCallback>::create();
-        modelText->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Caption[%1, %2]").arg(item.row).arg(item.column);
+        modelText->getValueFunction = [](ID id)->QString {
+            return QString("Caption[%1, %2]").arg(row(id)).arg(column(id));
         };
-        topGrid->addSchema(makeRangeRow(0), QSharedPointer<ViewText>::create(modelText));
+        topGrid->addSchema(makeRangeGridRow(0), QSharedPointer<ViewText>::create(modelText));
     }
 
     // setup left fixed sub-grid
     {
         auto modelRowNum = QSharedPointer<ModelRowNumber>::create();
         auto modelRowText = QSharedPointer<ModelNumericText<int>>::create(modelRowNum);
-        leftGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewText>::create(modelRowText, ViewDefaultControllerNone, Qt::AlignRight | Qt::AlignVCenter));
+        leftGrid->addSchema(makeRangeGridColumn(0), QSharedPointer<ViewText>::create(modelRowText, ViewDefaultControllerNone, Qt::AlignRight | Qt::AlignVCenter));
     }
 
     // text in all items except column 5, 6, 10 and 11
     auto modelText = QSharedPointer<ModelTextCallback>::create();
     {
-        modelText->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Item [%1, %2]").arg(item.row).arg(item.column);
+        modelText->getValueFunction = [](ID id)->QString {
+            return QString("Item [%1, %2]").arg(row(id)).arg(column(id));
         };
-        auto range = QSharedPointer<RangeCallback>::create([](const ItemID& item)->bool{
-            return item.column != 5 && item.column != 6 && item.column != 10 && item.column != 11;
+        auto range = QSharedPointer<RangeCallback>::create([](ID id)->bool{
+            return column(id) != 5 && column(id) != 6 && column(id) != 10 && column(id) != 11;
         });
         clientGrid->addSchema(range, QSharedPointer<ViewText>::create(modelText));
 
@@ -207,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Checkbox example
     {
         auto modelChecks = QSharedPointer<ModelStorageColumn<Qt::CheckState>>::create(clientGrid->rows());
-        clientGrid->addSchema(makeRangeColumn(0), QSharedPointer<ViewCheck>::create(modelChecks), makeLayoutLeft());
+        clientGrid->addSchema(makeRangeGridColumn(0), QSharedPointer<ViewCheck>::create(modelChecks), makeLayoutLeft());
 
         auto filter = QSharedPointer<ItemsFilterTextByText>::create(modelText);
         filterByText->addFilterByColumn(0, filter);
@@ -215,8 +216,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // radiobutton example
     {
-        auto modelRadio = QSharedPointer<ModelRadioStorage>::create();
-        clientGrid->addSchema(makeRangeColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
+        auto modelRadio = QSharedPointer<ModelRadioStorage>::create(makeID<GridID>());
+        clientGrid->addSchema(makeRangeGridColumn(1), QSharedPointer<ViewRadio>::create(modelRadio), makeLayoutLeft());
         modelSorting->addSortingModel(1, modelRadio);
     }
 
@@ -228,24 +229,24 @@ MainWindow::MainWindow(QWidget *parent) :
         auto modelBttnText = QSharedPointer<ModelStorageValue<QString>>::create(" ... ");
         auto viewBttnText  = QSharedPointer<ViewText>::create(modelBttnText);
         auto viewBttn = QSharedPointer<ViewButton>::create(viewBttnText);
-        viewBttn->tuneBttnState = [](const ItemID& item, QStyle::State& bttnState) {
-            if (item.row % 2 == 0)
+        viewBttn->tuneBttnState = [](ID id, QStyle::State& bttnState) {
+            if (row(id) % 2 == 0)
                 bttnState |= QStyle::State_Sunken;
         };
-        viewBttn->action = [](const ItemID& item,  const ControllerContext& context, const ViewButton*) {
-            QMessageBox::information(context.widget, "ViewButton clicked", QString("item[%1, %2]").arg(item.row).arg(item.column));
+        viewBttn->action = [](ID id,  const ControllerContext& context, const ViewButton*) {
+            QMessageBox::information(context.widget, "ViewButton clicked", QString("id[%1, %2]").arg(row(id)).arg(column(id)));
         };
         viewBttn->setTooltipText("Click me");
-        clientGrid->addSchema(makeRangeColumn(2), viewBttn, makeLayoutRight());
+        clientGrid->addSchema(makeRangeGridColumn(2), viewBttn, makeLayoutRight());
     }
 
     // Standard Pixmap example
     {
         auto viewStdIcon = QSharedPointer<ViewStyleStandardPixmap>::create(QStyle::SP_DialogOkButton);
-        viewStdIcon->action = [](const ItemID& item, const ControllerContext& context, const ViewStyleStandardPixmap*) {
-            QMessageBox::information(context.widget, "ViewStyleStandardPixmap clicked", QString("item[%1, %2]").arg(item.row).arg(item.column));
+        viewStdIcon->action = [](ID id, const ControllerContext& context, const ViewStyleStandardPixmap*) {
+            QMessageBox::information(context.widget, "ViewStyleStandardPixmap clicked", QString("id[%1, %2]").arg(row(id)).arg(column(id)));
         };
-        clientGrid->addSchema(makeRangeColumn(3), viewStdIcon, makeLayoutRight());
+        clientGrid->addSchema(makeRangeGridColumn(3), viewStdIcon, makeLayoutRight());
     }
 
     // QImage example
@@ -256,7 +257,7 @@ MainWindow::MainWindow(QWidget *parent) :
         auto modelImage = QSharedPointer<ModelImageCallback>::create();
         modelImage->getValueFunction = std::bind(std::mem_fn(&MainWindow::image), this, _1);
         auto viewImage = QSharedPointer<ViewImage>::create(modelImage);
-        clientGrid->addSchema(makeRangeColumn(4), viewImage, makeLayoutLeft());
+        clientGrid->addSchema(makeRangeGridColumn(4), viewImage, makeLayoutLeft());
     }
 
     // QPixmap example
@@ -268,38 +269,38 @@ MainWindow::MainWindow(QWidget *parent) :
         modelPixmap->getValueFunction = std::bind(std::mem_fn(&MainWindow::pixmap), this, _1);
         auto viewPixmap = QSharedPointer<ViewPixmap>::create(modelPixmap);
         viewPixmap->tooltipTextCallback = std::bind(std::mem_fn(&MainWindow::pixmapTooltip), this, _1, _2);
-        clientGrid->addSchema(makeRangeColumn(4), viewPixmap, makeLayoutLeft());
+        clientGrid->addSchema(makeRangeGridColumn(4), viewPixmap, makeLayoutLeft());
     }
 
     // Link example
     {
         auto modelLink = QSharedPointer<ModelTextCallback>::create();
-        modelLink->getValueFunction = [](const ItemID& item)->QString {
-            return QString("Link [%1, %2]").arg(item.row).arg(item.column);
+        modelLink->getValueFunction = [](ID id)->QString {
+            return QString("Link [%1, %2]").arg(row(id)).arg(column(id));
         };
         auto viewLink = QSharedPointer<ViewLink>::create(modelLink);
-        viewLink->action = [](const ItemID& item, const ControllerContext& context, const ViewLink* viewLink) {
+        viewLink->action = [](ID id, const ControllerContext& context, const ViewLink* viewLink) {
             QMessageBox::information(context.widget, "Link clicked",
-                                     QString("%1 was clicked").arg(viewLink->theModel()->value(item)));
+                                     QString("%1 was clicked").arg(viewLink->theModel()->value(id)));
         };
 
-        clientGrid->addSchema(makeRangeColumn(5), viewLink, makeLayoutLeft());
+        clientGrid->addSchema(makeRangeGridColumn(5), viewLink, makeLayoutLeft());
     }
 
     // progressbar example
     {
         auto modelProgress = QSharedPointer<ModelProgressCallback>::create();
-        modelProgress->getValueFunction = [](const ItemID& item)->float {
-            return float((item.row)%101)/100.f;
+        modelProgress->getValueFunction = [](ID id)->float {
+            return float((row(id))%101)/100.f;
         };
         auto viewProgress = QSharedPointer<ViewProgressContents>::create(modelProgress);
-        clientGrid->addSchema(makeRangeColumn(6), viewProgress, makeLayoutBackground());
+        clientGrid->addSchema(makeRangeGridColumn(6), viewProgress, makeLayoutBackground());
 
         auto viewProgressLabel = QSharedPointer<ViewProgressLabel>::create(modelProgress, ProgressLabelModePercent);
-        clientGrid->addSchema(makeRangeColumn(6), viewProgressLabel, makeLayoutClient());
+        clientGrid->addSchema(makeRangeGridColumn(6), viewProgressLabel, makeLayoutClient());
 
         auto viewProgressBox = QSharedPointer<ViewProgressBox>::create(modelProgress);
-        clientGrid->addSchema(makeRangeColumn(7), viewProgressBox, makeLayoutBackground());
+        clientGrid->addSchema(makeRangeGridColumn(7), viewProgressBox, makeLayoutBackground());
     }
 
     // color example
@@ -308,35 +309,35 @@ MainWindow::MainWindow(QWidget *parent) :
         m_colors = QSharedPointer<ModelStorageColumn<QColor>>::create(clientGrid->rows());
         for (ItemsIteratorGridByColumn it(*clientGrid, 8); it.isValid(); it.toNext())
         {
-            m_colors->setValue(it.item(), QColor(Qt::GlobalColor(rand()%20)));
+            m_colors->setValue(it.id(), QColor(Qt::GlobalColor(rand()%20)));
         }
 
         auto viewColor = QSharedPointer<ViewColor>::create(m_colors);
-        clientGrid->addSchema(makeRangeColumn(8), viewColor, makeLayoutSquareLeft());
+        clientGrid->addSchema(makeRangeGridColumn(8), viewColor, makeLayoutSquareLeft());
     }
 
     // color background color
     {
         auto modelColor = QSharedPointer<ModelColorCallback>::create();
-        modelColor->getValueFunction = [](const ItemID& item)->QColor {
-            int gradient = item.row * 255 / 99;
+        modelColor->getValueFunction = [](ID id)->QColor {
+            int gradient = row(id) * 255 / 99;
             return QColor(255, 0, 0, gradient);
         };
 
         auto viewColor = QSharedPointer<ViewColor>::create(modelColor, false, false);
         // insert view before selection
-        clientGrid->insertSchema(selectionViewIndex, makeRangeColumn(9), viewColor, makeLayoutBackground());
+        clientGrid->insertSchema(selectionViewIndex, makeRangeGridColumn(9), viewColor, makeLayoutBackground());
     }
 
     // numeric example
     {
         auto modelNumeric = QSharedPointer<ModelCallback<double>>::create();
-        modelNumeric->getValueFunction = [](const ItemID& item)->double {
-            return sin((double)item.row);
+        modelNumeric->getValueFunction = [](ID id)->double {
+            return sin((double)row(id));
         };
 
         auto viewText = QSharedPointer<ViewText>::create(QSharedPointer<ModelNumericText<double>>::create(modelNumeric));
-        clientGrid->addSchema(makeRangeColumn(10), viewText);
+        clientGrid->addSchema(makeRangeGridColumn(10), viewText);
         modelSorting->addSortingModel(10, modelNumeric);
     }
 
@@ -344,12 +345,12 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         auto traits = QSharedPointer<ColorEnumTraits>::create();
         auto modelEnumValues= QSharedPointer<ModelCallback<COLORS>>::create();
-        modelEnumValues->getValueFunction = [](const ItemID& item)->COLORS {
-            return COLORS(item.row%3);
+        modelEnumValues->getValueFunction = [](ID id)->COLORS {
+            return COLORS(row(id)%3);
         };
         auto modelEnum = QSharedPointer<ModelEnum<COLORS>>::create(traits, modelEnumValues);
         auto viewEnum = QSharedPointer<ViewEnumText<COLORS>>::create(modelEnum);
-        clientGrid->addSchema(makeRangeColumn(11), viewEnum);
+        clientGrid->addSchema(makeRangeGridColumn(11), viewEnum);
     }
 }
 
@@ -363,19 +364,19 @@ void MainWindow::on_pushButton_clicked()
     close();
 }
 
-QImage MainWindow::image(const Qi::ItemID& item) const
+QImage MainWindow::image(Qi::ID id) const
 {
-    return m_images[item.row%3];
+    return m_images[row(id)%3];
 }
 
-QPixmap MainWindow::pixmap(const Qi::ItemID& item) const
+QPixmap MainWindow::pixmap(Qi::ID id) const
 {
-    return m_pixmaps[item.row%3];
+    return m_pixmaps[row(id)%3];
 }
 
-bool MainWindow::pixmapTooltip(const Qi::ItemID& item, QString& text) const
+bool MainWindow::pixmapTooltip(ID id, QString& text) const
 {
-    int index = item.row%3;
+    int index = row(id)%3;
     switch (index)
     {
     case 0:

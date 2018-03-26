@@ -32,9 +32,9 @@ int calculateColumnFitWidth(const SpaceGrid& grid, int visibleColumn, const GuiC
 
     auto factory = grid.createCacheItemFactory();
     ViewSizeMode sizeMode = (grid.rowsVisibleCount() <= 1000) ? ViewSizeModeExact : ViewSizeModeFastAverage;
-    for (ItemID item(0, visibleColumn); item.row < grid.rowsVisibleCount(); ++item.row)
+    for (GridID id(0, visibleColumn); id.row < grid.rowsVisibleCount(); ++id.row)
     {
-        CacheItem cacheItem(factory->create(item));
+        CacheItem cacheItem(factory->create(ID(id)));
         cacheItem.validateCacheView(ctx);
         fitWidth = qMax(fitWidth, cacheItem.calculateItemSize(ctx, sizeMode).width());
     }
@@ -45,15 +45,15 @@ int calculateColumnFitWidth(const SpaceGrid& grid, int visibleColumn, const GuiC
 int calculateGridColumnFitWidth(const GridWidget& gridWidget, int columnsId, int visibleColumn)
 {
     int fitWidth = 0;
-    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(ItemID(0, columnsId)),
+    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(GridID(0, columnsId)),
                                                       visibleColumn,
                                                       gridWidget.guiContext()));
 
-    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(ItemID(1, columnsId)),
+    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(GridID(1, columnsId)),
                                                       visibleColumn,
                                                       gridWidget.guiContext()));
 
-    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(ItemID(2, columnsId)),
+    fitWidth = qMax(fitWidth, calculateColumnFitWidth(*gridWidget.subGrid(GridID(2, columnsId)),
                                                       visibleColumn,
                                                       gridWidget.guiContext()));
 
@@ -73,7 +73,7 @@ ColumnResizeModeInfo::ColumnResizeModeInfo()
 using namespace Impl;
 
 static const int ToleranceZone = 3;
-const ItemID GridColumnsResizer::clientID = Qi::clientID;
+const GridID GridColumnsResizer::clientID = Qi::clientID;
 
 GridColumnsResizer::GridColumnsResizer(GridWidget* gridWidget)
     : m_gridWidget(gridWidget)
@@ -103,20 +103,20 @@ GridColumnsResizer::~GridColumnsResizer()
     }
 }
 
-void GridColumnsResizer::setColumnResizeModeNone(int column, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeNone(int column, GridID subGridId)
 {
     auto& info = m_columns[subGridId.column][column];
     info.mode = ColumnResizeModeNone;
 }
 
-void GridColumnsResizer::setColumnResizeModeFit(int column, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeFit(int column, GridID subGridId)
 {
     auto& info = m_columns[subGridId.column][column];
     info.mode = ColumnResizeModeFit;
     info.param.fitSizeCache = FitSizeCacheInvalid;
 }
 
-void GridColumnsResizer::setColumnResizeModeFixed(int column, int size, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeFixed(int column, int size, GridID subGridId)
 {
     Q_ASSERT(size >= 0);
 
@@ -125,7 +125,7 @@ void GridColumnsResizer::setColumnResizeModeFixed(int column, int size, const It
     info.param.fixedSize = size;
 }
 
-void GridColumnsResizer::setColumnResizeModeFraction(int column, float fraction, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeFraction(int column, float fraction, GridID subGridId)
 {
     Q_ASSERT(fraction >= 0);
 
@@ -134,7 +134,7 @@ void GridColumnsResizer::setColumnResizeModeFraction(int column, float fraction,
     info.param.fraction = fraction;
 }
 
-void GridColumnsResizer::setColumnResizeModeFractionN(int column, float fractionN, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeFractionN(int column, float fractionN, GridID subGridId)
 {
     Q_ASSERT(fractionN >= 0);
 
@@ -143,13 +143,13 @@ void GridColumnsResizer::setColumnResizeModeFractionN(int column, float fraction
     info.param.fractionN = fractionN;
 }
 
-void GridColumnsResizer::setColumnResizeModeResidue(int column, const ItemID& subGridId)
+void GridColumnsResizer::setColumnResizeModeResidue(int column, GridID subGridId)
 {
     auto& info = m_columns[subGridId.column][column];
     info.mode = ColumnResizeModeResidue;
 }
 
-void GridColumnsResizer::setAllColumnResizeModeFit(const ItemID& subGridId)
+void GridColumnsResizer::setAllColumnResizeModeFit(GridID subGridId)
 {
     for (auto& info : m_columns[subGridId.column])
     {
@@ -686,9 +686,9 @@ ControllerMouseColumnsAutoFit::ControllerMouseColumnsAutoFit(GridWidget* gridWid
 
 bool ControllerMouseColumnsAutoFit::processLButtonDblClick(QMouseEvent* /*event*/)
 {
-    int fitWidth = calculateGridColumnFitWidth(*m_gridWidget, m_columnsID, activationState().visibleItem().column);
+    int fitWidth = calculateGridColumnFitWidth(*m_gridWidget, m_columnsID, column(activationState().visibleId()));
     if (fitWidth > 0)
-        m_gridWidget->columns(m_columnsID)->setLineSize(activationState().item.column, fitWidth);
+        m_gridWidget->columns(m_columnsID)->setLineSize(column(activationState().id), fitWidth);
     return true;
 }
 

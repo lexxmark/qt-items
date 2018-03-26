@@ -38,16 +38,16 @@ public:
     virtual ~Space();
 
     virtual QSize size() const = 0;
-    virtual ItemID toAbsolute(const ItemID& visibleItem) const = 0;
-    virtual ItemID toVisible(const ItemID& absoluteItem) const = 0;
-    virtual QRect itemRect(const ItemID& visibleItem) const = 0;
+    virtual ID toAbsolute(ID visibleItem) const = 0;
+    virtual ID toVisible(ID absoluteItem) const = 0;
+    virtual QRect itemRect(ID visibleItem) const = 0;
     virtual QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const = 0;
 
     const QVector<ItemSchema>& schemas() const { return m_schemas; }
     int addSchema(const ItemSchema& schema);
-    int addSchema(const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout = makeLayoutClient()) { return addSchema(ItemSchema(range, layout, view)); }
-    int insertSchema(int index, const QSharedPointer<Range>& range, const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout = makeLayoutClient());
-    void removeSchema(const QSharedPointer<View>& view);
+    int addSchema(QSharedPointer<Range> range, QSharedPointer<View> view, QSharedPointer<Layout> layout = makeLayoutClient()) { return addSchema(ItemSchema(range, layout, view)); }
+    int insertSchema(int index, QSharedPointer<Range> range, QSharedPointer<View> view, QSharedPointer<Layout> layout = makeLayoutClient());
+    void removeSchema(QSharedPointer<View> view);
     void clearSchemas();
 
     ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }

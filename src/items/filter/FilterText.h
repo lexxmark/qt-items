@@ -18,7 +18,7 @@
 #define QI_FILTER_TEXT_H
 
 #include "Filter.h"
-#include "space/Lines.h"
+#include "space/grid/Lines.h"
 #include "items/text/Text.h"
 
 namespace Qi
@@ -81,7 +81,7 @@ public:
     ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText);
 
 protected:
-    bool isItemPassFilterImpl(const ItemID& item) const override;
+    bool isItemPassFilterImpl(ID id) const override;
 
 private:
     QSharedPointer<ModelText> m_modelText;

@@ -15,14 +15,15 @@
 */
 
 #include "Selection.h"
-#include "cache/space/CacheSpaceGrid.h"
+#include "space/grid/CacheSpaceGrid.h"
+#include "space/grid/RangeGrid.h"
 #include "widgets/core/SpaceWidgetCore.h"
 #include <QStyleOptionViewItem>
 
 namespace Qi
 {
 
-ModelSelection::ModelSelection(const QSharedPointer<Space>& space)
+ModelSelection::ModelSelection(QSharedPointer<SpaceGrid> space)
     : m_space(space),
       m_selectionOperations(0)
 {
@@ -34,19 +35,19 @@ ModelSelection::~ModelSelection()
     Q_ASSERT(m_selectionOperations == 0);
 }
 
-bool ModelSelection::isVisibleItemSelected(const ItemID& visibleItem) const
+bool ModelSelection::isVisibleItemSelected(GridID visibleId) const
 {
-    if (!visibleItem.isValid())
+    if (!visibleId.isValid())
         return false;
 
     if (!m_space)
         return false;
 
-    ItemID absItem = m_space.data()->toAbsolute(visibleItem);
-    if (!absItem.isValid())
+    auto absId = m_space.data()->toGridAbsolute(visibleId);
+    if (!absId.isValid())
         return false;
 
-    return isItemSelected(absItem);
+    return isItemSelected(absId);
 }
 
 void ModelSelection::addSelection(const QSharedPointer<Range>& range, bool exclude)
@@ -74,27 +75,27 @@ void ModelSelection::applySelection(const RangeSelection& selection)
     emitChangedSignals(ChangeReasonSelection);
 }
 
-ItemID ModelSelection::activeVisibleItem() const
+GridID ModelSelection::activeVisibleId() const
 {
-    return m_space ? m_space.data()->toVisible(m_activeItem) : ItemID();
+    return m_space ? m_space.data()->toGridVisible(m_activeId) : GridID();
 }
 
-void ModelSelection::setActiveItem(const ItemID& item)
+void ModelSelection::setActiveId(GridID id)
 {
-    if (m_activeItem != item)
+    if (m_activeId != id)
     {
-        m_activeItem = item;
+        m_activeId = id;
         emitChangedSignals(ChangeReasonActiveItem);
     }
 }
 
-void ModelSelection::setActiveVisibleItem(const ItemID& visibleItem)
+void ModelSelection::setActiveVisibleId(GridID visibleId)
 {
     Q_ASSERT(m_space);
     if (!m_space)
         return;
 
-    setActiveItem(m_space.data()->toAbsolute(visibleItem));
+    setActiveId(m_space.data()->toGridAbsolute(visibleId));
 }
 
 void ModelSelection::startSelectionOperation()
@@ -118,9 +119,9 @@ void ModelSelection::stopSelectionOperation()
     }
 }
 
-int ModelSelection::compareImpl(const ItemID &left, const ItemID &right) const
+int ModelSelection::compareImpl(ID left, ID right) const
 {
-    return (int)isItemSelected(left) - (int)isItemSelected(right);
+    return (int)isItemSelected(left.as<GridID>()) - (int)isItemSelected(right.as<GridID>());
 }
 
 void ModelSelection::emitChangedSignals(ChangeReason changeReason)
@@ -132,14 +133,19 @@ void ModelSelection::emitChangedSignals(ChangeReason changeReason)
     stopSelectionOperation();
 }
 
+bool ModelSelectionRows::isRowSelected(int row) const
+{
+    return m_selection.hasItem(makeID<GridID>(row, InvalidIndex));
+}
+
 void ModelSelectionRows::selectRows(const QSet<int>& rows)
 {
-    setSelection(QSharedPointer<RangeRows>::create(rows));
+    setSelection(QSharedPointer<RangeGridRows>::create(rows));
 }
 
 void ModelSelectionColumns::selectColumns(const QSet<int>& columns)
 {
-    setSelection(QSharedPointer<RangeColumns>::create(columns));
+    setSelection(QSharedPointer<RangeGridColumns>::create(columns));
 }
 
 ViewSelectionClient::ViewSelectionClient(const QSharedPointer<ModelSelection>& model, bool useDefaultController)
@@ -163,20 +169,21 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     m_painterState.save(painter);
 
     auto style = ctx.style();
+    auto id = cache.id.as<GridID>();
 
     // cannot use drawPrimitive(QStyle::PE_PanelItemViewItem) from QWindowsVistaStyle class
     if (style->inherits("QWindowsVistaStyle"))
     {
         QPalette::ColorGroup cg = ctx.colorGroup();
 
-        if (theModel()->isItemSelected(cache.item))
+        if (theModel()->isItemSelected(id))
         {
             painter->setPen(ctx.widget->palette().color(cg, QPalette::HighlightedText));
             painter->fillRect(cache.cacheView.rect(), ctx.widget->palette().brush(cg, QPalette::Highlight));
         }
 
         // draw focus rect for active item
-        if ((cg == QPalette::Active) && (theModel()->activeItem() == cache.item))
+        if ((cg == QPalette::Active) && (theModel()->activeId() == id))
         {
             QStyleOptionFocusRect focusOption;
             ctx.initStyleOption(focusOption);
@@ -194,7 +201,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     option.widget = ctx.widget;
     option.showDecorationSelected = true;
 
-    if (theModel()->isItemSelected(cache.item))
+    if (theModel()->isItemSelected(id))
     {
         option.state |= QStyle::State_Selected;
         painter->setPen(ctx.widget->palette().highlightedText().color());
@@ -203,7 +210,7 @@ void ViewSelectionClient::drawImpl(QPainter* painter, const GuiContext& ctx, con
     }
 
     // draw focus rect for active item
-    if (theModel()->activeItem() == cache.item)
+    if (theModel()->activeId() == id)
     {
         QStyleOptionFocusRect focusOption;
         focusOption.QStyleOption::operator=(option);
@@ -235,12 +242,13 @@ void ViewSelectionHeader::drawImpl(QPainter* painter, const GuiContext& ctx, con
 {
     QStyleOptionHeader option;
     ctx.initStyleOption(option);
-    option.state |= m_pushableTracker.styleStateByItem(cache.item);
+    option.state |= m_pushableTracker.styleStateByItem(cache.id);
     option.rect = cache.cacheView.rect();
 
-    ItemID activeItem = theModel()->activeItem();
-    if (    ((m_type == SelectionColumnsHeader) && (activeItem.row == cache.item.row)) ||
-            ((m_type == SelectionRowsHeader) && (activeItem.column == cache.item.column)))
+    auto activeId = theModel()->activeId();
+    auto id = cache.id.as<GridID>();
+    if (    ((m_type == SelectionColumnsHeader) && (activeId.row == id.row)) ||
+            ((m_type == SelectionRowsHeader) && (activeId.column == id.column)))
     {
         option.state |= QStyle::State_Sunken;
     }
@@ -271,16 +279,16 @@ void ControllerMouseSelectionClient::startCapturingImpl()
     m_model->startSelectionOperation();
 
     m_selection = m_model->selection();
-    m_startItem = activationState().visibleItem();
-    m_trackItem = m_startItem;
-    m_exclude = m_model->isItemSelected(activationState().item);
+    m_startId = activationState().visibleId().as<GridID>();
+    m_trackId = m_startId;
+    m_exclude = m_model->isItemSelected(activationState().id.as<GridID>());
 }
 
 void ControllerMouseSelectionClient::stopCapturingImpl()
 {
     m_selection.clear();
-    m_startItem = ItemID();
-    m_trackItem = ItemID();
+    m_startId = GridID();
+    m_trackId = GridID();
     m_exclude = false;
 
     m_model->stopSelectionOperation();
@@ -303,7 +311,7 @@ bool ControllerMouseSelectionClient::processLButtonDown(QMouseEvent* event)
     // from active item to the current item
     if (event->modifiers() & Qt::ShiftModifier)
     {
-        m_startItem = m_model->activeVisibleItem();
+        m_startId = m_model->activeVisibleId();
         applySelection(false);
     }
     else
@@ -327,7 +335,7 @@ bool ControllerMouseSelectionClient::processLButtonDblClick(QMouseEvent* event)
 
     if (event->modifiers() & Qt::ShiftModifier)
     {
-        m_startItem = m_model->activeVisibleItem();
+        m_startId = m_model->activeVisibleId();
         applySelection(false);
     }
     else
@@ -345,18 +353,18 @@ bool ControllerMouseSelectionClient::processMouseMove(QMouseEvent* event)
     if (isCapturing())
     {
         auto cacheSpaceGrid = qobject_cast<const CacheSpaceGrid*>(&activationState().cacheSpace);
-        ItemID itemUnderPoint = cacheSpaceGrid->visibleItemByPosition(activationState().context.point);
+        GridID itemUnderPoint = cacheSpaceGrid->visibleItemByPosition(activationState().context.point);
 
         if (!cacheSpaceGrid->isItemInFrameStrict(itemUnderPoint))
         {
             // user moved mouse out of frame => try to scroll
-            activationState().context.widgetCore->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
+            activationState().context.widgetCore->ensureVisible(ID(itemUnderPoint), cacheSpaceGrid, false);
         }
 
-        if (m_trackItem != itemUnderPoint)
+        if (m_trackId != itemUnderPoint)
         {
             // update selection if track item has changed
-            m_trackItem = itemUnderPoint;
+            m_trackId = itemUnderPoint;
             applySelection(false);
         }
     }
@@ -369,11 +377,11 @@ bool ControllerMouseSelectionClient::processContextMenu(QContextMenuEvent* /*eve
     if (isCapturing())
         return false;
 
-    ItemID item = activationState().item;
-    m_model->setActiveItem(item);
+    auto id = activationState().id.as<GridID>();
+    m_model->setActiveId(id);
 
-    if (!m_model->isItemSelected(item))
-        m_model->setSelection(makeRangeItem(item));
+    if (!m_model->isItemSelected(id))
+        m_model->setSelection(makeRangeID(ID(id)));
 
     return false;
 }
@@ -381,12 +389,12 @@ bool ControllerMouseSelectionClient::processContextMenu(QContextMenuEvent* /*eve
 void ControllerMouseSelectionClient::applySelection(bool makeStartItemAsActive)
 {
     // this should be more abstract
-    auto spaceGrid = qobject_cast<const SpaceGrid*>(&m_model->space());
+    auto spaceGrid = &m_model->space();
     Q_ASSERT(spaceGrid);
     if (!spaceGrid)
         return;
 
-    auto range = createItemRangeRect(*spaceGrid, m_startItem, m_trackItem);
+    auto range = makeRangeGridRect(*spaceGrid, m_startId, m_trackId);
     if (range)
     {
         // perform selection
@@ -395,7 +403,7 @@ void ControllerMouseSelectionClient::applySelection(bool makeStartItemAsActive)
 
         m_model->applySelection(selection);
         if (makeStartItemAsActive)
-            m_model->setActiveVisibleItem(m_startItem);
+            m_model->setActiveVisibleId(m_startId);
     }
 }
 
@@ -409,15 +417,15 @@ ControllerMouseSelectionHeader::ControllerMouseSelectionHeader(const QSharedPoin
     Q_ASSERT(m_model);
 }
 
-static int lineIndexByHeaderType(const ItemID& item, SelectionHeaderType type)
+static int lineIndexByHeaderType(GridID id, SelectionHeaderType type)
 {
     switch (type)
     {
     case SelectionRowsHeader:
-        return item.column;
+        return id.column;
 
     case SelectionColumnsHeader:
-        return item.row;
+        return id.row;
 
     default:
         Q_ASSERT(false);
@@ -433,7 +441,7 @@ void ControllerMouseSelectionHeader::startCapturingImpl()
 
     m_selection = m_model->selection();
     if (m_type != SelectionCornerHeader)
-        m_startLine = m_trackLine = lineIndexByHeaderType(activationState().visibleItem(), m_type);
+        m_startLine = m_trackLine = lineIndexByHeaderType(activationState().visibleId().as<GridID>(), m_type);
 }
 
 void ControllerMouseSelectionHeader::stopCapturingImpl()
@@ -456,7 +464,7 @@ bool ControllerMouseSelectionHeader::processLButtonDown(QMouseEvent* event)
 
     if ((event->modifiers() & Qt::ShiftModifier))
     {
-        m_startLine = lineIndexByHeaderType(m_model->activeVisibleItem(), m_type);
+        m_startLine = lineIndexByHeaderType(m_model->activeVisibleId(), m_type);
         applySelection(false);
     }
     else
@@ -472,12 +480,12 @@ bool ControllerMouseSelectionHeader::processMouseMove(QMouseEvent* /*event*/)
     if (isCapturing() && m_type != SelectionCornerHeader)
     {
         auto cacheSpaceGrid = qobject_cast<const CacheSpaceGrid*>(&activationState().cacheSpace);
-        ItemID itemUnderPoint = cacheSpaceGrid->visibleItemByPosition(activationState().context.point);
+        auto itemUnderPoint = cacheSpaceGrid->visibleItemByPosition(activationState().context.point);
 
         if (!cacheSpaceGrid->isItemInFrameStrict(itemUnderPoint))
         {
             // user moved mouse out of frame => try to scroll
-            activationState().context.widgetCore->ensureVisible(itemUnderPoint, cacheSpaceGrid, false);
+            activationState().context.widgetCore->ensureVisible(ID(itemUnderPoint), cacheSpaceGrid, false);
         }
 
         int lineUnderPoint = lineIndexByHeaderType(itemUnderPoint, m_type);
@@ -499,7 +507,7 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
         return;
 
     RangeSelection selection = m_selection;
-    ItemID activeItem = m_model->activeItem();
+    auto activeId = m_model->activeId();
     const auto& space = m_model->space();
 
     switch (m_type)
@@ -507,26 +515,26 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
     case SelectionColumnsHeader:
     {
         QSet<int> rows;
-        for (ItemID item(qMin(m_startLine, m_trackLine), 0); item.row <= qMax(m_startLine, m_trackLine); ++item.row)
+        for (GridID id(qMin(m_startLine, m_trackLine), 0); id.row <= qMax(m_startLine, m_trackLine); ++id.row)
         {
-            rows.insert(space.toAbsolute(item).row);
+            rows.insert(space.toGridAbsolute(id).row);
         }
 
-        selection.addRange(makeRangeRows(rows), false);
-        activeItem.row = space.toAbsolute(ItemID(m_startLine, 0)).row;
+        selection.addRange(makeRangeGridRows(rows), false);
+        activeId.row = space.toGridAbsolute(GridID(m_startLine, 0)).row;
     }
         break;
 
     case SelectionRowsHeader:
     {
         QSet<int> columns;
-        for (ItemID item(0, qMin(m_startLine, m_trackLine)); item.column <= qMax(m_startLine, m_trackLine); ++item.column)
+        for (GridID id(0, qMin(m_startLine, m_trackLine)); id.column <= qMax(m_startLine, m_trackLine); ++id.column)
         {
-            columns.insert(space.toAbsolute(item).column);
+            columns.insert(space.toGridAbsolute(id).column);
         }
 
-        selection.addRange(makeRangeColumns(columns), false);
-        activeItem.column = space.toAbsolute(ItemID(0, m_startLine)).column;
+        selection.addRange(makeRangeGridColumns(columns), false);
+        activeId.column = space.toGridAbsolute(GridID(0, m_startLine)).column;
     }
         break;
 
@@ -540,9 +548,9 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
 
     m_model->applySelection(selection);
 
-    if (makeStartItemAsActive && activeItem.isValid())
+    if (makeStartItemAsActive && activeId.isValid())
     {
-        m_model->setActiveItem(activeItem);
+        m_model->setActiveId(activeId);
     }
 }
 
@@ -571,7 +579,7 @@ ControllerKeyboardSelection::ControllerKeyboardSelection(const QSharedPointer<Mo
     Q_ASSERT(m_widgetCore);
     Q_ASSERT(&m_cacheSpace->space() == &m_model->space());
 
-    m_trackItem = m_model->activeItem();
+    m_trackId = m_model->activeId();
 
     connect(m_model.data(), &ModelSelection::selectionChanged, this, &ControllerKeyboardSelection::onSelectionChanged);
 }
@@ -593,14 +601,14 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
         m_model->startSelectionOperation();
     m_pressedKeys.insert(event->key());
 
-    ItemID trackVisibleItem(0, 0);
+    GridID trackVisibleId(0, 0);
 
-    if (m_trackItem.isValid())
+    if (m_trackId.isValid())
     {
-        trackVisibleItem = m_model->space().toVisible(m_trackItem);
+        trackVisibleId = m_model->space().toGridVisible(m_trackId);
         // if invisible - let start from beginning
-        if (!trackVisibleItem.isValid())
-            trackVisibleItem = ItemID(0, 0);
+        if (!trackVisibleId.isValid())
+            trackVisibleId = GridID(0, 0);
     }
 
     const auto& rows = spaceGrid->rows();
@@ -614,42 +622,42 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
     {
     case Qt::Key_Home:
     {
-        rowOffset = 0 - trackVisibleItem.row;
+        rowOffset = 0 - trackVisibleId.row;
     } break;
 
     case Qt::Key_End:
     {
-        rowOffset = (rows->visibleCount() - 1) - trackVisibleItem.row;
+        rowOffset = (rows->visibleCount() - 1) - trackVisibleId.row;
     } break;
 
     case Qt::Key_PageUp:
     {
-        rowOffset = -qMin(10, trackVisibleItem.row - 0);
+        rowOffset = -qMin(10, trackVisibleId.row - 0);
     } break;
 
     case Qt::Key_PageDown:
     {
-        rowOffset = qMin(10, (rows->visibleCount() - 1) - trackVisibleItem.row);
+        rowOffset = qMin(10, (rows->visibleCount() - 1) - trackVisibleId.row);
     } break;
 
     case Qt::Key_Up:
     {
-        rowOffset = -qMin(1, trackVisibleItem.row - 0);
+        rowOffset = -qMin(1, trackVisibleId.row - 0);
     } break;
 
     case Qt::Key_Down:
     {
-        rowOffset = qMin(1, (rows->visibleCount() - 1) - trackVisibleItem.row);
+        rowOffset = qMin(1, (rows->visibleCount() - 1) - trackVisibleId.row);
     } break;
 
     case Qt::Key_Left:
     {
-        columnOffset = -qMin(1, trackVisibleItem.column - 0);
+        columnOffset = -qMin(1, trackVisibleId.column - 0);
     } break;
 
     case Qt::Key_Right:
     {
-        columnOffset = qMin(1, (columns->visibleCount() - 1) - trackVisibleItem.column);
+        columnOffset = qMin(1, (columns->visibleCount() - 1) - trackVisibleId.column);
     } break;
 
     case 'a':
@@ -670,7 +678,7 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
     {
         if (event->modifiers() & Qt::ControlModifier)
         {
-            m_model->addSelection(makeRangeItem(m_model->activeItem()), m_model->isItemSelected(m_model->activeItem()));
+            m_model->addSelection(makeRangeID(ID(m_model->activeId())), m_model->isItemSelected(m_model->activeId()));
         }
         else
         {
@@ -684,7 +692,7 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
 
     if (rowOffset != 0 || columnOffset != 0)
     {
-        trackVisibleItem = ItemID(trackVisibleItem.row + rowOffset, trackVisibleItem.column + columnOffset);
+        trackVisibleId = GridID(trackVisibleId.row + rowOffset, trackVisibleId.column + columnOffset);
 
         if (event->modifiers() & Qt::ShiftModifier)
         {
@@ -694,32 +702,32 @@ bool ControllerKeyboardSelection::processKeyPress(QKeyEvent* event)
             }
 
             RangeSelection selection(m_selection);
-            selection.addRange(createItemRangeRect(*spaceGrid, m_model->activeVisibleItem(), trackVisibleItem), false);
+            selection.addRange(makeRangeGridRect(*spaceGrid, m_model->activeVisibleId(), trackVisibleId), false);
             m_model->applySelection(selection);
         }
         else if (event->modifiers() & Qt::ControlModifier)
         {
-            m_model->setActiveVisibleItem(trackVisibleItem);
+            m_model->setActiveVisibleId(trackVisibleId);
         }
         else
         {
-            m_model->setActiveVisibleItem(trackVisibleItem);
-            m_model->setSelection(makeRangeItem(m_model->activeItem()));
+            m_model->setActiveVisibleId(trackVisibleId);
+            m_model->setSelection(makeRangeID(ID(m_model->activeId())));
         }
 
-        m_widgetCore->ensureVisible(trackVisibleItem, m_cacheSpace, false);
+        m_widgetCore->ensureVisible(ID(trackVisibleId), m_cacheSpace, false);
 
-        m_trackItem = spaceGrid->toAbsolute(trackVisibleItem);
+        m_trackId = spaceGrid->toGridAbsolute(trackVisibleId);
 
         return true;
     }
     else if (!eventIsProcessed)
     {
-        ItemID activeVisibleItem = m_model->activeVisibleItem();
-        if (activeVisibleItem.isValid())
+        auto activeVisibleId = m_model->activeVisibleId();
+        if (activeVisibleId.isValid())
         {
             // try to perform edit by keyboard on active cell
-            return m_widgetCore->doInplaceEdit(activeVisibleItem, m_cacheSpace, event);
+            return m_widgetCore->doInplaceEdit(ID(activeVisibleId), m_cacheSpace, event);
         }
     }
 
@@ -740,11 +748,11 @@ bool ControllerKeyboardSelection::processKeyRelease(QKeyEvent* event)
         }
     }
 
-    ItemID activeVisibleItem = m_model->activeVisibleItem();
-    if (activeVisibleItem.isValid())
+    auto activeVisibleId = m_model->activeVisibleId();
+    if (activeVisibleId.isValid())
     {
         // try to perform edit by keyboard on active cell
-        return m_widgetCore->doInplaceEdit(activeVisibleItem, m_cacheSpace, event);
+        return m_widgetCore->doInplaceEdit(ID(activeVisibleId), m_cacheSpace, event);
     }
 
     return false;
@@ -774,7 +782,7 @@ void ControllerKeyboardSelection::onSelectionChanged(const ModelSelection*, Mode
 {
     if (reason & ModelSelection::ChangeReasonActiveItem)
     {
-        m_trackItem = m_model->activeItem();
+        m_trackId = m_model->activeId();
         m_selection.clear();
     }
 }

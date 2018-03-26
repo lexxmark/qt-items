@@ -37,7 +37,7 @@ protected:
     bool event(QEvent* event) override;
 
     // SpaceWidgetCore implementation
-    void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
+    void ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
 };
 
 } // end namespace Qi

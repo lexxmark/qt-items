@@ -17,7 +17,7 @@
 #ifndef QI_MODEL_H
 #define QI_MODEL_H
 
-#include "ItemID.h"
+#include "ID.h"
 
 namespace Qi
 {
@@ -48,12 +48,16 @@ protected:
 public:
     virtual ~ModelComparable();
 
-    int compare(const ItemID& left, const ItemID& right) const { return compareImpl(left, right); }
-    bool isAscendingDefault(const ItemID& item) const { return isAscendingDefaultImpl(item); }
+    int compare(ID left, ID right) const { return compareImpl(left, right); }
+
+    template<typename T>
+    int compareAs(T left, T right) const { return compare(ID(left), ID(right)); }
+
+    bool isAscendingDefault(ID item) const { return isAscendingDefaultImpl(item); }
 
 protected:
-    virtual int compareImpl(const ItemID& left, const ItemID& right) const = 0;
-    virtual bool isAscendingDefaultImpl(const ItemID& /*item*/) const { return true; }
+    virtual int compareImpl(ID left, ID right) const = 0;
+    virtual bool isAscendingDefaultImpl(ID /*item*/) const { return true; }
 };
 
 } // end namespace Qi

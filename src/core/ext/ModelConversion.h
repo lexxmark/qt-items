@@ -38,7 +38,7 @@ public:
     std::function<Source_t(Target_t)> t2sFunction;
 
 protected:
-    int compareImpl(const ItemID& left, const ItemID& right) const override
+    int compareImpl(const ID& left, const ID& right) const override
     {
         if (m_compareBySource)
             return m_sourceModel->compare(left, right);
@@ -46,7 +46,7 @@ protected:
             return ModelTyped<Target_t>::compareImpl(left, right);
     }
 
-    bool isAscendingDefaultImpl(const ItemID& item) const override
+    bool isAscendingDefaultImpl(ID id) const override
     {
         if (m_compareBySource)
             return m_sourceModel->isAscendingDefault(item);
@@ -54,12 +54,12 @@ protected:
             return ModelTyped<Target_t>::isAscendingDefaultImpl(item);
     }
 
-    Target_t valueImpl(const ItemID& item) const override
+    Target_t valueImpl(ID id) const override
     {
         return s2tFunction(m_sourceModel->value(item));
     }
 
-    bool setValueImpl(const ItemID& item, Target_t value) override
+    bool setValueImpl(ID id, Target_t value) override
     {
         if (t2sFunction)
             return m_sourceModel->setValue(item, t2sFunction(value));
@@ -67,7 +67,7 @@ protected:
             return false;
     }
 
-    bool setValueMultipleImpl(ItemsIterator& itemsIterator, ValueType_t value) override
+    bool setValueMultipleImpl(IdIterator& itemsIterator, ValueType_t value) override
     {
         if (t2sFunction)
             return m_sourceModel->setValueMultiple(itemsIterator, t2sFunction(value));

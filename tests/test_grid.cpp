@@ -1,6 +1,6 @@
 #include "test_grid.h"
 #include "test_item_id.h"
-#include "space/SpaceGrid.h"
+#include "space/grid/SpaceGrid.h"
 #include "SignalSpy.h"
 #include <QtTest/QtTest>
 
@@ -38,9 +38,9 @@ void TestGrid::test()
     grid.rows().setAllLinesSize(50);
     grid.columns().setAllLinesSize(50);
     QCOMPARE(grid.size(), QSize(600, 600));
-    QCOMPARE(grid.findVisItem(QPoint(-2, -2)), ItemID(0, 0));
-    QCOMPARE(grid.findVisItem(QPoint(-2, 3)), ItemID(0, 0));
-    QCOMPARE(grid.findVisItem(QPoint(-2, 53)), ItemID(1, 0));
+    QCOMPARE(grid.findVisItem(QPoint(-2, -2)), ID(0, 0));
+    QCOMPARE(grid.findVisItem(QPoint(-2, 3)), ID(0, 0));
+    QCOMPARE(grid.findVisItem(QPoint(-2, 53)), ID(1, 0));
     
     Lines& rows = grid.rows();
     
@@ -108,34 +108,34 @@ void TestGrid::test()
     QCOMPARE(grid.size(), QSize(143, 136));
     
     QCOMPARE(grid.visibleDim(), QSize(6, 9));
-    QCOMPARE(grid.toVisible(ItemID(0, 0)), ItemID(2, Invalid));
-    QCOMPARE(grid.toVisible(ItemID(1, 3)), ItemID(4, 4));
-    QCOMPARE(grid.toVisible(ItemID(4, 2)), ItemID(8, 5));
-    QCOMPARE(grid.toVisible(ItemID(6, 6)), ItemID());
-    QCOMPARE(grid.toVisibleSafe(ItemID(18, 62)), ItemID());
+    QCOMPARE(grid.toVisible(ID(0, 0)), ID(2, Invalid));
+    QCOMPARE(grid.toVisible(ID(1, 3)), ID(4, 4));
+    QCOMPARE(grid.toVisible(ID(4, 2)), ID(8, 5));
+    QCOMPARE(grid.toVisible(ID(6, 6)), ID());
+    QCOMPARE(grid.toVisibleSafe(ID(18, 62)), ID());
     
-    QCOMPARE(grid.toAbsolute(ItemID(0, 0)), ItemID(2, 9));
-    QCOMPARE(grid.toAbsolute(ItemID(1, 1)), ItemID(8, 8));
-    QCOMPARE(grid.toAbsolute(ItemID(8, 5)), ItemID(4, 2));
-    QCOMPARE(grid.toAbsoluteSafe(ItemID(12, 12)), ItemID());
+    QCOMPARE(grid.toAbsolute(ID(0, 0)), ID(2, 9));
+    QCOMPARE(grid.toAbsolute(ID(1, 1)), ID(8, 8));
+    QCOMPARE(grid.toAbsolute(ID(8, 5)), ID(4, 2));
+    QCOMPARE(grid.toAbsoluteSafe(ID(12, 12)), ID());
     
-    QCOMPARE(grid.findVisItemExact(QPoint(-1, -1)), ItemID());
-    QCOMPARE(grid.findVisItem(QPoint(-1, -1)), ItemID(0, 0));
-    QCOMPARE(grid.findVisItemExact(QPoint(-1, 40)), ItemID(2, Invalid));
-    QCOMPARE(grid.findVisItem(QPoint(-1, 40)), ItemID(2, 0));
-    QCOMPARE(grid.findVisItemExact(QPoint(40, -10)), ItemID(Invalid, 2));
-    QCOMPARE(grid.findVisItem(QPoint(40, -10)), ItemID(0, 2));
-    QCOMPARE(grid.findVisItemExact(QPoint(90, 110)), ItemID(7, 3));
-    QCOMPARE(grid.findVisItem(QPoint(90, 110)), ItemID(7, 3));
-    QCOMPARE(grid.findVisItemExact(QPoint(150, 80)), ItemID(4, Invalid));
-    QCOMPARE(grid.findVisItem(QPoint(150, 80)), ItemID(4, 5));
-    QCOMPARE(grid.findVisItemExact(QPoint(45, 150)), ItemID(Invalid, 2));
-    QCOMPARE(grid.findVisItem(QPoint(45, 150)), ItemID(8, 2));
-    QCOMPARE(grid.findVisItemExact(QPoint(145, 150)), ItemID());
-    QCOMPARE(grid.findVisItem(QPoint(145, 150)), ItemID(8, 5));
+    QCOMPARE(grid.findVisItemExact(QPoint(-1, -1)), ID());
+    QCOMPARE(grid.findVisItem(QPoint(-1, -1)), ID(0, 0));
+    QCOMPARE(grid.findVisItemExact(QPoint(-1, 40)), ID(2, Invalid));
+    QCOMPARE(grid.findVisItem(QPoint(-1, 40)), ID(2, 0));
+    QCOMPARE(grid.findVisItemExact(QPoint(40, -10)), ID(Invalid, 2));
+    QCOMPARE(grid.findVisItem(QPoint(40, -10)), ID(0, 2));
+    QCOMPARE(grid.findVisItemExact(QPoint(90, 110)), ID(7, 3));
+    QCOMPARE(grid.findVisItem(QPoint(90, 110)), ID(7, 3));
+    QCOMPARE(grid.findVisItemExact(QPoint(150, 80)), ID(4, Invalid));
+    QCOMPARE(grid.findVisItem(QPoint(150, 80)), ID(4, 5));
+    QCOMPARE(grid.findVisItemExact(QPoint(45, 150)), ID(Invalid, 2));
+    QCOMPARE(grid.findVisItem(QPoint(45, 150)), ID(8, 2));
+    QCOMPARE(grid.findVisItemExact(QPoint(145, 150)), ID());
+    QCOMPARE(grid.findVisItem(QPoint(145, 150)), ID(8, 5));
     
     SpaceGrid grid2(grid.rowsPtr(), grid.columnsPtr());
-    QCOMPARE(grid2.findVisItem(QPoint(145, 150)), ItemID(8, 5));
+    QCOMPARE(grid2.findVisItem(QPoint(145, 150)), ID(8, 5));
     grid.rows().setCount(2);
     QCOMPARE(grid2.rows().count(), 2u);
 

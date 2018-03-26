@@ -39,7 +39,7 @@ class QI_EXPORT ControllerMousePushable: public ControllerMouseCaptured
 
 public:
     MousePushState pushState() const { return m_pushState; }
-    MousePushState pushStateByItem(const ItemID& item) const { return (item == activeItem()) ? pushState() : MousePushStateNone; }
+    MousePushState pushStateByItem(ID id) const;
     void setPushState(MousePushState pushState);
 
     bool processMouseMove(QMouseEvent* event) override;
@@ -69,8 +69,8 @@ public:
     PushableTracker(View* owner);
     ~PushableTracker();
 
-    MousePushState pushStateByItem(const ItemID& item) const;
-    QStyle::State styleStateByItem(const ItemID& item) const;
+    MousePushState pushStateByItem(ID id) const;
+    QStyle::State styleStateByItem(ID id) const;
 
 private:
     void onViewChanged(const View* view, ChangeReason changeReason);

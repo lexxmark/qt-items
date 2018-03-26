@@ -70,12 +70,12 @@ void View::draw(QPainter* painter, const GuiContext& ctx, const CacheContext& ca
         *showTooltip = true;
 }
 
-bool View::tooltipText(const ItemID& item, QString& text) const
+bool View::tooltipText(ID id, QString& text) const
 {
     if (tooltipTextCallback)
-        return tooltipTextCallback(item, text);
+        return tooltipTextCallback(id, text);
 
-    return tooltipTextImpl(item, text);
+    return tooltipTextImpl(id, text);
 }
 
 void View::emitViewChanged(ChangeReason reason)
@@ -83,15 +83,15 @@ void View::emitViewChanged(ChangeReason reason)
     emit viewChanged(this, reason);
 }
 
-void View::addViewImpl(const ItemID& /*item*/, QVector<const View*>& views) const
+void View::addViewImpl(ID /*id*/, QVector<const View*>& views) const
 {
     views.append(this);
 }
 
-CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
     QRect viewRect(0, 0, 0, 0);
-    if (!layout.doLayout(*this, ctx, item, ViewSizeModeExact, viewRect, itemRect, visibleItemRect))
+    if (!layout.doLayout(*this, ctx, id, ViewSizeModeExact, viewRect, itemRect, visibleItemRect))
         return nullptr;
 
     CacheView cacheView(&layout, this, viewRect);
@@ -99,7 +99,7 @@ CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, c
     return &cacheViews.back();
 }
 
-QSize View::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSizeMode /*sizeMode*/) const
+QSize View::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
 {
     // it should not be requested
     return QSize(0, 0);
@@ -107,7 +107,7 @@ QSize View::sizeImpl(const GuiContext& /*ctx*/, const ItemID& /*item*/, ViewSize
 
 void View::setTooltipText(const QString& text)
 {
-    tooltipTextCallback = [text] (const ItemID& /*item*/, QString& itemText) {
+    tooltipTextCallback = [text] (ID /*id*/, QString& itemText) {
         itemText = text;
         return true;
     };

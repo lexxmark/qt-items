@@ -17,7 +17,7 @@
 #ifndef QI_GRID_COLUMNS_RESIZER_H
 #define QI_GRID_COLUMNS_RESIZER_H
 
-#include "space/SpaceGrid.h"
+#include "space/grid/SpaceGrid.h"
 #include "core/ControllerMouse.h"
 
 namespace Qi
@@ -68,14 +68,14 @@ public:
     explicit GridColumnsResizer(GridWidget* gridWidget);
     virtual ~GridColumnsResizer();
 
-    void setColumnResizeModeNone(int column, const ItemID& subGridId = clientID);
-    void setColumnResizeModeFit(int column, const ItemID& subGridId = clientID);
-    void setColumnResizeModeFixed(int column, int size, const ItemID& subGridId = clientID);
-    void setColumnResizeModeFraction(int column, float fraction, const ItemID& subGridId = clientID);
-    void setColumnResizeModeFractionN(int column, float fractionN, const ItemID& subGridId = clientID);
-    void setColumnResizeModeResidue(int column, const ItemID& subGridId = clientID);
+    void setColumnResizeModeNone(int column, GridID subGridId = clientID);
+    void setColumnResizeModeFit(int column, GridID subGridId = clientID);
+    void setColumnResizeModeFixed(int column, int size, GridID subGridId = clientID);
+    void setColumnResizeModeFraction(int column, float fraction, GridID subGridId = clientID);
+    void setColumnResizeModeFractionN(int column, float fractionN, GridID subGridId = clientID);
+    void setColumnResizeModeResidue(int column, GridID subGridId = clientID);
 
-    void setAllColumnResizeModeFit(const ItemID& subGridId = clientID);
+    void setAllColumnResizeModeFit(GridID subGridId = clientID);
 
     int doResize();
     void doResizeLater();
@@ -93,7 +93,7 @@ private:
     QPointer<GridWidget> m_gridWidget;
     QVector<Impl::ColumnResizeModeInfo> m_columns[3];
 
-    static const ItemID clientID;
+    static const GridID clientID;
 };
 
 class QI_EXPORT ListColumnsResizer: public QObject

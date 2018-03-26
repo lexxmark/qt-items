@@ -45,7 +45,7 @@ protected:
     QSize viewportSizeHint() const override;
 
     // SpaceWidgetCore implementation
-    void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
+    void ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) override;
 
     void updateScrollbars();
     void invalidateCacheItemsLayout();

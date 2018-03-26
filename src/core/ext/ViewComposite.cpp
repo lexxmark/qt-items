@@ -48,18 +48,18 @@ void ViewComposite::setMargins(const QMargins& margins)
     }
 }
 
-void ViewComposite::addViewImpl(const ItemID& item, QVector<const View*>& views) const
+void ViewComposite::addViewImpl(ID id, QVector<const View*>& views) const
 {
-    View::addViewImpl(item, views);
+    View::addViewImpl(id, views);
     for (const auto& subView: m_subViews)
     {
-        subView.view->addView(item, views);
+        subView.view->addView(id, views);
     }
 }
 
-CacheView* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, const ItemID& item, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    CacheView* selfCacheView = View::addCacheViewImpl(layout, ctx, item, cacheViews, itemRect, visibleItemRect);
+    CacheView* selfCacheView = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     if (!selfCacheView)
         return selfCacheView;
 
@@ -67,13 +67,13 @@ CacheView* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContex
 
     for (const auto& subView: m_subViews)
     {
-        subView.view->addCacheView(*subView.layout, ctx, item, selfCacheView->rSubViews(), localRect, visibleItemRect);
+        subView.view->addCacheView(*subView.layout, ctx, id, selfCacheView->rSubViews(), localRect, visibleItemRect);
     }
 
     return selfCacheView;
 }
 
-QSize ViewComposite::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSizeMode sizeMode) const
+QSize ViewComposite::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
 {
     QSize size(0, 0);
 
@@ -81,7 +81,7 @@ QSize ViewComposite::sizeImpl(const GuiContext& ctx, const ItemID& item, ViewSiz
     for (int i = m_subViews.size() - 1; i >= 0; --i)
     {
         const auto& subView = m_subViews[i];
-        subView.layout->expandSize(*subView.view, ctx, item, sizeMode, size);
+        subView.layout->expandSize(*subView.view, ctx, id, sizeMode, size);
     }
 
     return QSize(size.width() + m_margins.left() + m_margins.right(),
@@ -92,7 +92,7 @@ void ViewComposite::drawImpl(QPainter* painter, const GuiContext& ctx, const Cac
 {
     for (const auto& subCacheView: cache.cacheView.subViews())
     {
-        subCacheView.draw(painter, ctx, cache.item, cache.itemRect, cache.visibleRect);
+        subCacheView.draw(painter, ctx, cache.id, cache.itemRect, cache.visibleRect);
     }
 
     // restore draw state in reversed order
@@ -100,7 +100,7 @@ void ViewComposite::drawImpl(QPainter* painter, const GuiContext& ctx, const Cac
     for (int i = subCacheViews.size() - 1; i >= 0; --i)
     {
         const auto& subCacheView = subCacheViews[i];
-        subCacheView.cleanupDraw(painter, ctx, cache.item, cache.itemRect, cache.visibleRect);
+        subCacheView.cleanupDraw(painter, ctx, cache.id, cache.itemRect, cache.visibleRect);
     }
 }
 /*
@@ -115,14 +115,14 @@ void ViewComposite::cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, co
     }
 }
 */
-bool ViewComposite::textImpl(const ItemID& item, QString& txt) const
+bool ViewComposite::textImpl(ID id, QString& txt) const
 {
     bool isAnySubText = false;
 
     for (const auto& subView: m_subViews)
     {
         QString subText;
-        if (subView.view->text(item, subText))
+        if (subView.view->text(id, subText))
         {
             isAnySubText = true;
             txt += subText;

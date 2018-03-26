@@ -15,8 +15,8 @@
 */
 
 #include "CacheControllerMouse.h"
+#include "space/CacheSpace.h"
 #include "cache/CacheItemFactory.h"
-#include "cache/space/CacheSpace.h"
 #include "widgets/core/SpaceWidgetCore.h"
 #include "utils/auto_value.h"
 #include <QDebug>
@@ -24,9 +24,9 @@
 namespace Qi
 {
 
-CacheControllerMouse::CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, const QSharedPointer<CacheSpace> &cacheSpace)
+CacheControllerMouse::CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, QSharedPointer<CacheSpace> cacheSpace)
     : ControllerContext(owner, widgetCore),
-      m_cacheSpaces(1, cacheSpace),
+      m_cacheSpaces(1, std::move(cacheSpace)),
       m_capturingController(nullptr),
       m_isStopped(false),
       m_isBusy(false)
@@ -41,10 +41,10 @@ CacheControllerMouse::~CacheControllerMouse()
     Q_ASSERT(m_activeControllers.isEmpty());
 }
 
-void CacheControllerMouse::addCacheSpace(const QSharedPointer<CacheSpace> &cacheSpace)
+void CacheControllerMouse::addCacheSpace(QSharedPointer<CacheSpace> cacheSpace)
 {
     clear();
-    m_cacheSpaces.append(cacheSpace);
+    m_cacheSpaces.append(std::move(cacheSpace));
 }
 
 void CacheControllerMouse::stop()
@@ -75,25 +75,25 @@ void CacheControllerMouse::clear()
     Q_ASSERT(!m_capturingController);
 }
 
-bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, const ItemID& visibleItem, const QKeyEvent* keyEvent, const View* view)
+bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View* view)
 {
     bool needEnsureVisible = false;
 
     QScopedPointer<CacheItem> newItem;
     // look up cacheItem in existing cache grid
-    CacheItem* cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
+    CacheItem* cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleId));
     if (!cacheItem)
     {
         // create temporary cache item
         needEnsureVisible = true;
         const auto& cacheItemFactory = cacheSpace.cacheItemFactory();
-        newItem.reset(new CacheItem(cacheItemFactory.create(visibleItem)));
+        newItem.reset(new CacheItem(cacheItemFactory.create(visibleId)));
         cacheItem = newItem.data();
     }
 
     QVector<const View*> itemViews;
     if (cacheItem->schema.view)
-        cacheItem->schema.view->addView(cacheItem->item, itemViews);
+        cacheItem->schema.view->addView(cacheItem->id, itemViews);
 
     // search for controller acceptable for edit
     for (auto itemView: itemViews)
@@ -104,14 +104,14 @@ bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, const Ite
         const auto& controller = itemView->controller();
         if (controller)
         {
-            if (!controller->acceptInplaceEdit(cacheItem->item, cacheSpace, keyEvent))
+            if (!controller->acceptInplaceEdit(cacheItem->id, cacheSpace, keyEvent))
                 continue;
 
             if (needEnsureVisible)
             {
-                widgetCore->ensureVisible(visibleItem, &cacheSpace, true);
+                widgetCore->ensureVisible(visibleId, &cacheSpace, true);
                 // get cache item from existing cache grid
-                cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleItem));
+                cacheItem = const_cast<CacheItem*>(cacheSpace.cacheItem(visibleId));
                 Q_ASSERT(cacheItem);
                 if (!cacheItem)
                     return false;
@@ -131,7 +131,7 @@ bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, const Ite
             if (!cacheView)
                 return false;
 
-            CacheContext cache(cacheItem->item, cacheItem->rect, *cacheView, &cacheSpace.window());
+            CacheContext cache(cacheItem->id, cacheItem->rect, *cacheView, &cacheSpace.window());
             // start edit
             controller->doInplaceEdit(m_activeControllers, *this, cache, cacheSpace, keyEvent);
             return true;
@@ -152,7 +152,7 @@ bool CacheControllerMouse::tooltipByPoint(const QPoint& point, TooltipInfo& tool
     return false;
 }
 
-void CacheControllerMouse::updatePosition(const QPoint& point)
+void CacheControllerMouse::updatePosition(QPoint point)
 {
     if (isStopped())
         return;

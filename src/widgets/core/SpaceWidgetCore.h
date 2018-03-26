@@ -28,7 +28,7 @@ class QKeyEvent;
 namespace Qi
 {
 
-class ItemID;
+class ID;
 class CacheSpace;
 class Space;
 class CacheControllerMouse;
@@ -50,9 +50,9 @@ public:
     void addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard);
 
     // scrolls widget to make visibleItem fully visible
-    void ensureVisible(const ItemID& visibleItem, const CacheSpace* cacheSpace, bool validateItem);
+    void ensureVisible(const ID& visibleItem, const CacheSpace* cacheSpace, bool validateItem);
     // performs inplace editing for visibleItem
-    bool doInplaceEdit(const ItemID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
+    bool doInplaceEdit(const ID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
 
     // context which used for draw operations
     const GuiContext& guiContext() const { return m_guiContext; }
@@ -71,7 +71,7 @@ protected:
     void resumeControllers();
 
     // scrolls widget to make visibleItem fully visible
-    virtual void ensureVisibleImpl(const ItemID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) = 0;
+    virtual void ensureVisibleImpl(const ID& visibleItem, const CacheSpace *cacheSpace, bool validateItem) = 0;
     // creates image of the widget
     virtual QPixmap createPixmapImpl() const;
 

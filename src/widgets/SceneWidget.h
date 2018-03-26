@@ -18,7 +18,7 @@
 #define QI_SCENE_WIDGET_H
 
 #include "QiAPI.h"
-#include "space/SpaceScene.h"
+#include "space/scene/SpaceScene.h"
 #include "core/SpaceWidgetScrollAbstract.h"
 
 namespace Qi

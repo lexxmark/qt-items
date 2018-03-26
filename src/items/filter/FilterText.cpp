@@ -88,12 +88,12 @@ void RowsFilterByText::setActive(bool isActive)
 
 bool RowsFilterByText::isLineVisibleImpl(int row) const
 {
-    for (ItemID item(row, 0); item.column < m_filterByColumn.size(); ++item.column)
+    for (GridID id(row, 0); id.column < m_filterByColumn.size(); ++id.column)
     {
-        if (m_filterByColumn[item.column].isNull())
+        if (m_filterByColumn[id.column].isNull())
             continue;
 
-        if (!m_filterByColumn[item.column]->isItemPassFilter(item))
+        if (!m_filterByColumn[id.column]->isItemPassFilter(ID(id)))
             return false;
     }
 
@@ -108,12 +108,12 @@ void RowsFilterByText::onFilterChanged(const ItemsFilter*)
 QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter)
 {
     auto modelFilterText = QSharedPointer<ModelTextCallback>::create();
-    modelFilterText->getValueFunction = [filter](const ItemID& item)->QString {
-        auto subFilter = filter->filterByColumn(item.column);
+    modelFilterText->getValueFunction = [filter](ID id)->QString {
+        auto subFilter = filter->filterByColumn(column(id));
         return subFilter.isNull() ? QString() : subFilter->filterText();
     };
-    modelFilterText->setValueFunction = [filter](const ItemID& item, QString value)->bool {
-        auto subFilter = filter->filterByColumn(item.column);
+    modelFilterText->setValueFunction = [filter](ID id, QString value)->bool {
+        auto subFilter = filter->filterByColumn(column(id));
         if (subFilter.isNull())
             return false;
 
@@ -121,17 +121,17 @@ QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByT
     };
 
     auto view = QSharedPointer<ViewTextOrHint>::create(modelFilterText);
-    view->isItemHint = [filter](const ItemID& item, const ModelText* sourceText) {
-        if (filter->filterByColumn(item.column).isNull()) return false;
+    view->isItemHint = [filter](ID id, const ModelText* sourceText) {
+        if (filter->filterByColumn(column(id)).isNull()) return false;
         if (!sourceText) return false;
-        return sourceText->value(item).isEmpty();
+        return sourceText->value(id).isEmpty();
     };
 
-    view->itemHintText = [](const ItemID&, const ModelText*)->QString {
+    view->itemHintText = [](const ID&, const ModelText*)->QString {
         return "<filter>";
     };
 
-    view->itemHintTooltipText = [](const ItemID&, const ModelText*, QString& text)->bool {
+    view->itemHintTooltipText = [](const ID&, const ModelText*, QString& text)->bool {
         text = "Enter text to filter";
         return true;
     };
@@ -151,12 +151,12 @@ ItemsFilterTextByText::ItemsFilterTextByText(const QSharedPointer<ModelText>& mo
     Q_ASSERT(modelText);
 }
 
-bool ItemsFilterTextByText::isItemPassFilterImpl(const ItemID& item) const
+bool ItemsFilterTextByText::isItemPassFilterImpl(ID id) const
 {
     if (isFilterTextEmpty())
         return true;
 
-    QString textValue = m_modelText->value(item);
+    QString textValue = m_modelText->value(id);
     return textValue.contains(filterText());
 }
 
