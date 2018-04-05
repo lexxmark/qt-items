@@ -21,9 +21,9 @@
 namespace Qi
 {
 
-CacheSpaceScene::CacheSpaceScene(const QSharedPointer<SpaceScene>& scene, ViewApplicationMask viewApplicationMask)
+CacheSpaceScene::CacheSpaceScene(SharedPtr<SpaceScene> scene, ViewApplicationMask viewApplicationMask)
     : CacheSpace(scene, viewApplicationMask),
-      m_scene(scene)
+      m_scene(std::move(scene))
 {
 }
 
@@ -59,14 +59,14 @@ void CacheSpaceScene::validateItemsCacheImpl() const
     int count = m_scene->count();
     auto it = m_items.begin();
 
-    QVector<QSharedPointer<CacheItem>> newItems;
+    QVector<SharedPtr<CacheItem>> newItems;
 
     for (int id(0); id < count; ++id)
     {
         if (!cacheRect.intersects(m_scene->itemRect(ID(id))))
             continue;
 
-        QSharedPointer<CacheItem> newItem;
+        SharedPtr<CacheItem> newItem;
         while ((it != m_items.end()) && (index((*it)->id) <= id))
         {
             if (index((*it)->id) == id)
@@ -98,7 +98,7 @@ void CacheSpaceScene::validateItemsCacheImpl() const
     m_itemsCacheInvalid = false;
 }
 
-bool CacheSpaceScene::forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+bool CacheSpaceScene::forEachCacheItemImpl(const std::function<bool(const SharedPtr<CacheItem>&)>& visitor) const
 {
     for (const auto& cacheItem : m_items)
     {

@@ -62,27 +62,27 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_scene = QSharedPointer<Qi::SpaceSceneElements>::create();
+    m_scene = makeShared<Qi::SpaceSceneElements>();
     ui->sceneWidget->initScene(m_scene);
 
-    auto root = QSharedPointer<SceneElementNode>::create(QRect(200, 10, 100, 100));
-    auto left = QSharedPointer<SceneElementNode>::create(QRect(100, 150, 100, 100));
-    auto right= QSharedPointer<SceneElementNode>::create(QRect(300, 150, 100, 100));
+    auto root = makeShared<SceneElementNode>(QRect(200, 10, 100, 100));
+    auto left = makeShared<SceneElementNode>(QRect(100, 150, 100, 100));
+    auto right= makeShared<SceneElementNode>(QRect(300, 150, 100, 100));
 
-    auto anchor1 = QSharedPointer<SceneElementAnchor>::create(root, HCenter|Bottom);
+    auto anchor1 = makeShared<SceneElementAnchor>(root, HCenter|Bottom);
 
-    auto anchor2 = QSharedPointer<SceneElementAnchor>::create(left, HCenter|Top);
-    m_scene->addElement(QSharedPointer<SceneElementConnection>::create(anchor1, anchor2));
+    auto anchor2 = makeShared<SceneElementAnchor>(left, HCenter|Top);
+    m_scene->addElement(makeShared<SceneElementConnection>(anchor1, anchor2));
 
-    anchor2 = QSharedPointer<SceneElementAnchor>::create(right, HCenter|Top);
-    m_scene->addElement(QSharedPointer<SceneElementConnection>::create(anchor1, anchor2));
+    anchor2 = makeShared<SceneElementAnchor>(right, HCenter|Top);
+    m_scene->addElement(makeShared<SceneElementConnection>(anchor1, anchor2));
 
     m_scene->addElement(right);
     m_scene->addElement(left);
     m_scene->addElement(root);
 
-    m_scene->addSchema(makeRangeByType(m_scene.data(), SceneElementTypeNode), QSharedPointer<ViewRect>::create(), makeLayoutBackground());
-    m_scene->addSchema(makeRangeByType(m_scene.data(), SceneElementTypeConnection), QSharedPointer<ViewLine>::create(), makeLayoutBackground());
+    m_scene->addSchema(makeRangeByType(m_scene.data(), SceneElementTypeNode), makeShared<ViewRect>(), makeLayoutBackground());
+    m_scene->addSchema(makeRangeByType(m_scene.data(), SceneElementTypeConnection), makeShared<ViewLine>(), makeLayoutBackground());
 }
 
 MainWindow::~MainWindow()

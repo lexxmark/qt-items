@@ -27,9 +27,9 @@ namespace Qi
 const int ToleranseZone = 3;
 const int MinLineSize = 5;
 
-ControllerMouseColumnsResizer::ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority)
+ControllerMouseColumnsResizer::ControllerMouseColumnsResizer(SharedPtr<Lines> columns, ControllerMousePriority priority)
     : ControllerMouseCaptured(priority),
-      m_columns(columns),
+      m_columns(std::move(columns)),
       m_delta(0),
       m_position(0),
       m_trackPosition(0),
@@ -117,9 +117,9 @@ void ControllerMouseColumnsResizer::applyImpl()
     m_columns->setLineSize(m_columnIndex, size);
 }
 
-ControllerMouseRowsResizer::ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority)
+ControllerMouseRowsResizer::ControllerMouseRowsResizer(SharedPtr<Lines> rows, ControllerMousePriority priority)
     : ControllerMouseCaptured(priority),
-      m_rows(rows),
+      m_rows(std::move(rows)),
       m_delta(0),
       m_position(0),
       m_trackPosition(0),

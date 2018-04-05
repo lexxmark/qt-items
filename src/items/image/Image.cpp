@@ -19,8 +19,8 @@
 namespace Qi
 {
 
-ViewImage::ViewImage(const QSharedPointer<ModelImage>& model)
-    : ViewModeled<ModelImage>(model)
+ViewImage::ViewImage(SharedPtr<ModelImage> model)
+    : ViewModeled<ModelImage>(std::move(model))
 {
 }
 

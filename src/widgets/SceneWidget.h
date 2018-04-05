@@ -35,14 +35,14 @@ public:
     explicit SceneWidget(QWidget *parent = nullptr);
     virtual ~SceneWidget();
 
-    const QSharedPointer<SpaceScene>& scene() const { return m_scene; }
-    void initScene(const QSharedPointer<SpaceScene>& scene);
+    const SharedPtr<SpaceScene>& scene() const { return m_scene; }
+    void initScene(SharedPtr<SpaceScene> scene);
 
-    const QSharedPointer<CacheSpaceScene>& cacheScene() const { return m_cacheScene;}
+    const SharedPtr<CacheSpaceScene>& cacheScene() const { return m_cacheScene;}
 
 private:
-    QSharedPointer<SpaceScene> m_scene;
-    QSharedPointer<CacheSpaceScene> m_cacheScene;
+    SharedPtr<SpaceScene> m_scene;
+    SharedPtr<CacheSpaceScene> m_cacheScene;
 };
 
 } // end namespace Qi

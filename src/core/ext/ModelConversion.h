@@ -27,7 +27,7 @@ template <typename Source_t, typename Target_t>
 class ModelConversion: public ModelTyped<Target_t>
 {
 public:
-    ModelConversion(const QSharedPointer<ModelTyped<Source_t>>& sourceModel, bool compareBySource = true)
+    ModelConversion(const makeShared<ModelTyped<Source_t>>& sourceModel, bool compareBySource = true)
         : m_sourceModel(sourceModel),
           m_compareBySource(compareBySource)
     {
@@ -76,7 +76,7 @@ protected:
     }
 
 private:
-    QSharedPointer<ModelTyped<Source_t>> m_sourceModel;
+    makeShared<ModelTyped<Source_t>> m_sourceModel;
     bool m_compareBySource;
 };
 

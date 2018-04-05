@@ -46,7 +46,7 @@ public:
     ID toAbsolute(ID visibleId) const override { return visibleId; }
     ID toVisible(ID absoluteId) const override { return absoluteId; }
     QRect itemRect(ID visibleId) const override { return elementRectImpl(index(visibleId)); }
-    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
+    SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     int itemType(int id) const { return elementTypeImpl(id); }
 
@@ -63,7 +63,7 @@ private:
     mutable QSize m_size;
 };
 
-QI_EXPORT QSharedPointer<Range> makeRangeByType(const SpaceScene* scene, int type);
+QI_EXPORT SharedPtr<Range> makeRangeByType(const SpaceScene* scene, int type);
 
 
 class SceneElement;
@@ -77,9 +77,9 @@ public:
     SpaceSceneElements(SpaceSceneHint hint = SpaceSceneHintNone);
     ~SpaceSceneElements();
 
-    void addElement(const QSharedPointer<SceneElement>& element);
+    void addElement(SharedPtr<SceneElement> element);
     void clearElements();
-    void setElements(const QVector<QSharedPointer<SceneElement>>& elements);
+    void setElements(QVector<SharedPtr<SceneElement> > elements);
 
 protected:
     int countImpl() const override { return m_elements.size(); }
@@ -87,7 +87,7 @@ protected:
     int elementTypeImpl(int id) const override;
 
 private:
-    QVector<QSharedPointer<SceneElement>> m_elements;
+    QVector<SharedPtr<SceneElement>> m_elements;
 };
 
 enum SceneElementType
@@ -165,7 +165,7 @@ class QI_EXPORT SceneElementAnchor: public SceneElementPoint
     Q_DISABLE_COPY(SceneElementAnchor)
 
 public:
-    SceneElementAnchor(const QSharedPointer<SceneElement>& sourceElement, Anchor anchor, int type = SceneElementTypeAnchor);
+    SceneElementAnchor(SharedPtr<SceneElement> sourceElement, Anchor anchor, int type = SceneElementTypeAnchor);
 
 protected:
     QRect rectImpl() const override;
@@ -173,7 +173,7 @@ protected:
     QPoint pointImpl() const override;
 
 private:
-    QSharedPointer<SceneElement> m_sourceElement;
+    SharedPtr<SceneElement> m_sourceElement;
     Anchor m_anchor;
     int m_type;
 };
@@ -183,15 +183,15 @@ class QI_EXPORT SceneElementConnection: public SceneElement
     Q_DISABLE_COPY(SceneElementConnection)
 
 public:
-    SceneElementConnection(const QSharedPointer<SceneElementPoint>& elementFrom, const QSharedPointer<SceneElementPoint>& elementTo, int type = SceneElementTypeConnection);
+    SceneElementConnection(SharedPtr<SceneElementPoint> elementFrom, SharedPtr<SceneElementPoint> elementTo, int type = SceneElementTypeConnection);
 
 protected:
     QRect rectImpl() const override;
     int typeImpl() const override { return m_type; }
 
 private:
-    QSharedPointer<SceneElementPoint> m_elementFrom;
-    QSharedPointer<SceneElementPoint> m_elementTo;
+    SharedPtr<SceneElementPoint> m_elementFrom;
+    SharedPtr<SceneElementPoint> m_elementTo;
     int m_type;
 };
 

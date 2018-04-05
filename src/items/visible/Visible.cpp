@@ -20,7 +20,7 @@
 namespace Qi
 {
 
-ViewVisible::ViewVisible(QSharedPointer<View> sourceView, bool reserveSize)
+ViewVisible::ViewVisible(SharedPtr<View> sourceView, bool reserveSize)
     : m_sourceView(std::move(sourceView)),
       m_reserveSize(reserveSize)
 {
@@ -76,8 +76,8 @@ void ViewVisible::onSourceViewChanged(const View* view, ChangeReason reason)
     emit viewChanged(this, reason);
 }
 
-ControllerMouseVisible::ControllerMouseVisible(const QSharedPointer<ViewVisible>& view)
-    : m_view(view)
+ControllerMouseVisible::ControllerMouseVisible(SharedPtr<ViewVisible> view)
+    : m_view(std::move(view))
 {
     Q_ASSERT(m_view);
 

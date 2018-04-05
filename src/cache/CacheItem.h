@@ -70,7 +70,7 @@ public:
 
 
 private:
-    QSharedPointer<CacheView> m_cacheView;
+    SharedPtr<CacheView> m_cacheView;
     bool m_isCacheViewValid;
     bool m_isAnyFloatView;
 };

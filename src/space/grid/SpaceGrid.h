@@ -42,7 +42,7 @@ class QI_EXPORT SpaceGrid: public Space
 
 public:
     SpaceGrid(SpaceGridHint hint = SpaceGridHintNone);
-    SpaceGrid(QSharedPointer<Lines> rows, QSharedPointer<Lines> columns, SpaceGridHint hint = SpaceGridHintNone);
+    SpaceGrid(SharedPtr<Lines> rows, SharedPtr<Lines> columns, SpaceGridHint hint = SpaceGridHintNone);
     ~SpaceGrid();
 
     SpaceGridHint hint() const { return m_hint; }
@@ -52,13 +52,13 @@ public:
     ID toAbsolute(ID visibleItem) const override { return ID(toGridAbsolute(visibleItem.as<GridID>())); }
     ID toVisible(ID absoluteItem) const override { return ID(toGridVisible(absoluteItem.as<GridID>())); }
     QRect itemRect(ID visibleItem) const override;
-    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
+    SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     bool isEmpty() const { return m_rows->isEmpty() || m_columns->isEmpty(); }
     bool isEmptyVisible() const { return m_rows->isEmptyVisible() || m_columns->isEmptyVisible(); }
 
-    const QSharedPointer<Lines>& rows() const { return m_rows; }
-    const QSharedPointer<Lines>& columns() const { return m_columns; }
+    const SharedPtr<Lines>& rows() const { return m_rows; }
+    const SharedPtr<Lines>& columns() const { return m_columns; }
 
     void setDimensions(int rows, int columns);
     void setRowsCount(int rows) { m_rows->setCount(rows); }
@@ -71,8 +71,8 @@ public:
     int rowsVisibleCount() const { return m_rows->visibleCount(); }
     int columnsVisibleCount() const { return m_columns->visibleCount(); }
 
-    void shareRows(const QSharedPointer<Lines>& rows);
-    void shareColumns(const QSharedPointer<Lines>& columns);
+    void shareRows(SharedPtr<Lines> rows);
+    void shareColumns(SharedPtr<Lines> columns);
 
     void unshareRows();
     void unshareColumns();
@@ -93,19 +93,19 @@ private slots:
     void onLinesChanged(const Lines* lines, ChangeReason reason);
 
 private:
-    void connectLines(const QSharedPointer<Lines>& lines);
-    void disconnectLines(const QSharedPointer<Lines>& lines);
+    void connectLines(const SharedPtr<Lines>& lines);
+    void disconnectLines(const SharedPtr<Lines>& lines);
 
     GridID trimItem(GridID item) const;
     GridID trimVisibleItem(GridID item) const;
 
-    QSharedPointer<Lines> m_rows;
-    QSharedPointer<Lines> m_columns;
+    SharedPtr<Lines> m_rows;
+    SharedPtr<Lines> m_columns;
 
     SpaceGridHint m_hint;
 };
 
-QI_EXPORT QSharedPointer<Range> makeRangeGridRect(const SpaceGrid& grid, GridID displayCorner1, GridID displayCorner2);
+QI_EXPORT SharedPtr<Range> makeRangeGridRect(const SpaceGrid& grid, GridID displayCorner1, GridID displayCorner2);
 
 class QI_EXPORT IdIteratorGrid: public IdIterator
 {

@@ -53,6 +53,7 @@ public:
         : m_data(other.m_data)
 #if defined(QI_CHECK_ID_TYPES)
           , m_type(other.m_type)
+          , m_typeName(other.m_typeName)
 #endif
     {
     }
@@ -62,6 +63,7 @@ public:
         : m_data(std::move(other.m_data))
 #if defined(QI_CHECK_ID_TYPES)
           , m_type(std::move(other.m_type))
+          , m_typeName(std::move(other.m_typeName))
 #endif
     {
     }
@@ -75,12 +77,15 @@ public:
 
     ID& operator=(const ID& other)
     {
+        CheckIDTypes(other);
+
         if (this != &other)
         {
             m_data = other.m_data;
 
 #if defined(QI_CHECK_ID_TYPES)
             m_type = other.m_type;
+            m_typeName= other.m_typeName;
 #endif
         }
         return *this;
@@ -88,12 +93,15 @@ public:
 
     ID& operator=(ID&& other)
     {
+        CheckIDTypes(other);
+
         if (this != &other)
         {
             m_data = std::move(other.m_data);
 
 #if defined(QI_CHECK_ID_TYPES)
             m_type = std::move(other.m_type);
+            m_typeName = std::move(other.m_typeName);
 #endif
         }
         return *this;
@@ -110,37 +118,39 @@ public:
     const T& as() const
     {
         CheckType<T>();
-
-#if defined(QI_CHECK_ID_TYPES)
-        Q_ASSERT(m_type && m_type->hash_code() == typeid(T).hash_code());
-#endif
         return *reinterpret_cast<const T*>(&m_data.front());
     }
 
     bool operator==(const ID& other) const
     {
-#if defined(QI_CHECK_ID_TYPES)
-        Q_ASSERT(m_type && other.m_type && m_type->hash_code() == other.m_type->hash_code());
-#endif
+        CheckIDTypes(other);
         return m_data == other.m_data;
     }
 
     bool operator!=(const ID& other) const
     {
-#if defined(QI_CHECK_ID_TYPES)
-        Q_ASSERT(m_type && other.m_type && m_type->hash_code() == other.m_type->hash_code());
-#endif
+        CheckIDTypes(other);
         return m_data != other.m_data;
     }
 
 protected:
     template <typename T>
-    static void CheckType()
+    void CheckType() const
     {
-        static_assert(sizeof(T) <= sizeof(ID), "Should be same size");
+        static_assert(sizeof(T) <= sizeof(ID), "Should fit in size");
         static_assert(std::is_standard_layout<T>::value, "Should be standard layout");
         static_assert(std::is_trivially_copyable<T>::value, "Should be trivial copyable");
         static_assert(std::is_trivially_destructible<T>::value, "Should be trivial destructable");
+#if defined(QI_CHECK_ID_TYPES)
+        Q_ASSERT(!m_type || m_type->hash_code() == typeid(T).hash_code());
+#endif
+    }
+
+    void CheckIDTypes(const ID& other) const
+    {
+#if defined(QI_CHECK_ID_TYPES)
+        Q_ASSERT(!m_type || !other.m_type || m_type->hash_code() == other.m_type->hash_code());
+#endif
     }
 
     template <typename T>
@@ -151,7 +161,16 @@ protected:
         std::memcpy(&m_data.front(), &other, sizeof(T));
 
 #if defined(QI_CHECK_ID_TYPES)
-       m_type = &typeid(T);
+        if (typeid(T).hash_code() != typeid(NoID).hash_code())
+        {
+            m_type = &typeid(T);
+            m_typeName = m_type->name();
+        }
+        else
+        {
+            m_type = nullptr;
+            m_typeName = nullptr;
+        }
 #endif
     }
 
@@ -160,6 +179,7 @@ private:
 
 #if defined(QI_CHECK_ID_TYPES)
     const std::type_info* m_type = nullptr;
+    const char* m_typeName = nullptr;
 #endif
 };
 

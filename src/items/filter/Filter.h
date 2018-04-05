@@ -33,21 +33,21 @@ class QI_EXPORT ItemsFilter: public QObject
 public:
     virtual ~ItemsFilter();
 
-    const QSharedPointer<Model>& modelToFilter() const { return m_modelToFilter; }
+    const SharedPtr<Model>& modelToFilter() const { return m_modelToFilter; }
     bool isItemPassFilter(ID id) const { return isItemPassFilterImpl(id); }
 
 signals:
     void filterChanged(const ItemsFilter*);
 
 protected:
-    ItemsFilter(const QSharedPointer<Model>& modelToFilter);
+    ItemsFilter(SharedPtr<Model> modelToFilter);
 
     virtual bool isItemPassFilterImpl(ID id) const = 0;
 
 private:
     void onModelToFilterChanged(const Model*);
 
-    QSharedPointer<Model> m_modelToFilter;
+    SharedPtr<Model> m_modelToFilter;
 };
 
 } // end namespace Qi

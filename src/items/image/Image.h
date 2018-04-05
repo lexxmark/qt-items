@@ -42,7 +42,7 @@ class QI_EXPORT ViewImage: public ViewModeled<ModelImage>
     Q_DISABLE_COPY(ViewImage)
 
 public:
-    ViewImage(const QSharedPointer<ModelImage>& model);
+    ViewImage(SharedPtr<ModelImage> model);
 
 protected:
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;

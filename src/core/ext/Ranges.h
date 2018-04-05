@@ -20,7 +20,6 @@
 #include "core/Range.h"
 #include <QSet>
 #include <QVector>
-#include <QSharedPointer>
 #include <functional>
 
 namespace Qi
@@ -54,7 +53,7 @@ public:
 
     bool isEmpty() const { return m_ranges.isEmpty(); }
     void clear();
-    void addRange(const QSharedPointer<Range>& range, bool exclude);
+    void addRange(SharedPtr<Range> range, bool exclude);
 
 protected:
     bool hasItemImpl(ID id) const override;
@@ -62,7 +61,7 @@ protected:
 private:
     struct RangeInfo
     {
-        QSharedPointer<Range> range;
+        SharedPtr<Range> range;
         bool exclude;
     };
 
@@ -79,7 +78,7 @@ public:
 protected:
     bool hasItemImpl(ID id) const override;
 };
-QI_EXPORT QSharedPointer<RangeNone> makeRangeNone();
+QI_EXPORT SharedPtr<RangeNone> makeRangeNone();
 
 class QI_EXPORT RangeAll: public Range
 {
@@ -91,7 +90,7 @@ public:
 protected:
     bool hasItemImpl(ID id) const override;
 };
-QI_EXPORT QSharedPointer<RangeAll> makeRangeAll();
+QI_EXPORT SharedPtr<RangeAll> makeRangeAll();
 
 class QI_EXPORT RangeID: public Range
 {
@@ -109,7 +108,7 @@ protected:
 private:
     ID m_id;
 };
-QI_EXPORT QSharedPointer<RangeID> makeRangeID(ID id);
+QI_EXPORT SharedPtr<RangeID> makeRangeID(ID id);
 
 } // end namespace Qi
 

@@ -20,7 +20,7 @@
 namespace Qi
 {
 
-ModelGridSortingBase::ModelGridSortingBase(QSharedPointer<SpaceGrid> grid)
+ModelGridSortingBase::ModelGridSortingBase(SharedPtr<SpaceGrid> grid)
     : m_grid(std::move(grid)),
       m_ascending(false),
       m_sortingExpired(false)
@@ -124,7 +124,7 @@ void ModelGridSortingBase::onSortingModelChanged(const Model* model)
     }
 }
 
-ModelGridSorting::ModelGridSorting(QSharedPointer<SpaceGrid> grid)
+ModelGridSorting::ModelGridSorting(SharedPtr<SpaceGrid> grid)
     : ModelGridSortingBase(std::move(grid))
 {
 }
@@ -134,20 +134,20 @@ ModelGridSorting::~ModelGridSorting()
     clear();
 }
 
-void ModelGridSorting::addSortingModel(GridID id, const QSharedPointer<ModelComparable>& model)
+void ModelGridSorting::addSortingModel(GridID id, SharedPtr<ModelComparable> model)
 {
     Q_ASSERT(model);
 
     if (!m_modelsToSort.contains(id))
     {
-        m_modelsToSort.insert(id, model);
         connectModel(model.data());
+        m_modelsToSort.insert(id, std::move(model));
     }
 }
 
-void ModelGridSorting::addSortingModel(int column, const QSharedPointer<ModelComparable>& model)
+void ModelGridSorting::addSortingModel(int column, SharedPtr<ModelComparable> model)
 {
-    addSortingModel(GridID(0, column), model);
+    addSortingModel(GridID(0, column), std::move(model));
 }
 
 void ModelGridSorting::clear()
@@ -160,16 +160,16 @@ void ModelGridSorting::clear()
     m_modelsToSort.clear();
 }
 
-QSharedPointer<ModelComparable> ModelGridSorting::sortingModelImpl(GridID id) const
+SharedPtr<ModelComparable> ModelGridSorting::sortingModelImpl(GridID id) const
 {
     auto it = m_modelsToSort.find(id);
     if (it == m_modelsToSort.end())
-        return QSharedPointer<ModelComparable>();
+        return nullptr;
 
     return it.value();
 }
 
-ModelGridSortingByRanges::ModelGridSortingByRanges(QSharedPointer<SpaceGrid> grid)
+ModelGridSortingByRanges::ModelGridSortingByRanges(SharedPtr<SpaceGrid> grid)
     : ModelGridSortingBase(std::move(grid))
 {
 }
@@ -179,13 +179,13 @@ ModelGridSortingByRanges::~ModelGridSortingByRanges()
     clear();
 }
 
-void ModelGridSortingByRanges::addSortingModel(const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range)
+void ModelGridSortingByRanges::addSortingModel(SharedPtr<ModelComparable> model, SharedPtr<Range> range)
 {
     Q_ASSERT(model);
 
-    SortingInfo info = { range, model };
-    m_modelsToSort.append(info);
     connectModel(model.data());
+    SortingInfo info = { std::move(range), std::move(model) };
+    m_modelsToSort.append(std::move(info));
 }
 
 void ModelGridSortingByRanges::clear()
@@ -198,7 +198,7 @@ void ModelGridSortingByRanges::clear()
     m_modelsToSort.clear();
 }
 
-QSharedPointer<ModelComparable> ModelGridSortingByRanges::sortingModelImpl(GridID id) const
+SharedPtr<ModelComparable> ModelGridSortingByRanges::sortingModelImpl(GridID id) const
 {
     for (const auto& info : m_modelsToSort)
     {
@@ -206,14 +206,14 @@ QSharedPointer<ModelComparable> ModelGridSortingByRanges::sortingModelImpl(GridI
             return info.model;
     }
 
-    return QSharedPointer<ModelComparable>();
+    return nullptr;
 }
 
 SortingHub::SortingHub()
 {
 }
 
-SortingHub::SortingHub(const QSharedPointer<ModelGridSortingBase>& sorting1, const QSharedPointer<ModelGridSortingBase>& sorting2)
+SortingHub::SortingHub(const SharedPtr<ModelGridSortingBase> &sorting1, const SharedPtr<ModelGridSortingBase> &sorting2)
 {
     addSorting(sorting1);
     addSorting(sorting2);
@@ -227,16 +227,16 @@ SortingHub::~SortingHub()
     }
 }
 
-void SortingHub::addSorting(const QSharedPointer<ModelGridSortingBase>& sorting)
+void SortingHub::addSorting(SharedPtr<ModelGridSortingBase> sorting)
 {
     Q_ASSERT(sorting);
 
     Info info;
-    info.sorting = sorting;
+    info.sorting = std::move(sorting);
     info.connection = QObject::connect(sorting.data(), &ModelGridSortingBase::didSortItems, [this] (const ModelGridSortingBase* activeSorting) {
         onDidSortItems(activeSorting);
     });
-    m_sortings.append(info);
+    m_sortings.append(std::move(info));
 }
 
 void SortingHub::clearActiveSortingId()
@@ -264,8 +264,8 @@ void SortingHub::onDidSortItems(const ModelGridSortingBase* activeSorting)
     }
 }
 
-RangeGridSorting::RangeGridSorting(const QSharedPointer<ModelGridSortingBase>& model, int row)
-    : m_model(model),
+RangeGridSorting::RangeGridSorting(SharedPtr<ModelGridSortingBase> model, int row)
+    : m_model(std::move(model)),
       m_row(row)
 {
     Q_ASSERT(m_model);
@@ -276,12 +276,12 @@ bool RangeGridSorting::hasItemImpl(ID id) const
     return m_row == row(id) && !m_model->sortingModel(id.as<GridID>()).isNull();
 }
 
-ViewGridSorting::ViewGridSorting(const QSharedPointer<ModelGridSortingBase>& model, bool useDefaultController)
-    : ViewModeled<ModelGridSortingBase>(model)
+ViewGridSorting::ViewGridSorting(SharedPtr<ModelGridSortingBase> model, bool useDefaultController)
+    : ViewModeled<ModelGridSortingBase>(std::move(model))
 {
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseGridSorting>::create(model));
+        setController(makeShared<ControllerMouseGridSorting>(theModel()));
     }
 }
 
@@ -318,8 +318,8 @@ bool ViewGridSorting::tooltipTextImpl(ID id, QString& txt) const
     return true;
 }
 
-ControllerMouseGridSorting::ControllerMouseGridSorting(const QSharedPointer<ModelGridSortingBase>& model)
-    : m_model(model)
+ControllerMouseGridSorting::ControllerMouseGridSorting(SharedPtr<ModelGridSortingBase> model)
+    : m_model(std::move(model))
 {
 }
 

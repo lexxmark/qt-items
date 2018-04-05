@@ -35,11 +35,11 @@ public:
     ID toAbsolute(ID visibleId) const override { return visibleId; }
     ID toVisible(ID absoluteId) const override { return absoluteId; }
     QRect itemRect(ID visibleId) const override;
-    QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
+    SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
 
     void setSize(const QSize& size);
 
-    const ID& id() const { return m_id; }
+    ID id() const { return m_id; }
     void setId(ID id);
 
 private:

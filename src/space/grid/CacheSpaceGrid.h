@@ -29,10 +29,10 @@ class QI_EXPORT CacheSpaceGrid: public CacheSpace
     Q_DISABLE_COPY(CacheSpaceGrid)
 
 public:
-    explicit CacheSpaceGrid(const QSharedPointer<SpaceGrid>& grid, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceGrid(SharedPtr<SpaceGrid> grid, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
     ~CacheSpaceGrid();
 
-    const QSharedPointer<SpaceGrid>& spaceGrid() const { return m_grid; }
+    const SharedPtr<SpaceGrid>& spaceGrid() const { return m_grid; }
     bool isEmpty() const { return m_items.isEmpty(); }
 
     bool isItemInFrame(GridID visibleId) const;
@@ -45,18 +45,18 @@ public:
 private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
-    bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
+    bool forEachCacheItemImpl(const std::function<bool(const SharedPtr<CacheItem>&)>& visitor) const override;
     const CacheItem* cacheItemImpl(ID visibleId) const override;
     const CacheItem* cacheItemByPositionImpl(QPoint point) const override;
 
     // source grid space
-    QSharedPointer<SpaceGrid> m_grid;
+    SharedPtr<SpaceGrid> m_grid;
 
     // visible item ids
     mutable GridID m_idStart;
     mutable GridID m_idEnd;
     // caches items
-    mutable QVector<QSharedPointer<CacheItem>> m_items;
+    mutable QVector<SharedPtr<CacheItem>> m_items;
 };
 
 } // end namespace Qi 

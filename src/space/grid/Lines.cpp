@@ -40,9 +40,9 @@ Lines::Lines(const Lines& lines)
 {
 }
 
-QSharedPointer<Lines> Lines::clone() const
+SharedPtr<Lines> Lines::clone() const
 {
-    return QSharedPointer<Lines>(new Lines(*this));
+    return SharedPtr<Lines>(new Lines(*this));
 }
 
 void Lines::setCount(int _count)
@@ -441,13 +441,13 @@ void Lines::setLineVisibleAll(bool visible)
     emit linesChanged(this, ChangeReasonLinesVisibility);
 }
 
-bool Lines::addLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility)
+bool Lines::addLinesVisibility(SharedPtr<LinesVisibility> linesVisibility)
 {
     if (m_linesVisibility.indexOf(linesVisibility) != -1)
         return false;
 
-    m_linesVisibility.append(linesVisibility);
     connect(linesVisibility.data(), &LinesVisibility::visibilityChanged, this, &Lines::onLinesVisibilityChanged);
+    m_linesVisibility.append(std::move(linesVisibility));
 
     invalidateVisibles();
     emit linesChanged(this, ChangeReasonLinesVisibility);
@@ -455,7 +455,7 @@ bool Lines::addLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisib
     return true;
 }
 
-bool Lines::removeLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility)
+bool Lines::removeLinesVisibility(SharedPtr<LinesVisibility> linesVisibility)
 {
     auto it = std::find(m_linesVisibility.begin(), m_linesVisibility.end(), linesVisibility);
     if (it == m_linesVisibility.end())

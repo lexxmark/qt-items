@@ -71,7 +71,7 @@ protected:
 private:
     int m_column;
 };
-QI_EXPORT QSharedPointer<RangeGridColumn> makeRangeGridColumn(int column);
+QI_EXPORT SharedPtr<RangeGridColumn> makeRangeGridColumn(int column);
 
 class QI_EXPORT RangeGridColumns: public RangeGrid
 {
@@ -90,8 +90,8 @@ protected:
 private:
     QSet<int> m_columns;
 };
-QI_EXPORT QSharedPointer<RangeGridColumns> makeRangeGridColumns(const QSet<int>& columns);
-QI_EXPORT QSharedPointer<RangeGridColumns> makeRangeGridColumns(int columnBegin, int columnEnd);
+QI_EXPORT SharedPtr<RangeGridColumns> makeRangeGridColumns(const QSet<int>& columns);
+QI_EXPORT SharedPtr<RangeGridColumns> makeRangeGridColumns(int columnBegin, int columnEnd);
 
 class QI_EXPORT RangeGridRow: public RangeGrid
 {
@@ -109,7 +109,7 @@ protected:
 private:
     int m_row;
 };
-QI_EXPORT QSharedPointer<RangeGridRow> makeRangeGridRow(int row);
+QI_EXPORT SharedPtr<RangeGridRow> makeRangeGridRow(int row);
 
 class QI_EXPORT RangeGridRows: public RangeGrid
 {
@@ -127,8 +127,8 @@ protected:
 private:
     QSet<int> m_rows;
 };
-QI_EXPORT QSharedPointer<RangeGridRows> makeRangeGridRows(const QSet<int>& rows);
-QI_EXPORT QSharedPointer<RangeGridRows> makeRangeGridRows(int rowBegin, int rowEnd);
+QI_EXPORT SharedPtr<RangeGridRows> makeRangeGridRows(const QSet<int>& rows);
+QI_EXPORT SharedPtr<RangeGridRows> makeRangeGridRows(int rowBegin, int rowEnd);
 
 class QI_EXPORT RangeGridRect: public RangeGrid
 {
@@ -151,8 +151,8 @@ private:
     QSet<int> m_rows;
     QSet<int> m_columns;
 };
-QI_EXPORT QSharedPointer<RangeGridRect> makeRangeGridRect(const QSet<int>& rows, const QSet<int>& columns);
-QI_EXPORT QSharedPointer<RangeGridRect> makeRangeGridRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd);
+QI_EXPORT SharedPtr<RangeGridRect> makeRangeGridRect(const QSet<int>& rows, const QSet<int>& columns);
+QI_EXPORT SharedPtr<RangeGridRect> makeRangeGridRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd);
 
 } // end namespace Qi 
 

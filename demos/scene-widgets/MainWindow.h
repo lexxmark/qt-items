@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "QiAPI.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +25,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QSharedPointer<Qi::SpaceSceneElements> m_scene;
+    Qi::SharedPtr<Qi::SpaceSceneElements> m_scene;
 };
 
 #endif // MAINWINDOW_H

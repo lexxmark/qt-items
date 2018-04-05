@@ -21,7 +21,7 @@
 namespace Qi
 {
 
-CacheSpaceGrid::CacheSpaceGrid(const QSharedPointer<SpaceGrid>& grid, ViewApplicationMask viewApplicationMask)
+CacheSpaceGrid::CacheSpaceGrid(SharedPtr<SpaceGrid> grid, ViewApplicationMask viewApplicationMask)
     : CacheSpace(grid, viewApplicationMask),
       m_grid(grid)
 {
@@ -134,7 +134,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     // init new items with empty caches
     int newIdRows = newIdEnd.row - newIdStart.row + 1;
     int newIdColumns = newIdEnd.column - newIdStart.column + 1;
-    QVector<QSharedPointer<CacheItem>> newItems(newIdRows * newIdColumns, nullptr);
+    QVector<SharedPtr<CacheItem>> newItems(newIdRows * newIdColumns, nullptr);
 
     if (!m_items.isEmpty())
     {
@@ -149,8 +149,8 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
             {
                 GridID idNew = id - newIdStart;
                 GridID idOld = id - m_idStart;
-                QSharedPointer<CacheItem>& oldCacheItem = m_items[idOld.row * oldIdColumns + idOld.column];
-                QSharedPointer<CacheItem>& newCacheItem = newItems[idNew.row * newIdColumns + idNew.column];
+                auto& oldCacheItem = m_items[idOld.row * oldIdColumns + idOld.column];
+                auto& newCacheItem = newItems[idNew.row * newIdColumns + idNew.column];
                 newCacheItem.swap(oldCacheItem);
                 newCacheItem->correctRectangles(m_scrollDelta);
             }
@@ -164,7 +164,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
         {
             GridID id = idVisible - newIdStart;
 
-            QSharedPointer<CacheItem>& cacheItem = newItems[id.row * newIdColumns + id.column];
+            auto& cacheItem = newItems[id.row * newIdColumns + id.column];
             if (cacheItem)
                 continue;
 
@@ -185,7 +185,7 @@ void CacheSpaceGrid::validateItemsCacheImpl() const
     m_itemsCacheInvalid = false;
 }
 
-bool CacheSpaceGrid::forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+bool CacheSpaceGrid::forEachCacheItemImpl(const std::function<bool (const SharedPtr<CacheItem> &)> &visitor) const
 {
     for (const auto& cacheItem : m_items)
     {

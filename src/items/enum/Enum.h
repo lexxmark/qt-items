@@ -73,7 +73,7 @@ class ModelEnum: public ModelTyped<EnumType>
 public:
     typedef typename ModelTyped<EnumType>::ValueType_t ValueType_t;
 
-    explicit ModelEnum(QSharedPointer<EnumTraits<EnumType>> enumTraits, QSharedPointer<ModelTyped<EnumType>> enumValues, bool ascendingDefault = true)
+    explicit ModelEnum(SharedPtr<EnumTraits<EnumType>> enumTraits, SharedPtr<ModelTyped<EnumType>> enumValues, bool ascendingDefault = true)
         : m_enumTraits(std::move(enumTraits)),
           m_enumValues(std::move(enumValues))
     {
@@ -106,8 +106,8 @@ protected:
     }
 
 private:
-    QSharedPointer<EnumTraits<EnumType>> m_enumTraits;
-    QSharedPointer<ModelTyped<EnumType>> m_enumValues;
+    SharedPtr<EnumTraits<EnumType>> m_enumTraits;
+    SharedPtr<ModelTyped<EnumType>> m_enumValues;
 };
 
 
@@ -117,7 +117,7 @@ class ModelEnumText: public ModelTyped<QString>
     Q_DISABLE_COPY(ModelEnumText)
 
 public:
-    explicit ModelEnumText(QSharedPointer<ModelEnum<EnumType>> modelEnum)
+    explicit ModelEnumText(SharedPtr<ModelEnum<EnumType>> modelEnum)
         : m_modelEnum(std::move(modelEnum))
     {
         Q_ASSERT(m_modelEnum);
@@ -160,7 +160,7 @@ private:
             m_text2Enum[m_modelEnum->enumTraits().valueText(enumValue)] = enumValue;
     }
 
-    QSharedPointer<ModelEnum<EnumType>> m_modelEnum;
+    SharedPtr<ModelEnum<EnumType>> m_modelEnum;
     QMap<QString, EnumType> m_text2Enum;
 };
 
@@ -170,8 +170,8 @@ class ViewEnumText: public ViewText
     Q_DISABLE_COPY(ViewEnumText)
 
 public:
-    ViewEnumText(QSharedPointer<ModelEnum<EnumType>> model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
-        : ViewText(QSharedPointer<ModelEnumText<EnumType>>::create(model), createDefaultController, alignment, textElideMode),
+    ViewEnumText(SharedPtr<ModelEnum<EnumType>> model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone)
+        : ViewText(makeShared<ModelEnumText<EnumType>>(model), createDefaultController, alignment, textElideMode),
           m_model(std::move(model))
     {
     }
@@ -188,7 +188,7 @@ protected:
     }
 
 private:
-    QSharedPointer<ModelEnum<EnumType>> m_model;
+    SharedPtr<ModelEnum<EnumType>> m_model;
     mutable QMap<EnumType, QSize> m_sizes;
 };
 

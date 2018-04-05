@@ -32,7 +32,7 @@ class QI_EXPORT ViewProgressBase: public ViewModeled<ModelProgress>
     Q_DISABLE_COPY(ViewProgressBase)
 
 public:
-    ViewProgressBase(const QSharedPointer<ModelProgress>& model);
+    ViewProgressBase(SharedPtr<ModelProgress> model);
 
     std::function<bool(float& value, ID id)> tuneValue;
 };
@@ -43,7 +43,7 @@ class QI_EXPORT ViewProgressContents: public ViewProgressBase
     Q_DISABLE_COPY(ViewProgressContents)
 
 public:
-    ViewProgressContents(const QSharedPointer<ModelProgress>& model);
+    ViewProgressContents(SharedPtr<ModelProgress> model);
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -62,7 +62,7 @@ class QI_EXPORT ViewProgressLabel: public ViewProgressBase
     Q_DISABLE_COPY(ViewProgressLabel)
 
 public:
-    ViewProgressLabel(const QSharedPointer<ModelProgress>& model, ProgressLabelMode mode = ProgressLabelModeProgress);
+    ViewProgressLabel(SharedPtr<ModelProgress> model, ProgressLabelMode mode = ProgressLabelModeProgress);
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -77,7 +77,7 @@ class QI_EXPORT ViewProgressBox: public ViewProgressBase
     Q_DISABLE_COPY(ViewProgressBox)
 
 public:
-    ViewProgressBox(const QSharedPointer<ModelProgress>& model);
+    ViewProgressBox(SharedPtr<ModelProgress> model);
 
     QColor contentsColor;
     QColor boundsColor;

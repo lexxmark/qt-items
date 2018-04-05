@@ -31,18 +31,18 @@ ListWidget::ListWidget(QWidget* parent)
     : SpaceWidgetScrollAbstract(parent)
 {
     // initialize main grid
-    m_grid = QSharedPointer<SpaceGrid>::create();
-    m_cacheGrid = QSharedPointer<CacheSpaceGrid>::create(m_grid);
+    m_grid = makeShared<SpaceGrid>();
+    m_cacheGrid = makeShared<CacheSpaceGrid>(m_grid);
 
     connect(m_cacheGrid.data(), &CacheSpace::cacheChanged, this, &ListWidget::onCacheSpaceGridChanged);
 
     // initialize main item space
-    m_mainSpace = QSharedPointer<SpaceItem>::create(ID(GridID(0, 0)));
-    m_mainCache = QSharedPointer<CacheSpaceItem>::create(m_mainSpace, true);
+    m_mainSpace = makeShared<SpaceItem>(ID(GridID(0, 0)));
+    m_mainCache = makeShared<CacheSpaceItem>(m_mainSpace, true);
 
     // add grid cache to main schema
-    auto modelCache = QSharedPointer<ModelStorageValue<QSharedPointer<CacheSpace>>>::create(m_cacheGrid);
-    m_mainSpace->addSchema(makeRangeAll(), QSharedPointer<ViewCacheSpace>::create(modelCache), makeLayoutBackground());
+    auto modelCache = makeShared<ModelStorageValue<SharedPtr<CacheSpace>>>(m_cacheGrid);
+    m_mainSpace->addSchema(makeRangeAll(), makeShared<ViewCacheSpace>(modelCache), makeLayoutBackground());
 
     initSpaceWidgetScrollable(m_mainCache, m_cacheGrid);
 }
@@ -68,20 +68,20 @@ void ListWidget::onSpaceGridChanged(const Space* space, ChangeReason reason)
         m_emptyView->notifyVisibilityChanged();
 }
 
-bool ListWidget::installEmptyView(const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout)
+bool ListWidget::installEmptyView(SharedPtr<View> view, SharedPtr<Layout> layout)
 {
     Q_ASSERT(view);
 
     if (m_emptyView)
         return false;
 
-    m_emptyView = QSharedPointer<ViewVisible>::create(view);
+    m_emptyView = makeShared<ViewVisible>(std::move(view));
     m_emptyView->isItemVisible = [this](const ID&)->bool {
         return m_grid->isEmptyVisible();
     };
     connect(m_grid.data(), &Space::spaceChanged, this, &ListWidget::onSpaceGridChanged);
 
-    m_mainSpace->addSchema(makeRangeAll(), m_emptyView, layout);
+    m_mainSpace->addSchema(makeRangeAll(), m_emptyView, std::move(layout));
 
     return true;
 }

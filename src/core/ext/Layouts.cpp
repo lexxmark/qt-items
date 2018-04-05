@@ -19,130 +19,130 @@
 namespace Qi
 {
 
-QSharedPointer<Layout> makeLayoutBackground()
+SharedPtr<Qi::Layout> makeLayoutBackground()
 {
-    static QSharedPointer<Layout> layout = QSharedPointer<LayoutClient>::create(LayoutBehaviorTransparent);
+    static SharedPtr<Layout> layout = makeShared<LayoutClient>(LayoutBehaviorTransparent);
     return layout;
 }
 
-QSharedPointer<Layout> makeLayoutClient()
+SharedPtr<Layout> makeLayoutClient()
 {
-    static QSharedPointer<Layout> layout = QSharedPointer<LayoutClient>::create(LayoutBehaviorNone);
+    static SharedPtr<Layout> layout = makeShared<LayoutClient>(LayoutBehaviorNone);
     return layout;
 }
 
-QSharedPointer<Layout> makeLayoutCenter()
+SharedPtr<Qi::Layout> makeLayoutCenter()
 {
-    static QSharedPointer<Layout> layout = QSharedPointer<LayoutCenter>::create(LayoutBehaviorNone);
+    static SharedPtr<Layout> layout = makeShared<LayoutCenter>(LayoutBehaviorNone);
     return layout;
 }
 
-QSharedPointer<Layout> makeLayoutLeft(LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutLeft(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutLeft>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutLeft>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutLeft>::create(behavior);
+    return makeShared<LayoutLeft>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutRight(LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutRight(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutRight>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutRight>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutRight>::create(behavior);
+    return makeShared<LayoutRight>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutTop(LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutTop(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutTop>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutTop>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutTop>::create(behavior);
+    return makeShared<LayoutTop>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutBottom(LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutBottom(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutBottom>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutBottom>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutBottom>::create(behavior);
+    return makeShared<LayoutBottom>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareLeft>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutSquareLeft>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutSquareLeft>::create(behavior);
+    return makeShared<LayoutSquareLeft>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareRight>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutSquareRight>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutSquareRight>::create(behavior);
+    return makeShared<LayoutSquareRight>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareTop>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutSquareTop>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutSquareTop>::create(behavior);
+    return makeShared<LayoutSquareTop>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior)
 {
     if (behavior == LayoutBehaviorNone)
     {
-        static QSharedPointer<Layout> layout = QSharedPointer<LayoutSquareBottom>::create(LayoutBehaviorNone);
+        static SharedPtr<Layout> layout = makeShared<LayoutSquareBottom>(LayoutBehaviorNone);
         return layout;
     }
 
-    return QSharedPointer<LayoutSquareBottom>::create(behavior);
+    return makeShared<LayoutSquareBottom>(behavior);
 }
 
-QSharedPointer<Layout> makeLayoutFixedLeft(int width, LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutFixedLeft(int width, LayoutBehaviorMask behavior)
 {
-    return QSharedPointer<LayoutFixedLeft>::create(width, behavior);
+    return makeShared<LayoutFixedLeft>(width, behavior);
 }
 
-QSharedPointer<Layout> makeLayoutFixedRight(int width, LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutFixedRight(int width, LayoutBehaviorMask behavior)
 {
-    return QSharedPointer<LayoutFixedRight>::create(width, behavior);
+    return makeShared<LayoutFixedRight>(width, behavior);
 }
 
-QSharedPointer<Layout> makeLayoutFixedTop(int height, LayoutBehaviorMask behavior)
+SharedPtr<Layout> makeLayoutFixedTop(int height, LayoutBehaviorMask behavior)
 {
-    return QSharedPointer<LayoutFixedTop>::create(height, behavior);
+    return makeShared<LayoutFixedTop>(height, behavior);
 }
 
-QSharedPointer<Layout> makeLayoutFixedBottom(int height, LayoutBehaviorMask behavior)
+SharedPtr<Qi::Layout> makeLayoutFixedBottom(int height, LayoutBehaviorMask behavior)
 {
-    return QSharedPointer<LayoutFixedBottom>::create(height, behavior);
+    return makeShared<LayoutFixedBottom>(height, behavior);
 }
 
 bool LayoutCenter::doLayoutImpl(const ViewInfo& viewInfo, LayoutInfo& info) const

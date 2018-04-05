@@ -42,7 +42,7 @@ class QI_EXPORT ViewColor: public ViewModeled<ModelColor>
     Q_DISABLE_COPY(ViewColor)
 
 public:
-    ViewColor(const QSharedPointer<ModelColor>& model, bool useDefaultController = true, bool withBorder = true);
+    ViewColor(SharedPtr<ModelColor> model, bool useDefaultController = true, bool withBorder = true);
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -51,7 +51,7 @@ private:
     bool m_withBorder;
 };
 
-QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseColor(const QSharedPointer<ModelColor>& model);
+QI_EXPORT SharedPtr<ControllerMousePushable> createControllerMouseColor(SharedPtr<ModelColor> model);
 
 
 } // end namespace Qi

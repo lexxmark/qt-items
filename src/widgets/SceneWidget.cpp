@@ -30,13 +30,13 @@ SceneWidget::~SceneWidget()
 {
 }
 
-void SceneWidget::initScene(const QSharedPointer<SpaceScene>& scene)
+void SceneWidget::initScene(SharedPtr<SpaceScene> scene)
 {
     Q_ASSERT(!m_scene);
 
     // initialize main space
-    m_scene = scene;
-    m_cacheScene = QSharedPointer<CacheSpaceScene>::create(m_scene);
+    m_scene = std::move(scene);
+    m_cacheScene = makeShared<CacheSpaceScene>(m_scene);
 
     initSpaceWidgetScrollable(m_cacheScene, m_cacheScene);
 }

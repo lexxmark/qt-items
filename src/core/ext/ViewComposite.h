@@ -31,7 +31,7 @@ class QI_EXPORT ViewComposite: public View
 
 public:
     ViewComposite(const QVector<ViewSchema>& subViews, const QMargins& margins = QMargins());
-    ViewComposite(const QSharedPointer<View>& subView, const QMargins& margins);
+    ViewComposite(SharedPtr<View> subView, const QMargins& margins);
 
     virtual ~ViewComposite();
 

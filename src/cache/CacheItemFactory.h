@@ -46,10 +46,10 @@ private:
     ViewApplicationMask m_viewApplicationMask;
 };
 
-QI_EXPORT QSharedPointer<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT QSharedPointer<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT QSharedPointer<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT QSharedPointer<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask);
 
 } // end namespace Qi
 

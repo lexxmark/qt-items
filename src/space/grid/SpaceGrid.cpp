@@ -22,7 +22,7 @@
 namespace Qi
 {
 
-QSharedPointer<Range> makeRangeGridRect(const SpaceGrid& grid, GridID displayCorner1, GridID displayCorner2)
+SharedPtr<Range> makeRangeGridRect(const SpaceGrid& grid, GridID displayCorner1, GridID displayCorner2)
 {
     if (grid.isEmptyVisible())
         return nullptr;
@@ -256,7 +256,7 @@ SpaceGrid::SpaceGrid(SpaceGridHint hint)
     connectLines(m_columns);
 }
 
-SpaceGrid::SpaceGrid(QSharedPointer<Lines> rows, QSharedPointer<Lines> columns, SpaceGridHint hint)
+SpaceGrid::SpaceGrid(SharedPtr<Lines> rows, SharedPtr<Lines> columns, SpaceGridHint hint)
     : m_rows(rows),
       m_columns(columns),
       m_hint(hint)
@@ -321,7 +321,7 @@ QRect SpaceGrid::itemRect(ID visibleItem) const
     return rect;
 }
 
-QSharedPointer<CacheItemFactory> SpaceGrid::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+SharedPtr<CacheItemFactory> SpaceGrid::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
 {
     switch (m_hint) {
     case SpaceGridHintSameSchemasByColumn:
@@ -338,12 +338,12 @@ QSize SpaceGrid::itemSize(GridID item) const
     return QSize((int)m_columns->lineSize(item.column), (int)m_rows->lineSize(item.row));
 }
 
-void SpaceGrid::connectLines(const QSharedPointer<Lines>& lines)
+void SpaceGrid::connectLines(const SharedPtr<Lines> &lines)
 {
     connect(lines.data(), &Lines::linesChanged, this, &SpaceGrid::onLinesChanged);
 }
 
-void SpaceGrid::disconnectLines(const QSharedPointer<Lines>& lines)
+void SpaceGrid::disconnectLines(const SharedPtr<Lines> &lines)
 {
     disconnect(lines.data(), &Lines::linesChanged, this, &SpaceGrid::onLinesChanged);
 }
@@ -378,19 +378,19 @@ void SpaceGrid::unshareColumns()
     emit spaceChanged(this, ChangeReasonLinesCount);
 }
 
-void SpaceGrid::shareRows(const QSharedPointer<Lines>& rows)
+void SpaceGrid::shareRows(SharedPtr<Lines> rows)
 {
     disconnectLines(m_rows);
-    m_rows = rows;
+    m_rows = std::move(rows);
     connectLines(m_rows);
 
     emit spaceChanged(this, ChangeReasonLinesCount);
 }
 
-void SpaceGrid::shareColumns(const QSharedPointer<Lines>& columns)
+void SpaceGrid::shareColumns(SharedPtr<Lines> columns)
 {
     disconnectLines(m_columns);
-    m_columns = columns;
+    m_columns = std::move(columns);
     connectLines(m_columns);
 
     emit spaceChanged(this, ChangeReasonLinesCount);

@@ -52,13 +52,13 @@ public:
     explicit GridWidget(QWidget *parent = nullptr);
     virtual ~GridWidget();
 
-    const QSharedPointer<SpaceGrid>& mainGrid() const { return m_mainGrid; }
+    const SharedPtr<SpaceGrid>& mainGrid() const { return m_mainGrid; }
 
-    const QSharedPointer<SpaceGrid>& subGrid(GridID subGridID = clientID) const;
-    const QSharedPointer<CacheSpaceGrid>& cacheSubGrid(GridID subGridID = clientID) const;
+    const SharedPtr<SpaceGrid>& subGrid(GridID subGridID = clientID) const;
+    const SharedPtr<CacheSpaceGrid>& cacheSubGrid(GridID subGridID = clientID) const;
 
-    const QSharedPointer<Lines>& rows(int subRowsID) const { return m_rows[subRowsID]; }
-    const QSharedPointer<Lines>& columns(int subColumnsID) const { return m_columns[subColumnsID]; }
+    const SharedPtr<Lines>& rows(int subRowsID) const { return m_rows[subRowsID]; }
+    const SharedPtr<Lines>& columns(int subColumnsID) const { return m_columns[subColumnsID]; }
 
 protected:
     // QAbstractScrollArea implementation
@@ -77,11 +77,11 @@ private:
     void onSubGridChanged(const Space* space, ChangeReason reason);
     void onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason);
 
-    QSharedPointer<SpaceGrid> m_mainGrid;
+    SharedPtr<SpaceGrid> m_mainGrid;
 
-    QSharedPointer<Lines> m_rows[3];
-    QSharedPointer<Lines> m_columns[3];
-    QSharedPointer<CacheSpaceGrid> m_cacheSubGrids[3][3];
+    SharedPtr<Lines> m_rows[3];
+    SharedPtr<Lines> m_columns[3];
+    SharedPtr<CacheSpaceGrid> m_cacheSubGrids[3][3];
 };
 
 } // end namespace Qi

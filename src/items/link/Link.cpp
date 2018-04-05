@@ -20,13 +20,13 @@
 namespace Qi
 {
 
-ViewLink::ViewLink(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
-    : ViewText(model, ViewDefaultControllerNone, alignment, textElideMode),
+ViewLink::ViewLink(SharedPtr<ModelText> model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+    : ViewText(std::move(model), ViewDefaultControllerNone, alignment, textElideMode),
       m_pushableTracker(this)
 {
     if (createDefaultController)
     {
-        auto controller = QSharedPointer<ControllerMouseLink>::create();
+        auto controller = makeShared<ControllerMouseLink>();
         controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
                 action(id, context, this);
@@ -35,18 +35,18 @@ ViewLink::ViewLink(const QSharedPointer<ModelText>& model, ViewDefaultController
     }
 }
 
-ViewLink::ViewLink(const QSharedPointer<ModelText>& model, const QSharedPointer<ModelUrl>& modelUrl, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+ViewLink::ViewLink(SharedPtr<ModelText> model, SharedPtr<ModelUrl> modelUrl, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewText(model, ViewDefaultControllerNone, alignment, textElideMode),
       m_pushableTracker(this)
 {
-    auto controller = QSharedPointer<ControllerMouseLink>::create();
+    auto controller = makeShared<ControllerMouseLink>();
     controller->onApply = [this] (ID id, const ControllerContext& context) {
         if (action)
             action(id, context, this);
     };
     setController(controller);
 
-    action = [modelUrl](ID id, const ControllerContext& /*context*/, const ViewLink* /*viewLink*/) {
+    action = [modelUrl = std::move(modelUrl)](ID id, const ControllerContext& /*context*/, const ViewLink* /*viewLink*/) {
         QDesktopServices::openUrl(modelUrl->value(id));
     };
 }

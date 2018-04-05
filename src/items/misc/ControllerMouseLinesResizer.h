@@ -33,7 +33,7 @@ class QI_EXPORT ControllerMouseColumnsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseColumnsResizer)
 
 public:
-    ControllerMouseColumnsResizer(const QSharedPointer<Lines>& columns, ControllerMousePriority priority = ControllerMousePriorityNormal);
+    ControllerMouseColumnsResizer(SharedPtr<Lines> columns, ControllerMousePriority priority = ControllerMousePriorityNormal);
 
     bool processMouseMove(QMouseEvent* event) override;
 
@@ -49,7 +49,7 @@ protected:
     bool canApplyImpl() const override { return true; }
 
 private:
-    QSharedPointer<Lines> m_columns;
+    SharedPtr<Lines> m_columns;
     mutable int m_delta;
     int m_position;
     int m_trackPosition;
@@ -63,7 +63,7 @@ class QI_EXPORT ControllerMouseRowsResizer: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseRowsResizer)
 
 public:
-    ControllerMouseRowsResizer(const QSharedPointer<Lines>& rows, ControllerMousePriority priority = ControllerMousePriorityNormal);
+    ControllerMouseRowsResizer(SharedPtr<Lines> rows, ControllerMousePriority priority = ControllerMousePriorityNormal);
 
     bool processMouseMove(QMouseEvent* event) override;
 
@@ -79,7 +79,7 @@ protected:
     bool canApplyImpl() const override { return true; }
 
 private:
-    QSharedPointer<Lines> m_rows;
+    SharedPtr<Lines> m_rows;
     mutable int m_delta;
     int m_position;
     int m_trackPosition;

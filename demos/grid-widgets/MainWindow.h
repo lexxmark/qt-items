@@ -29,7 +29,7 @@ private:
     Ui::MainWindow *ui;
     QImage m_images[3];
     QPixmap m_pixmaps[3];
-    QSharedPointer<Qi::ModelColor> m_colors;
+    Qi::SharedPtr<Qi::ModelColor> m_colors;
 };
 
 #endif // MAINWINDOW_H

@@ -37,7 +37,7 @@ class QI_EXPORT ViewText: public ViewModeled<ModelText>
     Q_DISABLE_COPY(ViewText)
 
 public:
-    ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewText(const SharedPtr<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     Qt::Alignment alignment(ID id) const { return alignmentImpl(id); }
     void setAlignment(Qt::Alignment alignment);
@@ -71,7 +71,7 @@ class QI_EXPORT ViewTextOrHint: public ViewText
     Q_DISABLE_COPY(ViewTextOrHint)
 
 public:
-    ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewTextOrHint(const SharedPtr<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerNone, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     std::function<bool(ID, const ModelText*)> isItemHint;
     std::function<QString(ID, const ModelText*)> itemHintText;
@@ -91,7 +91,7 @@ class QI_EXPORT ViewTextFont: public ViewModeled<ModelFont>
     Q_DISABLE_COPY(ViewTextFont)
 
 public:
-    explicit ViewTextFont(const QSharedPointer<ModelFont>& model);
+    explicit ViewTextFont(const SharedPtr<ModelFont>& model);
     explicit ViewTextFont(const QFont& font);
 
 protected:
@@ -105,7 +105,7 @@ private:
 class QI_EXPORT ControllerMouseText: public ControllerMouseInplaceEdit
 {
 public:
-    ControllerMouseText(const QSharedPointer<ModelText>& model);
+    ControllerMouseText(SharedPtr<ModelText> model);
 
     void enableLiveUpdate(bool enable = true);
 
@@ -117,7 +117,7 @@ private:
     void onEditingFinished();
     void onTextEdited(const QString& text);
 
-    QSharedPointer<ModelText> m_model;
+    SharedPtr<ModelText> m_model;
     bool m_liveUpdate;
 };
 

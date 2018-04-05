@@ -48,13 +48,13 @@ void ControllerKeyboardChain::clear()
     m_controllers.clear();
 }
 
-void ControllerKeyboardChain::append(const QSharedPointer<ControllerKeyboard>& controller)
+void ControllerKeyboardChain::append(const SharedPtr<ControllerKeyboard>& controller)
 {
     Q_ASSERT(!m_isInProcess);
     m_controllers.append(controller);
 }
 
-void ControllerKeyboardChain::prepend(const QSharedPointer<ControllerKeyboard>& controller)
+void ControllerKeyboardChain::prepend(const SharedPtr<ControllerKeyboard> &controller)
 {
     Q_ASSERT(!m_isInProcess);
     m_controllers.prepend(controller);

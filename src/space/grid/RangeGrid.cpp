@@ -38,9 +38,9 @@ bool RangeGridColumn::hasItemImpl(GridID id) const
     return id.column == m_column;
 }
 
-QSharedPointer<RangeGridColumn> makeRangeGridColumn(int column)
+SharedPtr<RangeGridColumn> makeRangeGridColumn(int column)
 {
-    return QSharedPointer<RangeGridColumn>::create(column);
+    return makeShared<RangeGridColumn>(column);
 }
 
 RangeGridColumns::RangeGridColumns(QSet<int> columns)
@@ -69,14 +69,14 @@ bool RangeGridColumns::hasItemImpl(GridID id) const
     return m_columns.contains(id.column);
 }
 
-QSharedPointer<RangeGridColumns> makeRangeGridColumns(const QSet<int>& columns)
+SharedPtr<RangeGridColumns> makeRangeGridColumns(const QSet<int>& columns)
 {
-    return QSharedPointer<RangeGridColumns>::create(columns);
+    return makeShared<RangeGridColumns>(columns);
 }
 
-QSharedPointer<RangeGridColumns> makeRangeGridColumns(int columnBegin, int columnEnd)
+SharedPtr<RangeGridColumns> makeRangeGridColumns(int columnBegin, int columnEnd)
 {
-    return QSharedPointer<RangeGridColumns>::create(columnBegin, columnEnd);
+    return makeShared<RangeGridColumns>(columnBegin, columnEnd);
 }
 
 RangeGridRow::RangeGridRow(int row)
@@ -98,9 +98,9 @@ bool RangeGridRow::hasItemImpl(GridID id) const
     return id.row == m_row;
 }
 
-QSharedPointer<RangeGridRow> makeRangeGridRow(int row)
+SharedPtr<RangeGridRow> makeRangeGridRow(int row)
 {
-    return QSharedPointer<RangeGridRow>::create(row);
+    return makeShared<RangeGridRow>(row);
 }
 
 RangeGridRows::RangeGridRows(QSet<int> rows)
@@ -129,14 +129,14 @@ bool RangeGridRows::hasItemImpl(GridID id) const
     return m_rows.contains(id.row);
 }
 
-QSharedPointer<RangeGridRows> makeRangeGridRows(const QSet<int>& rows)
+SharedPtr<RangeGridRows> makeRangeGridRows(const QSet<int>& rows)
 {
-    return QSharedPointer<RangeGridRows>::create(rows);
+    return makeShared<RangeGridRows>(rows);
 }
 
-QSharedPointer<RangeGridRows> makeRangeGridRows(int rowBegin, int rowEnd)
+SharedPtr<RangeGridRows> makeRangeGridRows(int rowBegin, int rowEnd)
 {
-    return QSharedPointer<RangeGridRows>::create(rowBegin, rowEnd);
+    return makeShared<RangeGridRows>(rowBegin, rowEnd);
 }
 
 RangeGridRect::RangeGridRect(const QSet<int>& rows, const QSet<int>& columns)
@@ -180,14 +180,14 @@ bool RangeGridRect::hasItemImpl(GridID id) const
      return m_rows.contains(id.row) && m_columns.contains(id.column);
 }
 
-QSharedPointer<RangeGridRect> makeRangeGridRect(const QSet<int>& rows, const QSet<int>& columns)
+SharedPtr<RangeGridRect> makeRangeGridRect(const QSet<int>& rows, const QSet<int>& columns)
 {
-    return QSharedPointer<RangeGridRect>::create(rows, columns);
+    return makeShared<RangeGridRect>(rows, columns);
 }
 
-QSharedPointer<RangeGridRect> makeRangeGridRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd)
+SharedPtr<RangeGridRect> makeRangeGridRect(int rowBegin, int rowEnd, int columnBegin, int columnEnd)
 {
-    return QSharedPointer<RangeGridRect>::create(rowBegin, rowEnd, columnBegin, columnEnd);
+    return makeShared<RangeGridRect>(rowBegin, rowEnd, columnBegin, columnEnd);
 }
 
 } // end namespace Qi

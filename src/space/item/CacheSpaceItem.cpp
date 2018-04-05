@@ -23,7 +23,7 @@ namespace Qi
 {
 
 
-CacheSpaceItem::CacheSpaceItem(const QSharedPointer<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow, ViewApplicationMask viewApplicationMask)
+CacheSpaceItem::CacheSpaceItem(const SharedPtr<SpaceItem> &spaceItem, bool syncSpaceSizeWithWindow, ViewApplicationMask viewApplicationMask)
     : CacheSpace(spaceItem, viewApplicationMask),
       m_spaceItem(spaceItem)
 {
@@ -63,7 +63,7 @@ void CacheSpaceItem::validateItemsCacheImpl() const
     m_itemsCacheInvalid = false;
 }
 
-bool CacheSpaceItem::forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+bool CacheSpaceItem::forEachCacheItemImpl(const std::function<bool(const SharedPtr<CacheItem> &)> &visitor) const
 {
     if (m_item)
         return visitor(m_item);

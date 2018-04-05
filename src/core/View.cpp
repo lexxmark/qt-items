@@ -31,7 +31,7 @@ View::~View()
 {
 }
 
-void View::setController(QSharedPointer<ControllerMouse> controller)
+void View::setController(SharedPtr<ControllerMouse> controller)
 {
     if (m_controller == controller)
         return;
@@ -40,7 +40,7 @@ void View::setController(QSharedPointer<ControllerMouse> controller)
     emitViewChanged(ChangeReasonViewController);
 }
 
-void View::addController(QSharedPointer<ControllerMouse> controller)
+void View::addController(SharedPtr<ControllerMouse> controller)
 {
     if (!m_controller)
     {

@@ -50,8 +50,8 @@ private:
     QPointer<ViewRating> m_viewRating;
 };
 
-ViewRating::ViewRating(const QSharedPointer<ModelRating>& model, const QPixmap& rateImageOn, const QPixmap& rateImageOff, int maxRate, bool useDefaultController)
-    : ViewModeled<ModelRating>(model),
+ViewRating::ViewRating(SharedPtr<ModelRating> model, const QPixmap& rateImageOn, const QPixmap& rateImageOff, int maxRate, bool useDefaultController)
+    : ViewModeled<ModelRating>(std::move(model)),
       m_rateImageOn(rateImageOn),
       m_rateImageOff(rateImageOff),
       m_maxRate(maxRate)
@@ -61,7 +61,7 @@ ViewRating::ViewRating(const QSharedPointer<ModelRating>& model, const QPixmap& 
 
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseRating>::create(this));
+        setController(makeShared<ControllerMouseRating>(this));
     }
 }
 

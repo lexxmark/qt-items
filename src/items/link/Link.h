@@ -31,8 +31,8 @@ class QI_EXPORT ViewLink: public ViewText
     Q_DISABLE_COPY(ViewLink)
 
 public:
-    ViewLink(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController = ViewDefaultControllerCreate, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
-    ViewLink(const QSharedPointer<ModelText>& model, const QSharedPointer<ModelUrl>& modelUrl, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewLink(SharedPtr<ModelText> model, ViewDefaultController createDefaultController = ViewDefaultControllerCreate, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
+    ViewLink(SharedPtr<ModelText> model, SharedPtr<ModelUrl> modelUrl, Qt::Alignment alignment = Qt::Alignment(Qt::AlignLeft | Qt::AlignVCenter), Qt::TextElideMode textElideMode = Qt::ElideNone);
 
     std::function<void (ID id, const ControllerContext& context, const ViewLink* viewLink)> action;
 

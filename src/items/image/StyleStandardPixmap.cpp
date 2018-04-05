@@ -27,7 +27,7 @@ ViewStyleStandardPixmap::ViewStyleStandardPixmap(QStyle::StandardPixmap standard
 {
     if (useDefaultController)
     {
-        auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+        auto controller = makeShared<ControllerMousePushableCallback>();
         controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
                 action(id, context, this);

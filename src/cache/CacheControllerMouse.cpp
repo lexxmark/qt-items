@@ -24,7 +24,7 @@
 namespace Qi
 {
 
-CacheControllerMouse::CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, QSharedPointer<CacheSpace> cacheSpace)
+CacheControllerMouse::CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, SharedPtr<CacheSpace> cacheSpace)
     : ControllerContext(owner, widgetCore),
       m_cacheSpaces(1, std::move(cacheSpace)),
       m_capturingController(nullptr),
@@ -41,7 +41,7 @@ CacheControllerMouse::~CacheControllerMouse()
     Q_ASSERT(m_activeControllers.isEmpty());
 }
 
-void CacheControllerMouse::addCacheSpace(QSharedPointer<CacheSpace> cacheSpace)
+void CacheControllerMouse::addCacheSpace(SharedPtr<CacheSpace> cacheSpace)
 {
     clear();
     m_cacheSpaces.append(std::move(cacheSpace));

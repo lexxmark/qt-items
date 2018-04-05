@@ -33,9 +33,9 @@ void RangeSelection::clear()
     emit rangeChanged(this, ChangeReasonRange);
 }
 
-void RangeSelection::addRange(const QSharedPointer<Range>& range, bool exclude)
+void RangeSelection::addRange(SharedPtr<Range> range, bool exclude)
 {
-    RangeInfo info = { range, exclude };
+    RangeInfo info = { std::move(range), exclude };
     m_ranges.append(info);
     emit rangeChanged(this, ChangeReasonRange);
 }
@@ -63,9 +63,9 @@ bool RangeNone::hasItemImpl(ID /*id*/) const
     return false;
 }
 
-QSharedPointer<RangeNone> makeRangeNone()
+SharedPtr<RangeNone> makeRangeNone()
 {
-    return QSharedPointer<RangeNone>::create();
+    return makeShared<RangeNone>();
 }
 
 RangeAll::RangeAll()
@@ -77,9 +77,9 @@ bool RangeAll::hasItemImpl(ID /*id*/) const
     return true;
 }
 
-QSharedPointer<RangeAll> makeRangeAll()
+SharedPtr<RangeAll> makeRangeAll()
 {
-    return QSharedPointer<RangeAll>::create();
+    return makeShared<RangeAll>();
 }
 
 RangeID::RangeID(ID id)
@@ -101,9 +101,9 @@ bool RangeID::hasItemImpl(ID id) const
     return m_id == id;
 }
 
-QSharedPointer<RangeID> makeRangeID(ID id)
+SharedPtr<RangeID> makeRangeID(ID id)
 {
-    return QSharedPointer<RangeID>::create(id);
+    return makeShared<RangeID>(id);
 }
 
 } // end namespace Qi

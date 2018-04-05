@@ -36,9 +36,9 @@ class QI_EXPORT ModelGridSortingBase: public Model
     Q_DISABLE_COPY(ModelGridSortingBase)
 
 public:
-    ModelGridSortingBase(QSharedPointer<SpaceGrid> grid);
+    ModelGridSortingBase(SharedPtr<SpaceGrid> grid);
 
-    QSharedPointer<ModelComparable> sortingModel(GridID id) const { return sortingModelImpl(id); }
+    SharedPtr<ModelComparable> sortingModel(GridID id) const { return sortingModelImpl(id); }
 
     GridID activeSortingId() const { return !m_sortingExpired ? m_activeSortingId : GridID(); }
     void clearActiveSortingId();
@@ -55,7 +55,7 @@ signals:
     void didSortItems(const ModelGridSortingBase*);
 
 protected:
-    virtual QSharedPointer<ModelComparable> sortingModelImpl(GridID /*id*/) const = 0;
+    virtual SharedPtr<ModelComparable> sortingModelImpl(GridID /*id*/) const = 0;
 
     void connectModel(const Model* model);
     void disconnectModel(const Model* model);
@@ -63,7 +63,7 @@ protected:
 private:
     void onSortingModelChanged(const Model* model);
 
-    QSharedPointer<SpaceGrid> m_grid;
+    SharedPtr<SpaceGrid> m_grid;
     bool m_ascending;
     GridID m_activeSortingId;
     bool m_sortingExpired;
@@ -75,18 +75,18 @@ class QI_EXPORT ModelGridSorting: public ModelGridSortingBase
     Q_DISABLE_COPY(ModelGridSorting)
 
 public:
-    ModelGridSorting(QSharedPointer<SpaceGrid> grid);
+    ModelGridSorting(SharedPtr<SpaceGrid> grid);
     virtual ~ModelGridSorting();
 
-    void addSortingModel(GridID id, const QSharedPointer<ModelComparable>& model);
-    void addSortingModel(int column, const QSharedPointer<ModelComparable>& model);
+    void addSortingModel(GridID id, SharedPtr<ModelComparable> model);
+    void addSortingModel(int column, SharedPtr<ModelComparable> model);
     void clear();
 
 protected:
-    QSharedPointer<ModelComparable> sortingModelImpl(GridID id) const override;
+    SharedPtr<ModelComparable> sortingModelImpl(GridID id) const override;
 
 private:
-    QMap<GridID, QSharedPointer<ModelComparable>> m_modelsToSort;
+    QMap<GridID, SharedPtr<ModelComparable>> m_modelsToSort;
 };
 
 class QI_EXPORT ModelGridSortingByRanges: public ModelGridSortingBase
@@ -95,20 +95,20 @@ class QI_EXPORT ModelGridSortingByRanges: public ModelGridSortingBase
     Q_DISABLE_COPY(ModelGridSortingByRanges)
 
 public:
-    ModelGridSortingByRanges(QSharedPointer<SpaceGrid> grid);
+    ModelGridSortingByRanges(SharedPtr<SpaceGrid> grid);
     virtual ~ModelGridSortingByRanges();
 
-    void addSortingModel(const QSharedPointer<ModelComparable>& model, const QSharedPointer<Range>& range);
+    void addSortingModel(SharedPtr<ModelComparable> model, SharedPtr<Range> range);
     void clear();
 
 protected:
-    QSharedPointer<ModelComparable> sortingModelImpl(GridID id) const override;
+    SharedPtr<ModelComparable> sortingModelImpl(GridID id) const override;
 
 private:
     struct SortingInfo
     {
-        QSharedPointer<Range> range;
-        QSharedPointer<ModelComparable> model;
+        SharedPtr<Range> range;
+        SharedPtr<ModelComparable> model;
     };
     QVector<SortingInfo> m_modelsToSort;
 };
@@ -117,10 +117,10 @@ class QI_EXPORT SortingHub
 {
 public:
     SortingHub();
-    SortingHub(const QSharedPointer<ModelGridSortingBase>& sorting1, const QSharedPointer<ModelGridSortingBase>& sorting2);
+    SortingHub(const SharedPtr<ModelGridSortingBase>& sorting1, const SharedPtr<ModelGridSortingBase>& sorting2);
     ~SortingHub();
 
-    void addSorting(const QSharedPointer<ModelGridSortingBase>& sorting);
+    void addSorting(SharedPtr<ModelGridSortingBase> sorting);
 
     void clearActiveSortingId();
     void sort();
@@ -130,7 +130,7 @@ private:
 
     struct Info
     {
-        QSharedPointer<ModelGridSortingBase> sorting;
+        SharedPtr<ModelGridSortingBase> sorting;
         QMetaObject::Connection connection;
     };
 
@@ -143,19 +143,19 @@ class QI_EXPORT RangeGridSorting: public Range
     Q_DISABLE_COPY(RangeGridSorting)
 
 public:
-    RangeGridSorting(const QSharedPointer<ModelGridSortingBase>& model, int row = 0);
+    RangeGridSorting(SharedPtr<ModelGridSortingBase> model, int row = 0);
 
 protected:
     bool hasItemImpl(ID id) const override;
 
 private:
-    QSharedPointer<ModelGridSortingBase> m_model;
+    SharedPtr<ModelGridSortingBase> m_model;
     int m_row;
 };
 
-inline QSharedPointer<RangeGridSorting> makeRangeGridSorter(const QSharedPointer<ModelGridSortingBase>& model, int row = 0)
+inline SharedPtr<RangeGridSorting> makeRangeGridSorter(SharedPtr<ModelGridSortingBase> model, int row = 0)
 {
-    return QSharedPointer<RangeGridSorting>::create(model, row);
+    return makeShared<RangeGridSorting>(std::move(model), row);
 }
 
 class QI_EXPORT ViewGridSorting: public ViewModeled<ModelGridSortingBase>
@@ -164,7 +164,7 @@ class QI_EXPORT ViewGridSorting: public ViewModeled<ModelGridSortingBase>
     Q_DISABLE_COPY(ViewGridSorting)
 
 public:
-    ViewGridSorting(const QSharedPointer<ModelGridSortingBase>& model, bool useDefaultController = true);
+    ViewGridSorting(SharedPtr<ModelGridSortingBase> model, bool useDefaultController = true);
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -177,13 +177,13 @@ class QI_EXPORT ControllerMouseGridSorting: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseGridSorting)
 
 public:
-    ControllerMouseGridSorting(const QSharedPointer<ModelGridSortingBase>& model);
+    ControllerMouseGridSorting(SharedPtr<ModelGridSortingBase> model);
 
 protected:
     void applyImpl() override;
 
 private:
-    QSharedPointer<ModelGridSortingBase> m_model;
+    SharedPtr<ModelGridSortingBase> m_model;
 };
 
 } // end namespace Qi

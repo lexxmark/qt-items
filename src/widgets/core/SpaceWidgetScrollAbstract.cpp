@@ -39,21 +39,21 @@ SpaceWidgetScrollAbstract::~SpaceWidgetScrollAbstract()
 {
 }
 
-bool SpaceWidgetScrollAbstract::initSpaceWidgetScrollable(const QSharedPointer<CacheSpace>& mainCacheSpace, const QSharedPointer<CacheSpace>& scrollableCacheSpace)
+bool SpaceWidgetScrollAbstract::initSpaceWidgetScrollable(SharedPtr<CacheSpace> mainCacheSpace, SharedPtr<CacheSpace> scrollableCacheSpace)
 {
     // one time initialization allowed
-    if(!m_scrollableCacheSpace.isNull())
+    if(m_scrollableCacheSpace)
     {
         Q_ASSERT(false);
         return false;
     }
 
-    Q_ASSERT(!scrollableCacheSpace.isNull());
+    Q_ASSERT(scrollableCacheSpace);
 
-    m_scrollableCacheSpace = scrollableCacheSpace;
+    m_scrollableCacheSpace = std::move(scrollableCacheSpace);
     connect(m_scrollableCacheSpace.data(), &CacheSpace::cacheChanged, this, &SpaceWidgetScrollAbstract::onScrollCacheSpaceChanged);
 
-    return initSpaceWidgetCore(mainCacheSpace);
+    return initSpaceWidgetCore(std::move(mainCacheSpace));
 }
 
 void SpaceWidgetScrollAbstract::onScrollCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason)

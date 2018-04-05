@@ -41,13 +41,13 @@ public:
     virtual ID toAbsolute(ID visibleItem) const = 0;
     virtual ID toVisible(ID absoluteItem) const = 0;
     virtual QRect itemRect(ID visibleItem) const = 0;
-    virtual QSharedPointer<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const = 0;
+    virtual SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const = 0;
 
     const QVector<ItemSchema>& schemas() const { return m_schemas; }
     int addSchema(const ItemSchema& schema);
-    int addSchema(QSharedPointer<Range> range, QSharedPointer<View> view, QSharedPointer<Layout> layout = makeLayoutClient()) { return addSchema(ItemSchema(range, layout, view)); }
-    int insertSchema(int index, QSharedPointer<Range> range, QSharedPointer<View> view, QSharedPointer<Layout> layout = makeLayoutClient());
-    void removeSchema(QSharedPointer<View> view);
+    int addSchema(SharedPtr<Range> range, SharedPtr<View> view, SharedPtr<Layout> layout = makeLayoutClient()) { return addSchema(ItemSchema(range, layout, view)); }
+    int insertSchema(int index, SharedPtr<Range> range, SharedPtr<View> view, SharedPtr<Layout> layout = makeLayoutClient());
+    void removeSchema(SharedPtr<View> view);
     void clearSchemas();
 
     ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }

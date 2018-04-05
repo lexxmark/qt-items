@@ -30,10 +30,10 @@ struct TooltipInfo;
 class QI_EXPORT CacheControllerMouse: public ControllerContext
 {
 public:
-    CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, QSharedPointer<CacheSpace> cacheSpace);
+    CacheControllerMouse(QWidget* owner, SpaceWidgetCore* widgetCore, SharedPtr<CacheSpace> cacheSpace);
     virtual ~CacheControllerMouse();
 
-    void addCacheSpace(QSharedPointer<CacheSpace> cacheSpace);
+    void addCacheSpace(SharedPtr<CacheSpace> cacheSpace);
 
     bool isBusy() const { return m_isBusy; }
 
@@ -112,7 +112,7 @@ private:
         }
     }
 
-    QVector<QSharedPointer<CacheSpace>> m_cacheSpaces;
+    QVector<SharedPtr<CacheSpace>> m_cacheSpaces;
     QVector<ControllerMouse*> m_activeControllers;
     ControllerMouse* m_capturingController;
     bool m_isStopped;

@@ -19,7 +19,6 @@
 
 #include "core/misc/ViewAuxiliary.h"
 
-#include <QSharedPointer>
 #include <QMetaObject>
 
 class QWidget;
@@ -45,14 +44,14 @@ public:
     CacheSpace& rMainCacheSpace() { return *m_mainCacheSpace; }
     Space& rMainSpace();
 
-    const QSharedPointer<ControllerKeyboard>& controllerKeyboard() const { return m_controllerKeyboard; }
-    void setControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard);
-    void addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard);
+    const SharedPtr<ControllerKeyboard>& controllerKeyboard() const { return m_controllerKeyboard; }
+    void setControllerKeyboard(SharedPtr<ControllerKeyboard> controllerKeyboard);
+    void addControllerKeyboard(SharedPtr<ControllerKeyboard> controllerKeyboard);
 
     // scrolls widget to make visibleItem fully visible
-    void ensureVisible(const ID& visibleItem, const CacheSpace* cacheSpace, bool validateItem);
+    void ensureVisible(ID visibleItem, const CacheSpace* cacheSpace, bool validateItem);
     // performs inplace editing for visibleItem
-    bool doInplaceEdit(const ID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
+    bool doInplaceEdit(ID visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event);
 
     // context which used for draw operations
     const GuiContext& guiContext() const { return m_guiContext; }
@@ -63,7 +62,7 @@ protected:
     explicit SpaceWidgetCore(QWidget* owner);
     ~SpaceWidgetCore();
 
-    bool initSpaceWidgetCore(const QSharedPointer<CacheSpace>& mainCacheSpace);
+    bool initSpaceWidgetCore(SharedPtr<CacheSpace> mainCacheSpace);
 
     bool processOwnerEvent(QEvent* event);
 
@@ -80,9 +79,9 @@ private:
 
     QWidget* m_owner;
 
-    QSharedPointer<CacheSpace> m_mainCacheSpace;
-    QScopedPointer<CacheControllerMouse> m_cacheControllers;
-    QSharedPointer<ControllerKeyboard> m_controllerKeyboard;
+    SharedPtr<CacheSpace> m_mainCacheSpace;
+    UniquePtr<CacheControllerMouse> m_cacheControllers;
+    SharedPtr<ControllerKeyboard> m_controllerKeyboard;
 
     GuiContext m_guiContext;
 

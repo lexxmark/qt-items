@@ -23,11 +23,11 @@
 namespace Qi
 {
 
-ModelSelection::ModelSelection(QSharedPointer<SpaceGrid> space)
-    : m_space(space),
+ModelSelection::ModelSelection(SharedPtr<SpaceGrid> space)
+    : m_space(std::move(space)),
       m_selectionOperations(0)
 {
-    Q_ASSERT(space);
+    Q_ASSERT(m_space);
 }
 
 ModelSelection::~ModelSelection()
@@ -50,16 +50,16 @@ bool ModelSelection::isVisibleItemSelected(GridID visibleId) const
     return isItemSelected(absId);
 }
 
-void ModelSelection::addSelection(const QSharedPointer<Range>& range, bool exclude)
+void ModelSelection::addSelection(SharedPtr<Range> range, bool exclude)
 {
-    m_selection.addRange(range, exclude);
+    m_selection.addRange(std::move(range), exclude);
     emitChangedSignals(ChangeReasonSelection);
 }
 
-void ModelSelection::setSelection(const QSharedPointer<Range>& range)
+void ModelSelection::setSelection(SharedPtr<Range> range)
 {
     m_selection.clear();
-    m_selection.addRange(range, false);
+    m_selection.addRange(std::move(range), false);
     emitChangedSignals(ChangeReasonSelection);
 }
 
@@ -140,15 +140,15 @@ bool ModelSelectionRows::isRowSelected(int row) const
 
 void ModelSelectionRows::selectRows(const QSet<int>& rows)
 {
-    setSelection(QSharedPointer<RangeGridRows>::create(rows));
+    setSelection(makeShared<RangeGridRows>(rows));
 }
 
 void ModelSelectionColumns::selectColumns(const QSet<int>& columns)
 {
-    setSelection(QSharedPointer<RangeGridColumns>::create(columns));
+    setSelection(makeShared<RangeGridColumns>(columns));
 }
 
-ViewSelectionClient::ViewSelectionClient(const QSharedPointer<ModelSelection>& model, bool useDefaultController)
+ViewSelectionClient::ViewSelectionClient(const SharedPtr<ModelSelection> &model, bool useDefaultController)
     : ViewModeled<ModelSelection>(model)
 {
     // don't use this view in copy operations by default
@@ -156,7 +156,7 @@ ViewSelectionClient::ViewSelectionClient(const QSharedPointer<ModelSelection>& m
 
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseSelectionClient>::create(model));
+        setController(makeShared<ControllerMouseSelectionClient>(model));
     }
 }
 
@@ -224,7 +224,7 @@ void ViewSelectionClient::cleanupDrawImpl(QPainter* painter, const GuiContext& /
     m_painterState.restore(painter);
 }
 
-ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type, bool useDefaultController)
+ViewSelectionHeader::ViewSelectionHeader(const SharedPtr<ModelSelection> &model, SelectionHeaderType type, bool useDefaultController)
     : ViewModeled<ModelSelection>(model),
       m_type(type),
       m_pushableTracker(this)
@@ -234,7 +234,7 @@ ViewSelectionHeader::ViewSelectionHeader(const QSharedPointer<ModelSelection>& m
 
     if (useDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseSelectionHeader>::create(model, type));
+        setController(makeShared<ControllerMouseSelectionHeader>(model, type));
     }
 }
 
@@ -261,9 +261,9 @@ void ViewSelectionHeader::drawImpl(QPainter* painter, const GuiContext& ctx, con
     ctx.widget->style()->drawControl(QStyle::CE_HeaderSection, &option, painter, ctx.widget);
 }
 
-ControllerMouseSelectionClient::ControllerMouseSelectionClient(const QSharedPointer<ModelSelection>& model)
+ControllerMouseSelectionClient::ControllerMouseSelectionClient(SharedPtr<ModelSelection> model)
     : ControllerMouseCaptured(ControllerMousePriorityBackground, true),
-      m_model(model),
+      m_model(std::move(model)),
       m_exclude(false)
 {
     Q_ASSERT(m_model);
@@ -407,9 +407,9 @@ void ControllerMouseSelectionClient::applySelection(bool makeStartItemAsActive)
     }
 }
 
-ControllerMouseSelectionHeader::ControllerMouseSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type)
+ControllerMouseSelectionHeader::ControllerMouseSelectionHeader(SharedPtr<ModelSelection> model, SelectionHeaderType type)
     : ControllerMouseCaptured(ControllerMousePriorityBackground, true),
-      m_model(model),
+      m_model(std::move(model)),
       m_type(type),
       m_startLine(InvalidIndex),
       m_trackLine(InvalidIndex)
@@ -554,9 +554,9 @@ void ControllerMouseSelectionHeader::applySelection(bool makeStartItemAsActive)
     }
 }
 
-ControllerMouseSelectionNonItems::ControllerMouseSelectionNonItems(const QSharedPointer<ModelSelection>& model)
+ControllerMouseSelectionNonItems::ControllerMouseSelectionNonItems(SharedPtr<ModelSelection> model)
     : ControllerMouse(ControllerMousePriorityBackground),
-      m_model(model)
+      m_model(std::move(model))
 {
     Q_ASSERT(m_model);
 }
@@ -569,8 +569,8 @@ bool ControllerMouseSelectionNonItems::processLButtonDown(QMouseEvent* event)
     return true;
 }
 
-ControllerKeyboardSelection::ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace *cacheSpace, SpaceWidgetCore* widgetCore)
-    : m_model(model),
+ControllerKeyboardSelection::ControllerKeyboardSelection(SharedPtr<ModelSelection> model, const CacheSpace *cacheSpace, SpaceWidgetCore* widgetCore)
+    : m_model(std::move(model)),
       m_cacheSpace(cacheSpace),
       m_widgetCore(widgetCore)
 {

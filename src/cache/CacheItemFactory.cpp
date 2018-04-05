@@ -72,14 +72,14 @@ ViewSchema CacheItemFactory::createViewSchema(ID absId) const
     {
         ViewSchema schema;
         schema.layout = makeLayoutBackground();
-        schema.view = QSharedPointer<ViewComposite>::create(viewSchemas);
+        schema.view = makeShared<ViewComposite>(viewSchemas);
         return schema;
     }
 }
 
-QSharedPointer<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask)
 {
-    return QSharedPointer<CacheItemFactory>::create(space, viewApplicationMask);
+    return makeShared<CacheItemFactory>(space, viewApplicationMask);
 }
 
 class CacheItemFactoryItem: public CacheItemFactory
@@ -108,9 +108,9 @@ private:
     mutable ViewSchema m_schema;
 };
 
-QSharedPointer<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask)
 {
-    return QSharedPointer<CacheItemFactoryItem>::create(space, viewApplicationMask);
+    return makeShared<CacheItemFactoryItem>(space, viewApplicationMask);
 }
 
 class CacheItemFactorySameSchemaByColumn: public CacheItemFactory
@@ -140,9 +140,9 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByColumn;
 };
 
-QSharedPointer<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask)
 {
-    return QSharedPointer<CacheItemFactorySameSchemaByColumn>::create(space, viewApplicationMask);
+    return makeShared<CacheItemFactorySameSchemaByColumn>(space, viewApplicationMask);
 }
 
 class CacheItemFactorySameSchemaByRow: public CacheItemFactory
@@ -172,9 +172,9 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByRow;
 };
 
-QSharedPointer<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask)
 {
-    return QSharedPointer<CacheItemFactorySameSchemaByRow>::create(space, viewApplicationMask);
+    return makeShared<CacheItemFactorySameSchemaByRow>(space, viewApplicationMask);
 }
 
 

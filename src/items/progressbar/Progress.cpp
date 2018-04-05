@@ -20,13 +20,13 @@
 namespace Qi
 {
 
-ViewProgressBase::ViewProgressBase(const QSharedPointer<ModelProgress>& model)
-    : ViewModeled<ModelProgress>(model)
+ViewProgressBase::ViewProgressBase(SharedPtr<ModelProgress> model)
+    : ViewModeled<ModelProgress>(std::move(model))
 {
 }
 
-ViewProgressContents::ViewProgressContents(const QSharedPointer<ModelProgress>& model)
-    : ViewProgressBase(model)
+ViewProgressContents::ViewProgressContents(SharedPtr<ModelProgress> model)
+    : ViewProgressBase(std::move(model))
 {
 }
 
@@ -64,8 +64,8 @@ void ViewProgressContents::drawImpl(QPainter* painter, const GuiContext& ctx, co
     style->drawControl(QStyle::CE_ProgressBarContents, &option, painter, ctx.widget);
 }
 
-ViewProgressLabel::ViewProgressLabel(const QSharedPointer<ModelProgress>& model, ProgressLabelMode mode)
-    : ViewProgressBase(model),
+ViewProgressLabel::ViewProgressLabel(SharedPtr<ModelProgress> model, ProgressLabelMode mode)
+    : ViewProgressBase(std::move(model)),
       m_mode(mode)
 {
 }
@@ -120,8 +120,8 @@ void ViewProgressLabel::drawImpl(QPainter* painter, const GuiContext& ctx, const
     style->drawControl(QStyle::CE_ProgressBarLabel, &option, painter, ctx.widget);
 }
 
-ViewProgressBox::ViewProgressBox(const QSharedPointer<ModelProgress>& model)
-    : ViewProgressBase(model)
+ViewProgressBox::ViewProgressBox(SharedPtr<ModelProgress> model)
+    : ViewProgressBase(std::move(model))
 {
     contentsColor = Qt::magenta;
     boundsColor = contentsColor.darker();

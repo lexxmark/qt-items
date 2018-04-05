@@ -19,8 +19,8 @@
 namespace Qi
 {
 
-ItemsFilterByText::ItemsFilterByText(const QSharedPointer<Model>& modelToFilter)
-    : ItemsFilter(modelToFilter)
+ItemsFilterByText::ItemsFilterByText(SharedPtr<Model> modelToFilter)
+    : ItemsFilter(std::move(modelToFilter))
 {
 }
 
@@ -45,15 +45,15 @@ RowsFilterByText::~RowsFilterByText()
     clearFilters();
 }
 
-QSharedPointer<ItemsFilterByText> RowsFilterByText::filterByColumn(int column) const
+SharedPtr<ItemsFilterByText> RowsFilterByText::filterByColumn(int column) const
 {
     if (m_filterByColumn.size() <= column)
-        return QSharedPointer<ItemsFilterByText>();
+        return nullptr;
 
     return m_filterByColumn[column];
 }
 
-bool RowsFilterByText::addFilterByColumn(int column, const QSharedPointer<ItemsFilterByText>& filter)
+bool RowsFilterByText::addFilterByColumn(int column, SharedPtr<ItemsFilterByText> filter)
 {
     Q_ASSERT(!filter.isNull());
 
@@ -63,8 +63,9 @@ bool RowsFilterByText::addFilterByColumn(int column, const QSharedPointer<ItemsF
     if (!m_filterByColumn[column].isNull())
         return false;
 
-    m_filterByColumn[column] = filter;
     connect(filter.data(), &ItemsFilterByText::filterChanged, this, &RowsFilterByText::onFilterChanged);
+    m_filterByColumn[column] = std::move(filter);
+
     return true;
 }
 
@@ -105,9 +106,9 @@ void RowsFilterByText::onFilterChanged(const ItemsFilter*)
     emit visibilityChanged(this);
 }
 
-QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter)
+SharedPtr<View> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter)
 {
-    auto modelFilterText = QSharedPointer<ModelTextCallback>::create();
+    auto modelFilterText = makeShared<ModelTextCallback>();
     modelFilterText->getValueFunction = [filter](ID id)->QString {
         auto subFilter = filter->filterByColumn(column(id));
         return subFilter.isNull() ? QString() : subFilter->filterText();
@@ -120,7 +121,7 @@ QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByT
         return subFilter->setFilterText(value);
     };
 
-    auto view = QSharedPointer<ViewTextOrHint>::create(modelFilterText);
+    auto view = makeShared<ViewTextOrHint>(modelFilterText);
     view->isItemHint = [filter](ID id, const ModelText* sourceText) {
         if (filter->filterByColumn(column(id)).isNull()) return false;
         if (!sourceText) return false;
@@ -136,7 +137,7 @@ QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByT
         return true;
     };
 
-    auto controller = QSharedPointer<ControllerMouseText>::create(modelFilterText);
+    auto controller = makeShared<ControllerMouseText>(modelFilterText);
     controller->enableEditBySingleClick();
     controller->enableLiveUpdate();
     view->setController(controller);
@@ -144,11 +145,11 @@ QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByT
     return view;
 }
 
-ItemsFilterTextByText::ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText)
+ItemsFilterTextByText::ItemsFilterTextByText(SharedPtr<ModelText> modelText)
     : ItemsFilterByText(modelText),
-      m_modelText(modelText)
+      m_modelText(std::move(modelText))
 {
-    Q_ASSERT(modelText);
+    Q_ASSERT(m_modelText);
 }
 
 bool ItemsFilterTextByText::isItemPassFilterImpl(ID id) const

@@ -21,6 +21,7 @@
 #include <QPointer>
 #include <QSharedPointer>
 #include <QDebug>
+#include <memory>
 
 #if defined(QT_ITEMS_LIBRARY)
 #  define QI_EXPORT Q_DECL_EXPORT
@@ -32,6 +33,27 @@
 
 namespace Qi
 {
+
+template<typename T>
+using SharedPtr = QSharedPointer<T>;
+
+template<typename T>
+using WeakPtr = QWeakPointer<T>;
+
+template<typename T>
+using UniquePtr = std::unique_ptr<T>;
+
+template <typename T, typename... Args>
+SharedPtr<T> makeShared(Args && ...arguments)
+{
+    return SharedPtr<T>::create(std::forward<Args>(arguments)...);
+}
+
+template <typename T, typename... Args>
+UniquePtr<T> makeUnique(Args && ...arguments)
+{
+    return std::make_unique<T>(std::forward<Args>(arguments)...);
+}
 
 static const int InvalidIndex = -1;
     

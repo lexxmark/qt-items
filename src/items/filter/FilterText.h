@@ -38,7 +38,7 @@ public:
     bool isFilterTextEmpty() const { return m_filterText.isEmpty(); }
 
 protected:
-    ItemsFilterByText(const QSharedPointer<Model>& modelToFilter);
+    ItemsFilterByText(SharedPtr<Model> modelToFilter);
 
 private:
     QString m_filterText;
@@ -53,8 +53,8 @@ public:
     RowsFilterByText();
     virtual ~RowsFilterByText();
 
-    QSharedPointer<ItemsFilterByText> filterByColumn(int column) const;
-    bool addFilterByColumn(int column, const QSharedPointer<ItemsFilterByText>& filter);
+    SharedPtr<ItemsFilterByText> filterByColumn(int column) const;
+    bool addFilterByColumn(int column, SharedPtr<ItemsFilterByText> filter);
     void clearFilters();
 
     bool isActive() const { return m_isActive; }
@@ -66,11 +66,11 @@ protected:
 private:
     void onFilterChanged(const ItemsFilter*);
 
-    mutable QVector<QSharedPointer<ItemsFilterByText>> m_filterByColumn;
+    mutable QVector<SharedPtr<ItemsFilterByText>> m_filterByColumn;
     bool m_isActive;
 };
 
-QI_EXPORT QSharedPointer<View> makeViewRowsFilterByText(const QSharedPointer<RowsFilterByText>& filter);
+QI_EXPORT SharedPtr<View> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter);
 
 class QI_EXPORT ItemsFilterTextByText: public ItemsFilterByText
 {
@@ -78,13 +78,13 @@ class QI_EXPORT ItemsFilterTextByText: public ItemsFilterByText
     Q_DISABLE_COPY(ItemsFilterTextByText)
 
 public:
-    ItemsFilterTextByText(const QSharedPointer<ModelText>& modelText);
+    ItemsFilterTextByText(SharedPtr<ModelText> modelText);
 
 protected:
     bool isItemPassFilterImpl(ID id) const override;
 
 private:
-    QSharedPointer<ModelText> m_modelText;
+    SharedPtr<ModelText> m_modelText;
 };
 
 

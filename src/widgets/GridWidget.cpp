@@ -29,26 +29,26 @@ GridWidget::GridWidget(QWidget* parent)
     : SpaceWidgetScrollAbstract(parent)
 {
     // initialize main grid
-    m_mainGrid = QSharedPointer<SpaceGrid>::create();
+    m_mainGrid = makeShared<SpaceGrid>();
     m_mainGrid->setDimensions(3, 3);
-    auto mainCacheSpace = QSharedPointer<CacheSpaceGrid>::create(m_mainGrid);
+    auto mainCacheSpace = makeShared<CacheSpaceGrid>(m_mainGrid);
 
     //initialize sub rows and columns
     for (int i = 0; i < 3; ++i)
     {
-        m_rows[i] = QSharedPointer<Lines>::create();
-        m_columns[i] = QSharedPointer<Lines>::create();
+        m_rows[i] = makeShared<Lines>();
+        m_columns[i] = makeShared<Lines>();
     }
 
     //initialize sub grids and caches
-    auto modelCache = QSharedPointer<ModelStorageGrid<QSharedPointer<CacheSpace>>>::create(m_mainGrid);
+    auto modelCache = makeShared<ModelStorageGrid<SharedPtr<CacheSpace>>>(m_mainGrid);
     for (GridID subID = GridID(0, 0); subID.row < 3; ++subID.row)
     {
         for (subID.column = 0; subID.column < 3; ++subID.column)
         {
             SpaceGridHint hint = (subID.row == 1) ? SpaceGridHintSameSchemasByColumn : SpaceGridHintNone;
-            auto subGrid = QSharedPointer<SpaceGrid>::create(m_rows[subID.row], m_columns[subID.column], hint);
-            auto cacheSpace = QSharedPointer<CacheSpaceGrid>::create(subGrid);
+            auto subGrid = makeShared<SpaceGrid>(m_rows[subID.row], m_columns[subID.column], hint);
+            auto cacheSpace = makeShared<CacheSpaceGrid>(subGrid);
 
             m_cacheSubGrids[subID.row][subID.column] = cacheSpace;
             modelCache->setValueId(subID, cacheSpace);
@@ -59,7 +59,7 @@ GridWidget::GridWidget(QWidget* parent)
     }
 
     // add sub-grid caches to main grid schema
-    m_mainGrid->addSchema(makeRangeAll(), QSharedPointer<ViewCacheSpace>::create(modelCache), makeLayoutBackground());
+    m_mainGrid->addSchema(makeRangeAll(), makeShared<ViewCacheSpace>(modelCache), makeLayoutBackground());
 
     initSpaceWidgetScrollable(mainCacheSpace, cacheSubGrid());
 }
@@ -68,12 +68,12 @@ GridWidget::~GridWidget()
 {
 }
 
-const QSharedPointer<SpaceGrid>& GridWidget::subGrid(GridID subGridID) const
+const SharedPtr<SpaceGrid>& GridWidget::subGrid(GridID subGridID) const
 {
     return m_cacheSubGrids[subGridID.row][subGridID.column]->spaceGrid();
 }
 
-const QSharedPointer<CacheSpaceGrid>& GridWidget::cacheSubGrid(GridID subGridID) const
+const SharedPtr<CacheSpaceGrid>& GridWidget::cacheSubGrid(GridID subGridID) const
 {
     return m_cacheSubGrids[subGridID.row][subGridID.column];
 }

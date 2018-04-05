@@ -38,14 +38,14 @@ public:
     explicit ListWidget(QWidget *parent = nullptr);
     virtual ~ListWidget();
 
-    const QSharedPointer<SpaceGrid>& grid() const { return m_grid; }
+    const SharedPtr<SpaceGrid>& grid() const { return m_grid; }
 
-    const QSharedPointer<Lines>& rows() const { return m_grid->rows(); }
-    const QSharedPointer<Lines>& columns() const { return m_grid->columns(); }
+    const SharedPtr<Lines>& rows() const { return m_grid->rows(); }
+    const SharedPtr<Lines>& columns() const { return m_grid->columns(); }
 
-    const QSharedPointer<CacheSpaceGrid>& cacheGrid() const { return m_cacheGrid;}
+    const SharedPtr<CacheSpaceGrid>& cacheGrid() const { return m_cacheGrid;}
 
-    bool installEmptyView(const QSharedPointer<View>& view, const QSharedPointer<Layout>& layout);
+    bool installEmptyView(SharedPtr<View> view, SharedPtr<Layout> layout);
 
 protected:
     QPixmap createPixmapImpl() const;
@@ -54,13 +54,13 @@ private:
     void onCacheSpaceGridChanged(const CacheSpace* cache, ChangeReason reason);
     void onSpaceGridChanged(const Space* space, ChangeReason reason);
 
-    QSharedPointer<SpaceGrid> m_grid;
-    QSharedPointer<CacheSpaceGrid> m_cacheGrid;
+    SharedPtr<SpaceGrid> m_grid;
+    SharedPtr<CacheSpaceGrid> m_cacheGrid;
 
-    QSharedPointer<SpaceItem> m_mainSpace;
-    QSharedPointer<CacheSpaceItem> m_mainCache;
+    SharedPtr<SpaceItem> m_mainSpace;
+    SharedPtr<CacheSpaceItem> m_mainCache;
 
-    QSharedPointer<ViewVisible> m_emptyView;
+    SharedPtr<ViewVisible> m_emptyView;
 };
 
 } // end namespace Qi

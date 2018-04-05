@@ -26,8 +26,8 @@ ItemWidget::ItemWidget(QWidget* parent, ID id)
     : SpaceWidgetAbstract(parent),
       m_syncSpaceSizeWithContent(true)
 {
-    m_space = QSharedPointer<SpaceItem>::create(id);
-    initSpaceWidgetCore(QSharedPointer<CacheSpaceItem>::create(m_space));
+    m_space = makeShared<SpaceItem>(id);
+    initSpaceWidgetCore(makeShared<CacheSpaceItem>(m_space));
 
     connect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
 }

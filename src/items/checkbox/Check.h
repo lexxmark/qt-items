@@ -33,7 +33,7 @@ class QI_EXPORT ViewCheck: public ViewModeled<ModelCheck>
     Q_DISABLE_COPY(ViewCheck)
 
 public:
-    ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultController = true);
+    ViewCheck(SharedPtr<ModelCheck> model, bool useDefaultController = true);
 
 protected:
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
@@ -45,7 +45,7 @@ private:
     PushableTracker m_pushableTracker;
 };
 
-QI_EXPORT QSharedPointer<ControllerMousePushable> createControllerMouseCheck(const QSharedPointer<ModelCheck>& model);
+QI_EXPORT SharedPtr<ControllerMousePushable> createControllerMouseCheck(const SharedPtr<ModelCheck> &model);
 
 } // end namespace Qi
 

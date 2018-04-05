@@ -71,7 +71,7 @@ bool ModelRadioStorage::setRadioItemImpl(ID id)
     return true;
 }
 
-ViewRadio::ViewRadio(const QSharedPointer<ModelRadio>& model, bool useDefaultController)
+ViewRadio::ViewRadio(const SharedPtr<ModelRadio>& model, bool useDefaultController)
     : ViewModeled<ModelRadio>(model),
       m_pushableTracker(this)
 {
@@ -119,9 +119,9 @@ QStyle::State ViewRadio::styleState(ID id) const
     return state;
 }
 
-QSharedPointer<ControllerMousePushable> createControllerMouseRadio(QSharedPointer<ModelRadio> model)
+SharedPtr<ControllerMousePushable> createControllerMouseRadio(SharedPtr<ModelRadio> model)
 {
-    auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+    auto controller = makeShared<ControllerMousePushableCallback>();
     controller->onApply = [model] (ID item, const ControllerContext& /*context*/) {
         model->setRadioItem(item);
     };

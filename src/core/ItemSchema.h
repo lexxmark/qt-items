@@ -25,13 +25,13 @@ namespace Qi
 
 struct QI_EXPORT ViewSchema
 {
-    QSharedPointer<Layout> layout;
-    QSharedPointer<View> view;
+    SharedPtr<Layout> layout;
+    SharedPtr<View> view;
 
     ViewSchema() {}
-    ViewSchema(QSharedPointer<Layout> layout, QSharedPointer<View> view)
-        : layout(layout),
-          view(view)
+    ViewSchema(SharedPtr<Layout> layout, SharedPtr<View> view)
+        : layout(std::move(layout)),
+          view(std::move(view))
     {}
 
     bool isValid() const { return layout && view; }
@@ -39,15 +39,15 @@ struct QI_EXPORT ViewSchema
 
 struct QI_EXPORT ItemSchema
 {
-    QSharedPointer<Range> range;
-    QSharedPointer<Layout> layout;
-    QSharedPointer<View> view;
+    SharedPtr<Range> range;
+    SharedPtr<Layout> layout;
+    SharedPtr<View> view;
 
     ItemSchema() {}
-    ItemSchema(QSharedPointer<Range> range, QSharedPointer<Layout> layout, QSharedPointer<View> view)
-        : range(range),
-          layout(layout),
-          view(view)
+    ItemSchema(SharedPtr<Range> range, SharedPtr<Layout> layout, SharedPtr<View> view)
+        : range(std::move(range)),
+          layout(std::move(layout)),
+          view(std::move(view))
     {}
 };
 

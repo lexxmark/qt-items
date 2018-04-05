@@ -33,7 +33,7 @@ class QI_EXPORT ViewRating: public ViewModeled<ModelRating>
     Q_DISABLE_COPY(ViewRating)
 
 public:
-    ViewRating(const QSharedPointer<ModelRating>& model, const QPixmap& rateImageOn, const QPixmap& rateImageOff, int maxRate = 5, bool useDefaultController= true);
+    ViewRating(SharedPtr<ModelRating> model, const QPixmap& rateImageOn, const QPixmap& rateImageOff, int maxRate = 5, bool useDefaultController= true);
 
     QPixmap rateImageOn() const { return m_rateImageOn; }
     QPixmap rateImageOff() const { return m_rateImageOff; }

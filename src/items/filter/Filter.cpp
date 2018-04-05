@@ -20,8 +20,8 @@
 namespace Qi
 {
 
-ItemsFilter::ItemsFilter(const QSharedPointer<Model>& modelToFilter)
-    : m_modelToFilter(modelToFilter)
+ItemsFilter::ItemsFilter(SharedPtr<Model> modelToFilter)
+    : m_modelToFilter(std::move(modelToFilter))
 {
     if (!m_modelToFilter.isNull())
         connect(m_modelToFilter.data(), &Model::modelChanged, this, &ItemsFilter::onModelToFilterChanged);

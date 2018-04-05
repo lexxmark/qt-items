@@ -67,8 +67,8 @@ public:
     ControllerKeyboardChain();
 
     void clear();
-    void append(const QSharedPointer<ControllerKeyboard>& controller);
-    void prepend(const QSharedPointer<ControllerKeyboard>& controller);
+    void append(const SharedPtr<ControllerKeyboard>& controller);
+    void prepend(const SharedPtr<ControllerKeyboard>& controller);
 
     bool processKeyPress(QKeyEvent* event) override;
     bool processKeyRelease(QKeyEvent* event) override;
@@ -77,7 +77,7 @@ public:
     void stopCapturing() override;
 
 private:
-    QVector<QSharedPointer<ControllerKeyboard>> m_controllers;
+    QVector<SharedPtr<ControllerKeyboard>> m_controllers;
     bool m_isInProcess;
 };
 

@@ -29,7 +29,7 @@ class QI_EXPORT ViewVisible: public View
     Q_DISABLE_COPY(ViewVisible)
 
 public:
-    explicit ViewVisible(QSharedPointer<View> sourceView, bool reserveSize = false);
+    explicit ViewVisible(SharedPtr<View> sourceView, bool reserveSize = false);
 
     std::function<bool(ID)> isItemVisible;
 
@@ -44,7 +44,7 @@ private:
     bool safeIsItemVisible(ID id) const;
     void onSourceViewChanged(const View* view, ChangeReason reason);
 
-    QSharedPointer<View> m_sourceView;
+    SharedPtr<View> m_sourceView;
     bool m_reserveSize;
 };
 
@@ -54,7 +54,7 @@ class QI_EXPORT ControllerMouseVisible: public ControllerMouse
     Q_DISABLE_COPY(ControllerMouseVisible)
 
 public:
-    explicit ControllerMouseVisible(const QSharedPointer<ViewVisible>& view);
+    explicit ControllerMouseVisible(SharedPtr<ViewVisible> view);
 
     bool event(QEvent* e) override;
 
@@ -65,7 +65,7 @@ protected:
 private:
     void notifyViewVisiblityChangedLater();
 
-    QSharedPointer<ViewVisible> m_view;
+    SharedPtr<ViewVisible> m_view;
 };
 
 } // end namespace Qi

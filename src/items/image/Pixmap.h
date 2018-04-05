@@ -51,7 +51,7 @@ class QI_EXPORT ViewPixmap: public ViewModeled<ModelPixmap>
     Q_DISABLE_COPY(ViewPixmap)
 
 public:
-    ViewPixmap(const QSharedPointer<ModelPixmap>& model);
+    ViewPixmap(SharedPtr<ModelPixmap> model);
 
 protected:
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;

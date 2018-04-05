@@ -19,7 +19,7 @@
 namespace Qi
 {
 
-void ControllerMouseMultiple::addController(const QSharedPointer<ControllerMouse>& controller)
+void ControllerMouseMultiple::addController(const SharedPtr<ControllerMouse> &controller)
 {
     Q_ASSERT(controller);
     m_controllers.append(controller);

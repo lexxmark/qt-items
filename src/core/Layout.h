@@ -99,21 +99,21 @@ private:
     LayoutBehaviorMask m_behavior;
 };
 
-QI_EXPORT QSharedPointer<Layout> makeLayoutBackground();
-QI_EXPORT QSharedPointer<Layout> makeLayoutClient();
-QI_EXPORT QSharedPointer<Layout> makeLayoutCenter();
-QI_EXPORT QSharedPointer<Layout> makeLayoutLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutFixedLeft(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutFixedRight(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutFixedTop(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone);
-QI_EXPORT QSharedPointer<Layout> makeLayoutFixedBottom(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutBackground();
+QI_EXPORT SharedPtr<Layout> makeLayoutClient();
+QI_EXPORT SharedPtr<Layout> makeLayoutCenter();
+QI_EXPORT SharedPtr<Layout> makeLayoutLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutSquareLeft(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutSquareRight(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutSquareTop(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutSquareBottom(LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutFixedLeft(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutFixedRight(int width, LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutFixedTop(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone);
+QI_EXPORT SharedPtr<Layout> makeLayoutFixedBottom(int height, LayoutBehaviorMask behavior = LayoutBehaviorNone);
 
 } // end namespace Qi
 

@@ -21,13 +21,13 @@
 namespace Qi
 {
 
-ViewButton::ViewButton(const QSharedPointer<View>& bttnContent, ViewDefaultController createDefaultController)
-    : ViewComposite(bttnContent, QMargins(1, 1, 1, 1)),
+ViewButton::ViewButton(SharedPtr<View> bttnContent, ViewDefaultController createDefaultController)
+    : ViewComposite(std::move(bttnContent), QMargins(1, 1, 1, 1)),
       m_pushableTracker(this)
 {
     if (createDefaultController)
     {
-        auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+        auto controller = makeShared<ControllerMousePushableCallback>();
         controller->onApply = [this] (ID id, const ControllerContext& context) {
             if (action)
                 action(id, context, this);

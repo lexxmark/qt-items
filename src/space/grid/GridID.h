@@ -34,12 +34,6 @@ public:
         : row(row), column(column)
     {}
 
-/*    explicit GridID(ID id)
-        : GridID()
-    {
-        swap(id.as<GridID>());
-    }
-*/
     bool isValid() const { return row >= 0 && column >= 0; }
 
     void swap(GridID& other)

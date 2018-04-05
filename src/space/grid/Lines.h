@@ -34,7 +34,7 @@ class QI_EXPORT Lines: public QObject
 public:
     Lines(int count = 0);
 
-    QSharedPointer<Lines> clone() const;
+    SharedPtr<Lines> clone() const;
 
     int count() const { return m_count; }
     void setCount(int count);
@@ -60,8 +60,8 @@ public:
     void setLinesVisible(const QVector<int>& lines, bool visible);
     void setLinesVisibleExact(const QVector<int>& lines, bool visible);
 
-    bool addLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility);
-    bool removeLinesVisibility(const QSharedPointer<LinesVisibility>& linesVisibility);
+    bool addLinesVisibility(SharedPtr<LinesVisibility> linesVisibility);
+    bool removeLinesVisibility(SharedPtr<LinesVisibility> linesVisibility);
     void clearLinesVisibility();
 
     int moveLines(int oldAbsoluteLine, int newRelativeLine, int linesCount = 1);
@@ -143,7 +143,7 @@ private:
     //
     // lines visibility stuff
     //
-    QVector<QSharedPointer<LinesVisibility>> m_linesVisibility;
+    QVector<SharedPtr<LinesVisibility>> m_linesVisibility;
 };
 
 // interface for handle line visible state

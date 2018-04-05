@@ -29,24 +29,24 @@ class QI_EXPORT CacheSpaceScene: public CacheSpace
     Q_DISABLE_COPY(CacheSpaceScene)
 
 public:
-    explicit CacheSpaceScene(const QSharedPointer<SpaceScene>& scene, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceScene(SharedPtr<SpaceScene> scene, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
     ~CacheSpaceScene();
 
-    const QSharedPointer<SpaceScene>& spaceScene() const { return m_scene; }
+    const SharedPtr<SpaceScene>& spaceScene() const { return m_scene; }
     bool isEmpty() const { return m_scene->count() == 0; }
 
 private:
     void clearItemsCacheImpl() const override;
     void validateItemsCacheImpl() const override;
-    bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const override;
+    bool forEachCacheItemImpl(const std::function<bool(const SharedPtr<CacheItem>&)>& visitor) const override;
     const CacheItem* cacheItemImpl(ID visibleId) const override;
     const CacheItem* cacheItemByPositionImpl(QPoint point) const override;
 
     // source scene space
-    QSharedPointer<SpaceScene> m_scene;
+    SharedPtr<SpaceScene> m_scene;
 
     // cache items
-    mutable QVector<QSharedPointer<CacheItem>> m_items;
+    mutable QVector<SharedPtr<CacheItem>> m_items;
 };
 
 } // end namespace Qi 

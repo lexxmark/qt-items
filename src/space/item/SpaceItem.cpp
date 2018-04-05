@@ -36,7 +36,7 @@ QRect SpaceItem::itemRect(ID visibleId) const
     return QRect(QPoint(0, 0), m_size);
 }
 
-QSharedPointer<CacheItemFactory> SpaceItem::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+SharedPtr<CacheItemFactory> SpaceItem::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
 {
     return createCacheItemFactoryItem(*this, viewApplicationMask);
 }

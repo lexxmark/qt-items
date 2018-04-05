@@ -27,10 +27,10 @@ ViewComposite::ViewComposite(const QVector<ViewSchema>& subViews, const QMargins
     connectSubViews();
 }
 
-ViewComposite::ViewComposite(const QSharedPointer<View>& subView, const QMargins& margins)
+ViewComposite::ViewComposite(SharedPtr<View> subView, const QMargins& margins)
     : m_margins(margins)
 {
-    m_subViews.push_back(ViewSchema(makeLayoutClient(), subView));
+    m_subViews.push_back(ViewSchema(makeLayoutClient(), std::move(subView)));
     connectSubViews();
 }
 

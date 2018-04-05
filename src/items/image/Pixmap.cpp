@@ -19,8 +19,8 @@
 namespace Qi
 {
 
-ViewPixmap::ViewPixmap(const QSharedPointer<ModelPixmap>& model)
-    : ViewModeled<ModelPixmap>(model)
+ViewPixmap::ViewPixmap(SharedPtr<ModelPixmap> model)
+    : ViewModeled<ModelPixmap>(std::move(model))
 {
 }
 

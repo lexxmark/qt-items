@@ -21,7 +21,7 @@
 namespace Qi
 {
 
-ViewCheck::ViewCheck(const QSharedPointer<ModelCheck>& model, bool useDefaultController)
+ViewCheck::ViewCheck(SharedPtr<ModelCheck> model, bool useDefaultController)
     : ViewModeled<ModelCheck>(model),
       m_pushableTracker(this)
 {
@@ -81,9 +81,9 @@ QStyle::State ViewCheck::styleState(ID id) const
     return state;
 }
 
-QSharedPointer<ControllerMousePushable> createControllerMouseCheck(const QSharedPointer<ModelCheck>& model)
+SharedPtr<ControllerMousePushable> createControllerMouseCheck(const SharedPtr<ModelCheck>& model)
 {
-    auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
+    auto controller = makeShared<ControllerMousePushableCallback>();
     controller->onApply = [model] (ID id, const ControllerContext& /*context*/) {
         Qt::CheckState check = model->value(id);
         model->setValue(id, (check != Qt::Unchecked) ? Qt::Unchecked : Qt::Checked);

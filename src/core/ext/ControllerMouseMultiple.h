@@ -31,9 +31,9 @@ public:
     ControllerMouseMultiple() {}
     virtual ~ControllerMouseMultiple() { clear(); }
 
-    void addController(const QSharedPointer<ControllerMouse>& controller);
+    void addController(const SharedPtr<ControllerMouse>& controller);
 
-    const QVector<QSharedPointer<ControllerMouse>>& controllers() const { return m_controllers; }
+    const QVector<SharedPtr<ControllerMouse>>& controllers() const { return m_controllers; }
     bool isEmpty() const { return m_controllers.isEmpty(); }
     void clear();
 
@@ -43,7 +43,7 @@ protected:
     void deactivateImpl() override;
 
 private:
-    QVector<QSharedPointer<ControllerMouse>> m_controllers;
+    QVector<SharedPtr<ControllerMouse>> m_controllers;
 };
 
 } // end namespace Qi

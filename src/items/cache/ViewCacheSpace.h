@@ -27,9 +27,9 @@ namespace Qi
 
 class CacheSpace;
 
-typedef ModelTyped<QSharedPointer<CacheSpace>> ModelCacheSpace;
-typedef ModelStorageValue<QSharedPointer<CacheSpace>> ModelCacheSpaceValue;
-typedef ModelCallback<QSharedPointer<CacheSpace>> ModelCacheSpaceCallback;
+typedef ModelTyped<SharedPtr<CacheSpace>> ModelCacheSpace;
+typedef ModelStorageValue<SharedPtr<CacheSpace>> ModelCacheSpaceValue;
+typedef ModelCallback<SharedPtr<CacheSpace>> ModelCacheSpaceCallback;
 
 class QI_EXPORT ViewCacheSpace: public View
 {
@@ -37,7 +37,7 @@ class QI_EXPORT ViewCacheSpace: public View
     Q_DISABLE_COPY(ViewCacheSpace)
 
 public:
-    ViewCacheSpace(const QSharedPointer<ModelCacheSpace>& model, bool useController = true);
+    ViewCacheSpace(const SharedPtr<ModelCacheSpace>& model, bool useController = true);
     virtual ~ViewCacheSpace();
 
 protected:
@@ -50,7 +50,7 @@ private slots:
     void onModelChanged(const Model*);
 
 private:
-    QSharedPointer<ModelCacheSpace> m_model;
+    SharedPtr<ModelCacheSpace> m_model;
 };
 
 class QI_EXPORT ControllerMouseCacheSpace: public ControllerMouse
@@ -59,12 +59,12 @@ class QI_EXPORT ControllerMouseCacheSpace: public ControllerMouse
     Q_DISABLE_COPY(ControllerMouseCacheSpace)
 
 public:
-    ControllerMouseCacheSpace(const QSharedPointer<ModelCacheSpace>& model);
+    ControllerMouseCacheSpace(SharedPtr<ModelCacheSpace> model);
 
 private:
     void tryActivateImpl(QVector<ControllerMouse*>& activatedControllers, const ActivationInfo& activationInfo) override;
 
-    QSharedPointer<ModelCacheSpace> m_model;
+    SharedPtr<ModelCacheSpace> m_model;
 };
 
 } // end namespace Qi

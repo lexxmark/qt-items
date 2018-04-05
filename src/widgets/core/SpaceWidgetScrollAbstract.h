@@ -34,7 +34,7 @@ public:
 protected:
     explicit SpaceWidgetScrollAbstract(QWidget *parent = nullptr);
 
-    bool initSpaceWidgetScrollable(const QSharedPointer<CacheSpace>& mainCacheSpace, const QSharedPointer<CacheSpace>& scrollableCacheSpace);
+    bool initSpaceWidgetScrollable(SharedPtr<CacheSpace> mainCacheSpace, SharedPtr<CacheSpace> scrollableCacheSpace);
 
     bool viewportEvent(QEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -61,7 +61,7 @@ private:
     using SpaceWidgetCore::initSpaceWidgetCore;
     void onScrollCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason);
 
-    QSharedPointer<CacheSpace> m_scrollableCacheSpace;
+    SharedPtr<CacheSpace> m_scrollableCacheSpace;
 
     bool m_isCacheItemsLayoutValid;
 };

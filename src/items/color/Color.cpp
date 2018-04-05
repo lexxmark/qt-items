@@ -21,13 +21,13 @@
 namespace Qi
 {
 
-ViewColor::ViewColor(const QSharedPointer<ModelColor>& model, bool useDefaultController, bool withBorder)
-    : ViewModeled<ModelColor>(model),
+ViewColor::ViewColor(SharedPtr<ModelColor> model, bool useDefaultController, bool withBorder)
+    : ViewModeled<ModelColor>(std::move(model)),
       m_withBorder(withBorder)
 {
     if (useDefaultController)
     {
-        setController(createControllerMouseColor(model));
+        setController(createControllerMouseColor(theModel()));
     }
 }
 
@@ -61,10 +61,10 @@ void ViewColor::drawImpl(QPainter* painter, const GuiContext& /*ctx*/, const Cac
     }
 }
 
-QSharedPointer<ControllerMousePushable> createControllerMouseColor(const QSharedPointer<ModelColor>& model)
+SharedPtr<ControllerMousePushable> createControllerMouseColor(SharedPtr<ModelColor> model)
 {
-    auto controller = QSharedPointer<ControllerMousePushableCallback>::create();
-    controller->onApply = [model] (ID id, const ControllerContext& context) {
+    auto controller = makeShared<ControllerMousePushableCallback>();
+    controller->onApply = [model = std::move(model)] (ID id, const ControllerContext& context) {
         QColorDialog dlg(model->value(id), context.widget);
         if (dlg.exec() == QDialog::Accepted)
         {

@@ -40,9 +40,9 @@ private:
     int m_type;
 };
 
-QSharedPointer<Range> makeRangeByType(const SpaceScene* scene, int type)
+SharedPtr<Range> makeRangeByType(const SpaceScene* scene, int type)
 {
-    return QSharedPointer<RangeByType>::create(scene, type);
+    return makeShared<RangeByType>(scene, type);
 }
 
 class CacheItemFactorySameSchemaByType: public CacheItemFactory
@@ -112,11 +112,11 @@ QSize SpaceScene::size() const
     return m_size;
 }
 
-QSharedPointer<CacheItemFactory> SpaceScene::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+SharedPtr<CacheItemFactory> SpaceScene::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
 {
     switch (m_hint) {
     case SpaceSceneHintSameSchemasByType:
-        return QSharedPointer<CacheItemFactory>(new CacheItemFactorySameSchemaByType(*this, viewApplicationMask));
+        return makeShared<CacheItemFactorySameSchemaByType>(*this, viewApplicationMask);
     default:
         return createCacheItemFactoryDefault(*this, viewApplicationMask);
     }
@@ -137,9 +137,9 @@ SpaceSceneElements::~SpaceSceneElements()
 {
 }
 
-void SpaceSceneElements::addElement(const QSharedPointer<SceneElement>& element)
+void SpaceSceneElements::addElement(SharedPtr<SceneElement> element)
 {
-    m_elements.append(element);
+    m_elements.append(std::move(element));
     notifyCountChanged();
 }
 
@@ -149,9 +149,9 @@ void SpaceSceneElements::clearElements()
     notifyCountChanged();
 }
 
-void SpaceSceneElements::setElements(const QVector<QSharedPointer<SceneElement>>& elements)
+void SpaceSceneElements::setElements(QVector<SharedPtr<SceneElement>> elements)
 {
-    m_elements = elements;
+    m_elements = std::move(elements);
     notifyCountChanged();
 }
 
@@ -165,8 +165,8 @@ int SpaceSceneElements::elementTypeImpl(int id) const
     return m_elements[id]->type();
 }
 
-SceneElementAnchor::SceneElementAnchor(const QSharedPointer<SceneElement>& sourceElement, Anchor anchor, int type)
-    : m_sourceElement(sourceElement),
+SceneElementAnchor::SceneElementAnchor(SharedPtr<SceneElement> sourceElement, Anchor anchor, int type)
+    : m_sourceElement(std::move(sourceElement)),
       m_anchor(anchor),
       m_type(type)
 {
@@ -196,9 +196,9 @@ QPoint SceneElementAnchor::pointImpl() const
     return point;
 }
 
-SceneElementConnection::SceneElementConnection(const QSharedPointer<SceneElementPoint>& elementFrom, const QSharedPointer<SceneElementPoint>& elementTo, int type)
-    : m_elementFrom(elementFrom),
-      m_elementTo(elementTo),
+SceneElementConnection::SceneElementConnection(SharedPtr<SceneElementPoint> elementFrom, SharedPtr<SceneElementPoint> elementTo, int type)
+    : m_elementFrom(std::move(elementFrom)),
+      m_elementTo(std::move(elementTo)),
       m_type(type)
 {
 }

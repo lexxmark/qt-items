@@ -20,11 +20,11 @@
 namespace Qi
 {
 
-ViewCacheSpace::ViewCacheSpace(const QSharedPointer<ModelCacheSpace>& model, bool useController)
+ViewCacheSpace::ViewCacheSpace(const SharedPtr<ModelCacheSpace> &model, bool useController)
     : m_model(model)
 {
     if (useController)
-        setController(QSharedPointer<ControllerMouseCacheSpace>::create(model));
+        setController(makeShared<ControllerMouseCacheSpace>(model));
 
     connect(m_model.data(), &Model::modelChanged, this, &ViewCacheSpace::onModelChanged);
 }
@@ -86,8 +86,8 @@ void ViewCacheSpace::onModelChanged(const Model*)
     emitViewChanged(ChangeReasonViewContent);
 }
 
-ControllerMouseCacheSpace::ControllerMouseCacheSpace(const QSharedPointer<ModelCacheSpace>& model)
-    : m_model(model)
+ControllerMouseCacheSpace::ControllerMouseCacheSpace(SharedPtr<ModelCacheSpace> model)
+    : m_model(std::move(model))
 {
 }
 

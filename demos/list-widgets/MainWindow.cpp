@@ -47,25 +47,25 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_resizer = QSharedPointer<Qi::ListColumnsResizer>::create(ui->listWidget);
+    m_resizer = makeShared<Qi::ListColumnsResizer>(ui->listWidget);
 
     auto& grid = *ui->listWidget->grid();
     grid.columns()->setCount(1);
 
-    m_images = QSharedPointer<ModelStorageColumn<QPixmap>>::create(grid.rows());
-    m_names = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
-    m_descriptions = QSharedPointer<ModelStorageColumn<QString>>::create(grid.rows());
-    m_rates = QSharedPointer<ModelStorageColumn<int>>::create(grid.rows());
+    m_images = makeShared<ModelStorageColumn<QPixmap>>(grid.rows());
+    m_names = makeShared<ModelStorageColumn<QString>>(grid.rows());
+    m_descriptions = makeShared<ModelStorageColumn<QString>>(grid.rows());
+    m_rates = makeShared<ModelStorageColumn<int>>(grid.rows());
 
     {
-        auto textView = QSharedPointer<ViewText>::create(QSharedPointer<ModelTextValue>::create("Load"));
-        auto imageView = QSharedPointer<ViewPixmap>::create(QSharedPointer<ModelPixmapValue>::create(QPixmap("://img/Download.png")));
+        auto textView = makeShared<ViewText>(makeShared<ModelTextValue>("Load"));
+        auto imageView = makeShared<ViewPixmap>(makeShared<ModelPixmapValue>(QPixmap("://img/Download.png")));
 
         QVector<ViewSchema> subViews;
         subViews.append(ViewSchema(makeLayoutLeft(), imageView));
         subViews.append(ViewSchema(makeLayoutClient(), textView));
 
-        auto bttnView = QSharedPointer<ViewButton>::create(QSharedPointer<ViewComposite>::create(subViews));
+        auto bttnView = makeShared<ViewButton>(makeShared<ViewComposite>(subViews));
         bttnView->action = memFunction(this, &MainWindow::onLoadBttnPressed);
         bttnView->setMargins(QMargins(10, 10, 10, 10));
         ui->listWidget->installEmptyView(bttnView, makeLayoutCenter());
@@ -74,32 +74,32 @@ MainWindow::MainWindow(QWidget *parent) :
     QFont boldFont = ui->listWidget->font();
     boldFont.setBold(true);
 
-    auto viewImages = QSharedPointer<ViewPixmap>::create(m_images);
+    auto viewImages = makeShared<ViewPixmap>(m_images);
 
-    grid.addSchema(makeRangeGridColumn(0), QSharedPointer<ViewRowBorder>::create(), makeLayoutBottom());
+    grid.addSchema(makeRangeGridColumn(0), makeShared<ViewRowBorder>(), makeLayoutBottom());
     grid.addSchema(makeRangeGridColumn(0), viewImages, makeLayoutLeft());
 
     {
         QVector<ViewSchema> subViews;
-        subViews.append(ViewSchema(makeLayoutBackground(), QSharedPointer<ViewTextFont>::create(boldFont)));
-        auto ratingView = QSharedPointer<ViewRating>::create(m_rates, QPixmap("://img/StarOn.png"), QPixmap("://img/StarOff.png"));
+        subViews.append(ViewSchema(makeLayoutBackground(), makeShared<ViewTextFont>(boldFont)));
+        auto ratingView = makeShared<ViewRating>(m_rates, QPixmap("://img/StarOn.png"), QPixmap("://img/StarOff.png"));
         subViews.append(ViewSchema(makeLayoutRight(), ratingView));
-        subViews.append(ViewSchema(makeLayoutClient(), QSharedPointer<ViewText>::create(m_names, ViewDefaultControllerNone, Qt::AlignHCenter|Qt::AlignTop, Qt::ElideRight)));
+        subViews.append(ViewSchema(makeLayoutClient(), makeShared<ViewText>(m_names, ViewDefaultControllerNone, Qt::AlignHCenter|Qt::AlignTop, Qt::ElideRight)));
         QMargins margins(0, 2, 0, 2);
-        grid.addSchema(makeRangeGridColumn(0), QSharedPointer<ViewComposite>::create(subViews, margins), makeLayoutTop());
+        grid.addSchema(makeRangeGridColumn(0), makeShared<ViewComposite>(subViews, margins), makeLayoutTop());
     }
 
-    grid.addSchema(makeRangeGridColumn(0), QSharedPointer<ViewText>::create(m_descriptions, ViewDefaultControllerNone, Qt::Alignment(Qt::AlignLeft|Qt::AlignTop|Qt::TextWordWrap)), makeLayoutClient());
+    grid.addSchema(makeRangeGridColumn(0), makeShared<ViewText>(m_descriptions, ViewDefaultControllerNone, Qt::Alignment(Qt::AlignLeft|Qt::AlignTop|Qt::TextWordWrap)), makeLayoutClient());
 
     {
-        auto wikiModel = QSharedPointer<ModelCallback<QUrl>>::create();
+        auto wikiModel = makeShared<ModelCallback<QUrl>>();
         wikiModel->getValueFunction = [this](ID id)->QUrl {
             return QUrl(QString("http://en.wikipedia.org/wiki/%1").arg(m_names->value(id)));
         };
-        m_wikiView = QSharedPointer<ViewLink>::create(QSharedPointer<ModelStorageValue<QString>>::create("more"), wikiModel);
+        m_wikiView = makeShared<ViewLink>(makeShared<ModelStorageValue<QString>>("more"), wikiModel);
         QVector<ViewSchema> subViews;
         subViews.append(ViewSchema(makeLayoutRight(), m_wikiView));
-        grid.addSchema(makeRangeGridColumn(0), QSharedPointer<ViewComposite>::create(subViews), makeLayoutBottom());
+        grid.addSchema(makeRangeGridColumn(0), makeShared<ViewComposite>(subViews), makeLayoutBottom());
     }
 
     // show load button animation
@@ -243,7 +243,7 @@ void MainWindow::loadData()
     m_rates->setValue(id, 2);
 
     // set row heights as 1st item height
-    auto cacheItem = QSharedPointer<CacheItem>::create(ui->listWidget->cacheGrid()->cacheItemFactory().create(makeID<GridID>(0, 0)));
+    auto cacheItem = makeShared<CacheItem>(ui->listWidget->cacheGrid()->cacheItemFactory().create(makeID<GridID>(0, 0)));
     Q_ASSERT(cacheItem);
     cacheItem->validateCacheView(ui->listWidget->guiContext());
     QSize itemSize = cacheItem->calculateItemSize(ui->listWidget->guiContext());
@@ -410,7 +410,7 @@ QAbstractAnimation* MainWindow::createShiftRightItemAnimation(const Qi::CacheSpa
 
     cacheSpace->validate(ctx);
     int itemIndex = 0;
-    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const SharedPtr<CacheItem>& cacheItem)->bool {
 
         // create image of the item
         {
@@ -471,7 +471,7 @@ QAbstractAnimation* MainWindow::createShiftDownItemAnimation(const Qi::CacheSpac
 
     cacheSpace->validate(ctx);
     int itemIndex = 0;
-    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    cacheSpace->forEachCacheItem([mainAnimation, animation, &ctx, cacheSpace, &itemIndex, painter](const SharedPtr<CacheItem>& cacheItem)->bool {
 
         auto topAnimation = new QVariantAnimation(animation);
         topAnimation->setDuration(200);

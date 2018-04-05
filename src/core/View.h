@@ -42,9 +42,9 @@ public:
     void setExcludeApplicationMask(ViewApplicationMask excludeApplicationMask) { m_excludeApplicationMask = excludeApplicationMask; }
     bool isApplicable(ViewApplicationMask applicationMask) const { return !(bool)(m_excludeApplicationMask & applicationMask); }
 
-    QSharedPointer<ControllerMouse> controller() const { return m_controller; }
-    void setController(QSharedPointer<ControllerMouse> controller);
-    void addController(QSharedPointer<ControllerMouse> controller);
+    SharedPtr<ControllerMouse> controller() const { return m_controller; }
+    void setController(SharedPtr<ControllerMouse> controller);
+    void addController(SharedPtr<ControllerMouse> controller);
 
     std::function<bool(ID id, QString& text)> tooltipTextCallback;
     void setTooltipText(const QString& text);
@@ -129,7 +129,7 @@ protected:
     };
 
 private:
-    QSharedPointer<ControllerMouse> m_controller;
+    SharedPtr<ControllerMouse> m_controller;
     ViewApplicationMask m_excludeApplicationMask;
 };
 

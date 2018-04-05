@@ -57,9 +57,9 @@ Space& SpaceWidgetCore::rMainSpace()
     return m_mainCacheSpace->rSpace();
 }
 
-bool SpaceWidgetCore::initSpaceWidgetCore(const QSharedPointer<CacheSpace>& mainCacheSpace)
+bool SpaceWidgetCore::initSpaceWidgetCore(SharedPtr<CacheSpace> mainCacheSpace)
 {
-    if (!m_mainCacheSpace.isNull())
+    if (m_mainCacheSpace)
     {
         // one time initialization allowed
         Q_ASSERT(false);
@@ -67,8 +67,8 @@ bool SpaceWidgetCore::initSpaceWidgetCore(const QSharedPointer<CacheSpace>& main
     }
 
     Q_ASSERT(mainCacheSpace);
-    m_mainCacheSpace = mainCacheSpace;
-    m_cacheControllers.reset(new CacheControllerMouse(m_owner, this, m_mainCacheSpace));
+    m_mainCacheSpace = std::move(mainCacheSpace);
+    m_cacheControllers = makeUnique<CacheControllerMouse>(m_owner, this, m_mainCacheSpace);
 
     m_connection = QObject::connect(m_mainCacheSpace.data(), &CacheSpace::cacheChanged, [this](const CacheSpace* cache, ChangeReason reason) {
         onCacheSpaceChanged(cache, reason);
@@ -80,25 +80,25 @@ bool SpaceWidgetCore::initSpaceWidgetCore(const QSharedPointer<CacheSpace>& main
     return true;
 }
 
-void SpaceWidgetCore::setControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard)
+void SpaceWidgetCore::setControllerKeyboard(SharedPtr<ControllerKeyboard> controllerKeyboard)
 {
-    m_controllerKeyboard = controllerKeyboard;
+    m_controllerKeyboard = std::move(controllerKeyboard);
 }
 
-void SpaceWidgetCore::addControllerKeyboard(const QSharedPointer<ControllerKeyboard>& controllerKeyboard)
+void SpaceWidgetCore::addControllerKeyboard(SharedPtr<ControllerKeyboard> controllerKeyboard)
 {
-    if (m_controllerKeyboard.isNull())
-        m_controllerKeyboard = controllerKeyboard;
+    if (!m_controllerKeyboard)
+        m_controllerKeyboard = std::move(controllerKeyboard);
     else
     {
-        auto newController = QSharedPointer<ControllerKeyboardChain>::create();
-        newController->append(m_controllerKeyboard);
-        newController->append(controllerKeyboard);
-        m_controllerKeyboard = newController;
+        auto newController = makeShared<ControllerKeyboardChain>();
+        newController->append(std::move(m_controllerKeyboard));
+        newController->append(std::move(controllerKeyboard));
+        m_controllerKeyboard = std::move(newController);
     }
 }
 
-void SpaceWidgetCore::ensureVisible(const ID& visibleItem, const CacheSpace* cacheSpace, bool validateItem)
+void SpaceWidgetCore::ensureVisible(ID visibleItem, const CacheSpace* cacheSpace, bool validateItem)
 {
     ensureVisibleImpl(visibleItem, cacheSpace, validateItem);
 }
@@ -178,10 +178,10 @@ bool SpaceWidgetCore::processOwnerEvent(QEvent* event)
     return m_cacheControllers->processEvent(event) || processed;
 }
 
-bool SpaceWidgetCore::doInplaceEdit(const ID& visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event)
+bool SpaceWidgetCore::doInplaceEdit(ID visibleItem, const CacheSpace* cacheSpace, const QKeyEvent* event)
 {
     Q_ASSERT(m_cacheControllers);
-    if (m_cacheControllers.isNull())
+    if (!m_cacheControllers)
         return false;
 
     return m_cacheControllers->doInplaceEdit(*cacheSpace, visibleItem, event, nullptr);
@@ -190,14 +190,14 @@ bool SpaceWidgetCore::doInplaceEdit(const ID& visibleItem, const CacheSpace* cac
 void SpaceWidgetCore::stopControllers()
 {
     Q_ASSERT(m_cacheControllers);
-    if (!m_cacheControllers.isNull())
+    if (m_cacheControllers)
         m_cacheControllers->stop();
 }
 
 void SpaceWidgetCore::resumeControllers()
 {
     Q_ASSERT(m_cacheControllers);
-    if (!m_cacheControllers.isNull())
+    if (m_cacheControllers)
         m_cacheControllers->resume();
 }
 

@@ -21,7 +21,7 @@
 namespace Qi
 {
 
-ViewText::ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+ViewText::ViewText(const SharedPtr<ModelText> &model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewModeled<ModelText>(model),
       m_alignment(alignment),
       m_textElideMode(textElideMode),
@@ -29,7 +29,7 @@ ViewText::ViewText(const QSharedPointer<ModelText>& model, ViewDefaultController
 {
     if (createDefaultController)
     {
-        setController(QSharedPointer<ControllerMouseText>::create(model));
+        setController(makeShared<ControllerMouseText>(model));
     }
 }
 
@@ -129,7 +129,7 @@ void ViewText::drawText(const QString& text, QPainter* painter, const GuiContext
 }
 
 
-ViewTextOrHint::ViewTextOrHint(const QSharedPointer<ModelText>& model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
+ViewTextOrHint::ViewTextOrHint(const SharedPtr<ModelText> &model, ViewDefaultController createDefaultController, Qt::Alignment alignment, Qt::TextElideMode textElideMode)
     : ViewText(model, createDefaultController, alignment, textElideMode)
 {
 }
@@ -174,13 +174,13 @@ bool ViewTextOrHint::tooltipTextImpl(ID id, QString& txt) const
         return ViewText::tooltipTextImpl(id, txt);
 }
 
-ViewTextFont::ViewTextFont(const QSharedPointer<ModelFont>& model)
+ViewTextFont::ViewTextFont(const SharedPtr<ModelFont> &model)
     : ViewModeled<ModelFont>(model)
 {
 }
 
 ViewTextFont::ViewTextFont(const QFont& font)
-    : ViewModeled<ModelFont>(QSharedPointer<ModelStorageValue<QFont>>::create(font))
+    : ViewModeled<ModelFont>(makeShared<ModelStorageValue<QFont>>(font))
 {
 }
 
@@ -195,9 +195,9 @@ void ViewTextFont::cleanupDrawImpl(QPainter* painter, const GuiContext& /*ctx*/,
     painter->setFont(m_oldFont);
 }
 
-ControllerMouseText::ControllerMouseText(const QSharedPointer<ModelText>& model)
+ControllerMouseText::ControllerMouseText(SharedPtr<ModelText> model)
     : ControllerMouseInplaceEdit(),
-      m_model(model),
+      m_model(std::move(model)),
       m_liveUpdate(false)
 {
     Q_ASSERT(m_model);

@@ -24,7 +24,7 @@
 namespace Qi
 {
 
-CacheSpace::CacheSpace(QSharedPointer<Space> space, ViewApplicationMask viewApplicationMask)
+CacheSpace::CacheSpace(SharedPtr<Space> space, ViewApplicationMask viewApplicationMask)
     : m_space(std::move(space)),
       m_viewApplicationMask(viewApplicationMask),
       m_window(0, 0, 0, 0),
@@ -141,9 +141,9 @@ void CacheSpace::clearItemsCache() const
     clearItemsCacheImpl();
 }
 
-QSharedPointer<CacheItem> CacheSpace::createCacheItem(ID visibleId) const
+SharedPtr<CacheItem> CacheSpace::createCacheItem(ID visibleId) const
 {
-    return QSharedPointer<CacheItem>::create(m_cacheItemsFactory->create(visibleId));
+    return makeShared<CacheItem>(m_cacheItemsFactory->create(visibleId));
 }
 
 void CacheSpace::validateItemsCache() const
@@ -166,7 +166,7 @@ const CacheItem* CacheSpace::cacheItemByPosition(QPoint point) const
     return cacheItemByPositionImpl(point);
 }
 
-bool CacheSpace::forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const
+bool CacheSpace::forEachCacheItem(const std::function<bool(const SharedPtr<CacheItem>&)>& visitor) const
 {
     Q_ASSERT(visitor);
     return forEachCacheItemImpl(visitor);
@@ -177,7 +177,7 @@ bool CacheSpace::forEachCacheView(const std::function<bool(const CacheSpace::Ite
     Q_ASSERT(visitor);
 
     IterateInfo info;
-    return forEachCacheItem([&visitor, &info](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    return forEachCacheItem([&visitor, &info](const SharedPtr<CacheItem>& cacheItem)->bool {
 
         bool result = true;
 
@@ -204,7 +204,7 @@ void CacheSpace::validate(const GuiContext& ctx) const
 
     auto_value<bool> inUse(m_cacheIsInUse, true);
 
-    forEachCacheItem([&ctx, this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    forEachCacheItem([&ctx, this](const SharedPtr<CacheItem>& cacheItem)->bool {
                          cacheItem->validateCacheView(ctx, &m_window);
                          return true;
                      });
@@ -230,7 +230,7 @@ void CacheSpace::drawRaw(QPainter* painter, const GuiContext& ctx) const
     painter->save();
     painter->setClipRect(m_window);
 
-    forEachCacheItem([painter, &ctx, this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    forEachCacheItem([painter, &ctx, this](const SharedPtr<CacheItem>& cacheItem)->bool {
                          cacheItem->draw(painter, ctx, &m_window);
                          return true;
                      });
@@ -283,7 +283,7 @@ void CacheSpace::updateCacheItemsFactory()
     Q_ASSERT(m_cacheItemsFactory);
 
     // update schemas
-    forEachCacheItem([this](const QSharedPointer<CacheItem>& cacheItem)->bool {
+    forEachCacheItem([this](const SharedPtr<CacheItem>& cacheItem)->bool {
                          cacheItem->invalidateCacheView();
                          m_cacheItemsFactory->updateSchema(*cacheItem);
                          return true;

@@ -36,7 +36,7 @@ class QI_EXPORT ModelSelection: public ModelComparable
     Q_DISABLE_COPY(ModelSelection)
 
 public:
-    ModelSelection(QSharedPointer<SpaceGrid> space);
+    ModelSelection(SharedPtr<SpaceGrid> space);
     virtual ~ModelSelection();
 
     const SpaceGrid& space() const { return *m_space.data(); }
@@ -44,8 +44,8 @@ public:
     bool isItemSelected(GridID id) const { return isItemSelectedImpl(id); }
     bool isVisibleItemSelected(GridID visibleId) const;
 
-    void addSelection(const QSharedPointer<Range>& range, bool exclude);
-    void setSelection(const QSharedPointer<Range>& range);
+    void addSelection(SharedPtr<Range> range, bool exclude);
+    void setSelection(SharedPtr<Range> range);
     void clearSelection();
 
     const RangeSelection& selection() const { return m_selection; }
@@ -89,8 +89,8 @@ class QI_EXPORT ModelSelectionRows: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionRows)
 
 public:
-    ModelSelectionRows(QSharedPointer<SpaceGrid> space)
-        : ModelSelection(space)
+    ModelSelectionRows(SharedPtr<SpaceGrid> space)
+        : ModelSelection(std::move(space))
     {}
 
     bool isRowSelected(int row) const;
@@ -106,8 +106,8 @@ class QI_EXPORT ModelSelectionRow: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionRow)
 
 public:
-    ModelSelectionRow(QSharedPointer<SpaceGrid> space)
-        : ModelSelection(space)
+    ModelSelectionRow(SharedPtr<SpaceGrid> space)
+        : ModelSelection(std::move(space))
     {}
 
     bool isRowSelected(int row) const { return activeId().row == row; }
@@ -123,8 +123,8 @@ class QI_EXPORT ModelSelectionColumns: public ModelSelection
     Q_DISABLE_COPY(ModelSelectionColumns)
 
 public:
-    ModelSelectionColumns(QSharedPointer<SpaceGrid> space)
-        : ModelSelection(space)
+    ModelSelectionColumns(SharedPtr<SpaceGrid> space)
+        : ModelSelection(std::move(space))
     {}
 
     bool isColumnSelected(int column) const { return activeId().column == column; }
@@ -140,7 +140,7 @@ class QI_EXPORT ViewSelectionClient: public ViewModeled<ModelSelection>
     Q_DISABLE_COPY(ViewSelectionClient)
 
 public:
-    ViewSelectionClient(const QSharedPointer<ModelSelection>& model, bool useDefaultController = true);
+    ViewSelectionClient(const SharedPtr<ModelSelection>& model, bool useDefaultController = true);
     ~ViewSelectionClient();
 
 protected:
@@ -164,7 +164,7 @@ class QI_EXPORT ViewSelectionHeader: public ViewModeled<ModelSelection>
     Q_DISABLE_COPY(ViewSelectionHeader)
 
 public:
-    ViewSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type, bool useDefaultController = true);
+    ViewSelectionHeader(const SharedPtr<ModelSelection>& model, SelectionHeaderType type, bool useDefaultController = true);
 
 protected:
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -180,9 +180,9 @@ class QI_EXPORT ControllerMouseSelectionClient: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseSelectionClient)
 
 public:
-    ControllerMouseSelectionClient(const QSharedPointer<ModelSelection>& model);
+    ControllerMouseSelectionClient(SharedPtr<ModelSelection> model);
 
-    const QSharedPointer<ModelSelection>& theModel() const { return m_model; }
+    const SharedPtr<ModelSelection>& theModel() const { return m_model; }
 
     bool processLButtonDown(QMouseEvent* event) override;
     bool processLButtonDblClick(QMouseEvent* event) override;
@@ -196,7 +196,7 @@ protected:
 private:
     void applySelection(bool makeStartItemAsActive);
 
-    QSharedPointer<ModelSelection> m_model;
+    SharedPtr<ModelSelection> m_model;
     RangeSelection m_selection;
     GridID m_startId;
     GridID m_trackId;
@@ -209,7 +209,7 @@ class QI_EXPORT ControllerMouseSelectionHeader: public ControllerMouseCaptured
     Q_DISABLE_COPY(ControllerMouseSelectionHeader)
 
 public:
-    ControllerMouseSelectionHeader(const QSharedPointer<ModelSelection>& model, SelectionHeaderType type);
+    ControllerMouseSelectionHeader(SharedPtr<ModelSelection> model, SelectionHeaderType type);
 
     bool processLButtonDown(QMouseEvent* event) override;
     bool processMouseMove(QMouseEvent* event) override;
@@ -221,7 +221,7 @@ protected:
 private:
     void applySelection(bool makeStartItemAsActive);
 
-    QSharedPointer<ModelSelection> m_model;
+    SharedPtr<ModelSelection> m_model;
     SelectionHeaderType m_type;
     RangeSelection m_selection;
     int m_startLine;
@@ -231,12 +231,12 @@ private:
 class QI_EXPORT ControllerMouseSelectionNonItems: public ControllerMouse
 {
 public:
-    ControllerMouseSelectionNonItems(const QSharedPointer<ModelSelection>& model);
+    ControllerMouseSelectionNonItems(SharedPtr<ModelSelection> model);
 
     bool processLButtonDown(QMouseEvent* event) override;
 
 private:
-    QSharedPointer<ModelSelection> m_model;
+    SharedPtr<ModelSelection> m_model;
 };
 
 class QI_EXPORT ControllerKeyboardSelection: public ControllerKeyboard
@@ -245,7 +245,7 @@ class QI_EXPORT ControllerKeyboardSelection: public ControllerKeyboard
     Q_DISABLE_COPY(ControllerKeyboardSelection)
 
 public:
-    ControllerKeyboardSelection(const QSharedPointer<ModelSelection>& model, const CacheSpace* cacheSpace, SpaceWidgetCore* widgetCore);
+    ControllerKeyboardSelection(SharedPtr<ModelSelection> model, const CacheSpace* cacheSpace, SpaceWidgetCore* widgetCore);
     virtual ~ControllerKeyboardSelection();
 
     bool processKeyPress(QKeyEvent* event) override;
@@ -257,7 +257,7 @@ public:
 private:
     void onSelectionChanged(const ModelSelection*, ModelSelection::ChangeReason reason);
 
-    QSharedPointer<ModelSelection> m_model;
+    SharedPtr<ModelSelection> m_model;
     const CacheSpace* m_cacheSpace;
     SpaceWidgetCore* m_widgetCore;
 

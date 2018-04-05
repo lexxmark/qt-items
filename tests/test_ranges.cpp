@@ -16,7 +16,7 @@ void TestRanges::testRangeNone()
     }
     
     {
-        QSharedPointer<Range> r = makeRangeNone();
+        SharedPtr<Range> r = makeRangeNone();
         QVERIFY(r.data());
         QVERIFY(!r->parent());
         QVERIFY(!r->hasItem(makeID<GridID>(3, 4)));
@@ -104,7 +104,7 @@ void TestRanges::testRangeColumns()
     }
     
     {
-        QSharedPointer<RangeGridColumns> r(makeRangeGridColumns(0, 10));
+        SharedPtr<RangeGridColumns> r(makeRangeGridColumns(0, 10));
         QVERIFY(r.data());
         QSet<int> columns;
         columns << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -128,7 +128,7 @@ void TestRanges::testRangeColumns()
     {
         QSet<int> columns;
         columns << 0 << 10;
-        QSharedPointer<RangeGridColumns> r(makeRangeGridColumns(columns));
+        SharedPtr<RangeGridColumns> r(makeRangeGridColumns(columns));
         QVERIFY(r.data());
         QVERIFY(r->columns() == columns);
         QVERIFY(r->hasItem(9, 10));
@@ -148,7 +148,7 @@ void TestRanges::testRangeRow()
     }
     
     {
-        QSharedPointer<RangeGridRow> r(makeRangeGridRow(4));
+        SharedPtr<RangeGridRow> r(makeRangeGridRow(4));
         QVERIFY(r.data());
         QVERIFY(!r->parent());
         QCOMPARE(r->row(), 4);
@@ -198,7 +198,7 @@ void TestRanges::testRangeRows()
     }
     
     {
-        QSharedPointer<RangeGridRows> r(makeRangeGridRows(0, 10));
+        SharedPtr<RangeGridRows> r(makeRangeGridRows(0, 10));
         QVERIFY(r.data());
         QSet<int> rows;
         rows << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9;
@@ -222,7 +222,7 @@ void TestRanges::testRangeRows()
     {
         QSet<int> rows;
         rows << 0 << 10;
-        QSharedPointer<RangeGridRows> r(makeRangeGridRows(rows));
+        SharedPtr<RangeGridRows> r(makeRangeGridRows(rows));
         QVERIFY(r.data());
         QVERIFY(r->rows() == rows);
         QVERIFY(r->hasItem(10, 9));

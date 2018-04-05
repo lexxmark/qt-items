@@ -61,12 +61,12 @@ private:
     QAbstractAnimation* createFadeAnimation(const Qi::CacheSpaceAnimationAbstract* mainAnimation, Qi::CacheSpace* cacheSpace, QPainter* painter, const Qi::GuiContext& ctx) const;
 
     Ui::MainWindow *ui;
-    QSharedPointer<Qi::ModelPixmap> m_images;
-    QSharedPointer<Qi::ModelText> m_names;
-    QSharedPointer<Qi::ModelText> m_descriptions;
-    QSharedPointer<Qi::ModelRating> m_rates;
-    QSharedPointer<Qi::View> m_wikiView;
-    QSharedPointer<Qi::ListColumnsResizer> m_resizer;
+    Qi::SharedPtr<Qi::ModelPixmap> m_images;
+    Qi::SharedPtr<Qi::ModelText> m_names;
+    Qi::SharedPtr<Qi::ModelText> m_descriptions;
+    Qi::SharedPtr<Qi::ModelRating> m_rates;
+    Qi::SharedPtr<Qi::View> m_wikiView;
+    Qi::SharedPtr<Qi::ListColumnsResizer> m_resizer;
 
     QPointer<Qi::CacheSpaceAnimationAbstract> m_animation;
 };

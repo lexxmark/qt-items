@@ -76,7 +76,7 @@ public:
 
     struct QI_EXPORT IterateInfo
     {
-        QSharedPointer<CacheItem> cacheItem;
+        SharedPtr<CacheItem> cacheItem;
         int cacheItemIndex;
         CacheView* cacheView;
         int cacheViewIndex;
@@ -84,34 +84,34 @@ public:
         IterateInfo(): cacheItemIndex(0), cacheView(nullptr), cacheViewIndex(0) {}
     };
 
-    bool forEachCacheItem(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const;
+    bool forEachCacheItem(const std::function<bool(const SharedPtr<CacheItem> &)> &visitor) const;
     bool forEachCacheView(const std::function<bool(const IterateInfo&)>& visitor) const;
-    //bool forEachCacheView(const std::function<bool(const QSharedPointer<CacheItem>&, CacheView*)>& visitor);
+    //bool forEachCacheView(const std::function<bool(const makeShared<CacheItem>&, CacheView*)>& visitor);
 
 
 signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
 
 protected:
-    explicit CacheSpace(QSharedPointer<Space> space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpace(SharedPtr<Space> space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
 
     void validateItemsCache() const;
     void clearItemsCache() const;
-    QSharedPointer<CacheItem> createCacheItem(ID visibleId) const;
+    SharedPtr<CacheItem> createCacheItem(ID visibleId) const;
 
     virtual void clearItemsCacheImpl() const = 0;
     virtual void validateItemsCacheImpl() const = 0;
-    virtual bool forEachCacheItemImpl(const std::function<bool(const QSharedPointer<CacheItem>&)>& visitor) const = 0;
+    virtual bool forEachCacheItemImpl(const std::function<bool(const SharedPtr<CacheItem>&)>& visitor) const = 0;
     virtual const CacheItem* cacheItemImpl(ID visibleId) const = 0;
     virtual const CacheItem* cacheItemByPositionImpl(QPoint point) const = 0;
 
     // space
-    QSharedPointer<Space> m_space;
+    SharedPtr<Space> m_space;
 
     ViewApplicationMask m_viewApplicationMask;
 
     // cache items factory
-    QSharedPointer<CacheItemFactory> m_cacheItemsFactory;
+    SharedPtr<CacheItemFactory> m_cacheItemsFactory;
 
     // visible frame
     QRect m_window;

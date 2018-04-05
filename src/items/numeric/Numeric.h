@@ -52,8 +52,8 @@ class ModelNumericText: public ModelTyped<QString>
     Q_DISABLE_COPY(ModelNumericText)
 
 public:
-    explicit ModelNumericText(const QSharedPointer<ModelTyped<NumericType>>& modelNumeric, bool ascendingDefault = true)
-        : m_modelNumeric(modelNumeric)
+    explicit ModelNumericText(SharedPtr<ModelTyped<NumericType>> modelNumeric, bool ascendingDefault = true)
+        : m_modelNumeric(std::move(modelNumeric))
     {
         static_assert(std::numeric_limits<NumericType>::is_specialized, "NumericType should be numeric.");
         Q_ASSERT(m_modelNumeric);
@@ -83,7 +83,7 @@ protected:
     }
 
 private:
-    QSharedPointer<ModelTyped<NumericType>> m_modelNumeric;
+    SharedPtr<ModelTyped<NumericType>> m_modelNumeric;
 };
 
 class QI_EXPORT ModelRowNumber: public ModelTyped<int>

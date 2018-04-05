@@ -48,7 +48,7 @@ protected:
 private:
     void onSpaceChanged(const Space* space, ChangeReason reason);
 
-    QSharedPointer<SpaceItem> m_space;
+    SharedPtr<SpaceItem> m_space;
     bool m_syncSpaceSizeWithContent;
 };
 

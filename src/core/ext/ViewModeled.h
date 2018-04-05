@@ -26,8 +26,8 @@ namespace Qi
 template <typename Model_t> class ViewModeled: public View
 {
 public:
-    ViewModeled(const QSharedPointer<Model_t>& model)
-        : m_model(model)
+    ViewModeled(SharedPtr<Model_t> model)
+        : m_model(std::move(model))
     {
         Q_ASSERT(m_model);
         connect(m_model.data(), &Model::modelChanged, this, &ViewModeled::onModelChanged);
@@ -38,7 +38,7 @@ public:
         disconnect(m_model.data(), &Model::modelChanged, this, &ViewModeled::onModelChanged);
     }
 
-    const QSharedPointer<Model_t>& theModel() const { return m_model; }
+    const SharedPtr<Model_t>& theModel() const { return m_model; }
 
 protected:
     Model* modelImpl() override { return m_model.data(); }
@@ -47,7 +47,7 @@ private slots:
     void onModelChanged(const Model*) { emitViewChanged(ChangeReasonViewContent); }
 
 private:
-    QSharedPointer<Model_t> m_model;
+    SharedPtr<Model_t> m_model;
 };
 
 } // end namespace Qi
