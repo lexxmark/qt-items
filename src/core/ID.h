@@ -52,7 +52,7 @@ public:
     ID(const ID& other)
         : m_data(other.m_data)
 #if defined(QI_CHECK_ID_TYPES)
-          , m_type(other.m_type)
+          , m_typeHashCode(other.m_typeHashCode)
           , m_typeName(other.m_typeName)
 #endif
     {
@@ -62,7 +62,7 @@ public:
     ID(ID&& other)
         : m_data(std::move(other.m_data))
 #if defined(QI_CHECK_ID_TYPES)
-          , m_type(std::move(other.m_type))
+          , m_typeHashCode(std::move(other.m_typeHashCode))
           , m_typeName(std::move(other.m_typeName))
 #endif
     {
@@ -84,7 +84,7 @@ public:
             m_data = other.m_data;
 
 #if defined(QI_CHECK_ID_TYPES)
-            m_type = other.m_type;
+            m_typeHashCode = other.m_typeHashCode;
             m_typeName= other.m_typeName;
 #endif
         }
@@ -100,7 +100,7 @@ public:
             m_data = std::move(other.m_data);
 
 #if defined(QI_CHECK_ID_TYPES)
-            m_type = std::move(other.m_type);
+            m_typeHashCode = std::move(other.m_typeHashCode);
             m_typeName = std::move(other.m_typeName);
 #endif
         }
@@ -142,14 +142,15 @@ protected:
         static_assert(std::is_trivially_copyable<T>::value, "Should be trivial copyable");
         static_assert(std::is_trivially_destructible<T>::value, "Should be trivial destructable");
 #if defined(QI_CHECK_ID_TYPES)
-        Q_ASSERT(!m_type || m_type->hash_code() == typeid(T).hash_code());
+        Q_ASSERT(!m_typeHashCode || m_typeHashCode == typeid(T).hash_code());
 #endif
     }
 
     void CheckIDTypes(const ID& other) const
     {
+        Q_UNUSED(other);
 #if defined(QI_CHECK_ID_TYPES)
-        Q_ASSERT(!m_type || !other.m_type || m_type->hash_code() == other.m_type->hash_code());
+        Q_ASSERT(!m_typeHashCode || !other.m_typeHashCode || m_typeHashCode == other.m_typeHashCode);
 #endif
     }
 
@@ -163,12 +164,12 @@ protected:
 #if defined(QI_CHECK_ID_TYPES)
         if (typeid(T).hash_code() != typeid(NoID).hash_code())
         {
-            m_type = &typeid(T);
-            m_typeName = m_type->name();
+            m_typeHashCode = typeid(T).hash_code();
+            m_typeName = typeid(T).name();
         }
         else
         {
-            m_type = nullptr;
+            m_typeHashCode = 0;
             m_typeName = nullptr;
         }
 #endif
@@ -178,7 +179,7 @@ private:
     std::array<qintptr, 3> m_data;
 
 #if defined(QI_CHECK_ID_TYPES)
-    const std::type_info* m_type = nullptr;
+    size_t m_typeHashCode = 0;
     const char* m_typeName = nullptr;
 #endif
 };
