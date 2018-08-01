@@ -29,7 +29,7 @@ class QI_EXPORT CacheSpaceScene: public CacheSpace
     Q_DISABLE_COPY(CacheSpaceScene)
 
 public:
-    explicit CacheSpaceScene(SharedPtr<SpaceScene> scene, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceScene(SharedPtr<SpaceScene> scene);
     ~CacheSpaceScene();
 
     const SharedPtr<SpaceScene>& spaceScene() const { return m_scene; }

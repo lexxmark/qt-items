@@ -21,8 +21,8 @@
 namespace Qi
 {
 
-CacheSpaceScene::CacheSpaceScene(SharedPtr<SpaceScene> scene, ViewApplicationMask viewApplicationMask)
-    : CacheSpace(scene, viewApplicationMask),
+CacheSpaceScene::CacheSpaceScene(SharedPtr<SpaceScene> scene)
+    : CacheSpace(scene),
       m_scene(std::move(scene))
 {
 }

@@ -23,7 +23,6 @@ namespace Qi
 {
 
 View::View()
-    : m_excludeApplicationMask(ViewApplicationNone)
 {
 }
 

@@ -38,10 +38,6 @@ public:
     View();
     virtual ~View();
 
-    ViewApplicationMask excludeApplicationMask() const { return m_excludeApplicationMask; }
-    void setExcludeApplicationMask(ViewApplicationMask excludeApplicationMask) { m_excludeApplicationMask = excludeApplicationMask; }
-    bool isApplicable(ViewApplicationMask applicationMask) const { return !(bool)(m_excludeApplicationMask & applicationMask); }
-
     SharedPtr<ControllerMouse> controller() const { return m_controller; }
     void setController(SharedPtr<ControllerMouse> controller);
     void addController(SharedPtr<ControllerMouse> controller);
@@ -130,7 +126,6 @@ protected:
 
 private:
     SharedPtr<ControllerMouse> m_controller;
-    ViewApplicationMask m_excludeApplicationMask;
 };
 
 } // end namespace Qi

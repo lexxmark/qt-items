@@ -48,8 +48,8 @@ SharedPtr<Range> makeRangeByType(const SpaceScene* scene, int type)
 class CacheItemFactorySameSchemaByType: public CacheItemFactory
 {
 public:
-    CacheItemFactorySameSchemaByType(const SpaceScene& space, ViewApplicationMask viewApplicationMask)
-        : CacheItemFactory(space, viewApplicationMask),
+    CacheItemFactorySameSchemaByType(const SpaceScene& space)
+        : CacheItemFactory(space),
           m_spaceScene(space)
     {}
 
@@ -112,13 +112,13 @@ QSize SpaceScene::size() const
     return m_size;
 }
 
-SharedPtr<CacheItemFactory> SpaceScene::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+SharedPtr<CacheItemFactory> SpaceScene::createCacheItemFactory() const
 {
     switch (m_hint) {
     case SpaceSceneHintSameSchemasByType:
-        return makeShared<CacheItemFactorySameSchemaByType>(*this, viewApplicationMask);
+        return makeShared<CacheItemFactorySameSchemaByType>(*this);
     default:
-        return createCacheItemFactoryDefault(*this, viewApplicationMask);
+        return createCacheItemFactoryDefault(*this);
     }
 }
 

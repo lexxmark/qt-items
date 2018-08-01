@@ -52,7 +52,7 @@ public:
     ID toAbsolute(ID visibleItem) const override { return ID(toGridAbsolute(visibleItem.as<GridID>())); }
     ID toVisible(ID absoluteItem) const override { return ID(toGridVisible(absoluteItem.as<GridID>())); }
     QRect itemRect(ID visibleItem) const override;
-    SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
+    SharedPtr<CacheItemFactory> createCacheItemFactory() const override;
 
     bool isEmpty() const { return m_rows->isEmpty() || m_columns->isEmpty(); }
     bool isEmptyVisible() const { return m_rows->isEmptyVisible() || m_columns->isEmptyVisible(); }

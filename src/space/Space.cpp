@@ -20,7 +20,6 @@ namespace Qi
 {
 
 Space::Space()
-    : m_viewApplicationMask(ViewApplicationNone)
 {
 }
 
@@ -114,15 +113,6 @@ void Space::clearSchemas()
     m_schemasOrdered.clear();
 
     emit spaceChanged(this, ChangeReasonSpaceItemsStructure);
-}
-
-void Space::setViewApplicationMask(ViewApplicationMask viewApplicationMask)
-{
-    if (m_viewApplicationMask != viewApplicationMask)
-    {
-        m_viewApplicationMask = viewApplicationMask;
-        emit spaceChanged(this, ChangeReasonSpaceItemsStructure);
-    }
 }
 
 void Space::connectSchema(const ItemSchema& schema)

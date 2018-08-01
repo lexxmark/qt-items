@@ -46,7 +46,7 @@ public:
     ID toAbsolute(ID visibleId) const override { return visibleId; }
     ID toVisible(ID absoluteId) const override { return absoluteId; }
     QRect itemRect(ID visibleId) const override { return elementRectImpl(index(visibleId)); }
-    SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const override;
+    SharedPtr<CacheItemFactory> createCacheItemFactory() const override;
 
     int itemType(int id) const { return elementTypeImpl(id); }
 

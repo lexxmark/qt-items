@@ -42,9 +42,6 @@ public:
 
     const CacheItemFactory& cacheItemFactory() const { return *m_cacheItemsFactory; }
 
-    ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }
-    void setViewApplicationMask(ViewApplicationMask viewApplicationMask);
-
     const QRect& window() const { return m_window; }
     void setWindow(const QRect& window);
 
@@ -93,7 +90,7 @@ signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
 
 protected:
-    explicit CacheSpace(SharedPtr<Space> space, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpace(SharedPtr<Space> space);
 
     void validateItemsCache() const;
     void clearItemsCache() const;
@@ -107,8 +104,6 @@ protected:
 
     // space
     SharedPtr<Space> m_space;
-
-    ViewApplicationMask m_viewApplicationMask;
 
     // cache items factory
     SharedPtr<CacheItemFactory> m_cacheItemsFactory;

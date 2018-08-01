@@ -41,7 +41,7 @@ public:
     virtual ID toAbsolute(ID visibleItem) const = 0;
     virtual ID toVisible(ID absoluteItem) const = 0;
     virtual QRect itemRect(ID visibleItem) const = 0;
-    virtual SharedPtr<CacheItemFactory> createCacheItemFactory(ViewApplicationMask viewApplicationMask = ViewApplicationNone) const = 0;
+    virtual SharedPtr<CacheItemFactory> createCacheItemFactory() const = 0;
 
     const QVector<ItemSchema>& schemas() const { return m_schemas; }
     int addSchema(const ItemSchema& schema);
@@ -49,9 +49,6 @@ public:
     int insertSchema(int index, SharedPtr<Range> range, SharedPtr<View> view, SharedPtr<Layout> layout = makeLayoutClient());
     void removeSchema(SharedPtr<View> view);
     void clearSchemas();
-
-    ViewApplicationMask viewApplicationMask() const { return m_viewApplicationMask; }
-    void setViewApplicationMask(ViewApplicationMask viewApplicationMask);
 
     const QVector<ItemSchema>& schemasOrdered() const;
 
@@ -69,9 +66,6 @@ private:
 
     QVector<ItemSchema> m_schemas;
     mutable QVector<ItemSchema> m_schemasOrdered;
-
-    // views filtering
-    ViewApplicationMask m_viewApplicationMask;
 };
 
 } // end namespace Qi 

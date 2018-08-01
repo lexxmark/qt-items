@@ -22,9 +22,8 @@
 namespace Qi
 {
 
-CacheItemFactory::CacheItemFactory(const Space& space, ViewApplicationMask viewApplicationMask)
-    : m_space(space),
-      m_viewApplicationMask(viewApplicationMask)
+CacheItemFactory::CacheItemFactory(const Space& space)
+    : m_space(space)
 {
 }
 
@@ -54,11 +53,10 @@ void CacheItemFactory::initSchemaImpl(CacheItemInfo& info) const
 ViewSchema CacheItemFactory::createViewSchema(ID absId) const
 {
     QVector<ViewSchema> viewSchemas;
-    auto viewApplicationMask = m_space.viewApplicationMask() | m_viewApplicationMask;
 
     for (const auto& schema : m_space.schemasOrdered())
     {
-        if (schema.range->hasItem(absId) && schema.view->isApplicable(viewApplicationMask))
+        if (schema.range->hasItem(absId))
         {
             viewSchemas.append(ViewSchema(schema.layout, schema.view));
         }
@@ -77,16 +75,16 @@ ViewSchema CacheItemFactory::createViewSchema(ID absId) const
     }
 }
 
-SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space)
 {
-    return makeShared<CacheItemFactory>(space, viewApplicationMask);
+    return makeShared<CacheItemFactory>(space);
 }
 
 class CacheItemFactoryItem: public CacheItemFactory
 {
 public:
-    CacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask)
-        : CacheItemFactory(space, viewApplicationMask)
+    CacheItemFactoryItem(const Space& space)
+        : CacheItemFactory(space)
     {}
 
 protected:
@@ -108,16 +106,16 @@ private:
     mutable ViewSchema m_schema;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space)
 {
-    return makeShared<CacheItemFactoryItem>(space, viewApplicationMask);
+    return makeShared<CacheItemFactoryItem>(space);
 }
 
 class CacheItemFactorySameSchemaByColumn: public CacheItemFactory
 {
 public:
-    CacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask)
-        : CacheItemFactory(space, viewApplicationMask)
+    CacheItemFactorySameSchemaByColumn(const Space& space)
+        : CacheItemFactory(space)
     {}
 
 protected:
@@ -140,16 +138,16 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByColumn;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space)
 {
-    return makeShared<CacheItemFactorySameSchemaByColumn>(space, viewApplicationMask);
+    return makeShared<CacheItemFactorySameSchemaByColumn>(space);
 }
 
 class CacheItemFactorySameSchemaByRow: public CacheItemFactory
 {
 public:
-    CacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask)
-        : CacheItemFactory(space, viewApplicationMask)
+    CacheItemFactorySameSchemaByRow(const Space& space)
+        : CacheItemFactory(space)
     {}
 
 protected:
@@ -172,9 +170,9 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByRow;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space)
 {
-    return makeShared<CacheItemFactorySameSchemaByRow>(space, viewApplicationMask);
+    return makeShared<CacheItemFactorySameSchemaByRow>(space);
 }
 
 

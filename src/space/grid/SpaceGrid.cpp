@@ -321,15 +321,15 @@ QRect SpaceGrid::itemRect(ID visibleItem) const
     return rect;
 }
 
-SharedPtr<CacheItemFactory> SpaceGrid::createCacheItemFactory(ViewApplicationMask viewApplicationMask) const
+SharedPtr<CacheItemFactory> SpaceGrid::createCacheItemFactory() const
 {
     switch (m_hint) {
     case SpaceGridHintSameSchemasByColumn:
-        return createCacheItemFactorySameSchemaByColumn(*this, viewApplicationMask);
+        return createCacheItemFactorySameSchemaByColumn(*this);
     case SpaceGridHintSameSchemasByRow:
-        return createCacheItemFactorySameSchemaByRow(*this, viewApplicationMask);
+        return createCacheItemFactorySameSchemaByRow(*this);
     default:
-        return createCacheItemFactoryDefault(*this, viewApplicationMask);
+        return createCacheItemFactoryDefault(*this);
     }
 }
 

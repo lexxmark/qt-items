@@ -24,9 +24,8 @@
 namespace Qi
 {
 
-CacheSpace::CacheSpace(SharedPtr<Space> space, ViewApplicationMask viewApplicationMask)
+CacheSpace::CacheSpace(SharedPtr<Space> space)
     : m_space(std::move(space)),
-      m_viewApplicationMask(viewApplicationMask),
       m_window(0, 0, 0, 0),
       m_scrollOffset(0, 0),
       m_scrollDelta(0, 0),
@@ -36,7 +35,7 @@ CacheSpace::CacheSpace(SharedPtr<Space> space, ViewApplicationMask viewApplicati
 {
     connect(m_space.data(), &Space::spaceChanged, this, &CacheSpace::onSpaceChanged);
 
-    m_cacheItemsFactory = m_space->createCacheItemFactory(m_viewApplicationMask);
+    m_cacheItemsFactory = m_space->createCacheItemFactory();
     Q_ASSERT(m_cacheItemsFactory);
 }
 
@@ -66,15 +65,6 @@ void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
     {
         // forward event
         emit cacheChanged(this, reason|ChangeReasonCacheContent);
-    }
-}
-
-void CacheSpace::setViewApplicationMask(ViewApplicationMask viewApplicationMask)
-{
-    if (m_viewApplicationMask != viewApplicationMask)
-    {
-        updateCacheItemsFactory();
-        emit cacheChanged(this, ChangeReasonCacheItems);
     }
 }
 
@@ -279,7 +269,7 @@ bool CacheSpace::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) c
 
 void CacheSpace::updateCacheItemsFactory()
 {
-    m_cacheItemsFactory = m_space->createCacheItemFactory(m_viewApplicationMask);
+    m_cacheItemsFactory = m_space->createCacheItemFactory();
     Q_ASSERT(m_cacheItemsFactory);
 
     // update schemas

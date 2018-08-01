@@ -28,7 +28,7 @@ class QI_EXPORT CacheItemFactory
     Q_DISABLE_COPY(CacheItemFactory)
 
 public:
-    CacheItemFactory(const Space& space, ViewApplicationMask viewApplicationMask);
+    CacheItemFactory(const Space& space);
     virtual ~CacheItemFactory();
 
     CacheItemInfo create(ID visibleId) const;
@@ -43,13 +43,12 @@ protected:
 
 private:
     const Space& m_space;
-    ViewApplicationMask m_viewApplicationMask;
 };
 
-QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space, ViewApplicationMask viewApplicationMask);
-QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space, ViewApplicationMask viewApplicationMask);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space);
+QI_EXPORT SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space);
 
 } // end namespace Qi
 

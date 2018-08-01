@@ -151,9 +151,6 @@ void ModelSelectionColumns::selectColumns(const QSet<int>& columns)
 ViewSelectionClient::ViewSelectionClient(const SharedPtr<ModelSelection> &model, bool useDefaultController)
     : ViewModeled<ModelSelection>(model)
 {
-    // don't use this view in copy operations by default
-    setExcludeApplicationMask(ViewApplicationCopy);
-
     if (useDefaultController)
     {
         setController(makeShared<ControllerMouseSelectionClient>(model));
@@ -229,9 +226,6 @@ ViewSelectionHeader::ViewSelectionHeader(const SharedPtr<ModelSelection> &model,
       m_type(type),
       m_pushableTracker(this)
 {
-    // don't use this view in copy operations by default
-    setExcludeApplicationMask(ViewApplicationCopy);
-
     if (useDefaultController)
     {
         setController(makeShared<ControllerMouseSelectionHeader>(model, type));

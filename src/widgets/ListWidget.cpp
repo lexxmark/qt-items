@@ -98,7 +98,7 @@ QPixmap ListWidget::createPixmapImpl() const
         QPainter painter(&image);
         copyPainterState(viewport(), &painter);
 
-        auto cacheItemFactory = m_grid->createCacheItemFactory(ViewApplicationCopyDraw);
+        auto cacheItemFactory = m_grid->createCacheItemFactory();
         for (ItemsIteratorGridVisible it(*m_grid); it.isValid(); it.toNext())
         {
             CacheItem cacheItem(cacheItemFactory->create(ID(it.gridIdVisible())));

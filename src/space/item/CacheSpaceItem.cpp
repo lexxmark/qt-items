@@ -23,8 +23,8 @@ namespace Qi
 {
 
 
-CacheSpaceItem::CacheSpaceItem(const SharedPtr<SpaceItem> &spaceItem, bool syncSpaceSizeWithWindow, ViewApplicationMask viewApplicationMask)
-    : CacheSpace(spaceItem, viewApplicationMask),
+CacheSpaceItem::CacheSpaceItem(const SharedPtr<SpaceItem> &spaceItem, bool syncSpaceSizeWithWindow)
+    : CacheSpace(spaceItem),
       m_spaceItem(spaceItem)
 {
     if (syncSpaceSizeWithWindow)

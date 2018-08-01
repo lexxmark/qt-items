@@ -21,8 +21,8 @@
 namespace Qi
 {
 
-CacheSpaceGrid::CacheSpaceGrid(SharedPtr<SpaceGrid> grid, ViewApplicationMask viewApplicationMask)
-    : CacheSpace(grid, viewApplicationMask),
+CacheSpaceGrid::CacheSpaceGrid(SharedPtr<SpaceGrid> grid)
+    : CacheSpace(grid),
       m_grid(grid)
 {
 }

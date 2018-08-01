@@ -29,7 +29,7 @@ class QI_EXPORT CacheSpaceGrid: public CacheSpace
     Q_DISABLE_COPY(CacheSpaceGrid)
 
 public:
-    explicit CacheSpaceGrid(SharedPtr<SpaceGrid> grid, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceGrid(SharedPtr<SpaceGrid> grid);
     ~CacheSpaceGrid();
 
     const SharedPtr<SpaceGrid>& spaceGrid() const { return m_grid; }

@@ -29,7 +29,7 @@ class QI_EXPORT CacheSpaceItem : public CacheSpace
     Q_DISABLE_COPY(CacheSpaceItem)
 
 public:
-    explicit CacheSpaceItem(const SharedPtr<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow = false, ViewApplicationMask viewApplicationMask = ViewApplicationDraw);
+    explicit CacheSpaceItem(const SharedPtr<SpaceItem>& spaceItem, bool syncSpaceSizeWithWindow = false);
     ~CacheSpaceItem();
 
     const SharedPtr<SpaceItem>& spaceItem() const { return m_spaceItem; }
