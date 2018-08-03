@@ -176,7 +176,7 @@ bool CacheSpace::forEachCacheView(const std::function<bool(const CacheSpace::Ite
         auto rootCacheView = cacheItem->cacheView();
         if (rootCacheView)
         {
-            result = rootCacheView->forEachCacheView([&visitor, &info](CacheView* cacheView)->bool {
+            result = rootCacheView->forEachCacheView([&visitor, &info](CacheView2* cacheView)->bool {
                 info.cacheView = cacheView;
                 bool result = visitor(info);
                 ++info.cacheViewIndex;

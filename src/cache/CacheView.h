@@ -25,29 +25,27 @@
 namespace Qi
 {
 
-class Layout;
 class View;
 class GuiContext;
 
-class QI_EXPORT CacheView
+class QI_EXPORT CacheView2
 {
 public:
-    CacheView();
-    CacheView(const Layout* layout, const View* view, const QRect& rect);
-    CacheView(const CacheView& other);
-    ~CacheView();
+    CacheView2();
+    CacheView2(const View* view, const QRect& rect);
+    CacheView2(const CacheView2& other);
+    ~CacheView2();
 
-    CacheView& operator=(const CacheView& other);
+    CacheView2& operator=(const CacheView2& other);
 
-    const Layout* layout() const { return m_layout; }
     const View* view() const { return m_view; }
     const QRect& rect() const { return m_rect; }
-    const QVector<CacheView>& subViews() const { return m_subViews; }
+    const QVector<CacheView2>& subViews() const { return m_subViews; }
 
-    QVector<CacheView>& rSubViews() { return m_subViews; }
+    QVector<CacheView2>& rSubViews() { return m_subViews; }
     QRect& rRect() { return m_rect; }
 
-    std::function<void(const CacheView*, QPainter*, const GuiContext&, ID, const QRect&, const QRect*)> drawProxy;
+    std::function<void(const CacheView2*, QPainter*, const GuiContext&, ID, const QRect&, const QRect*)> drawProxy;
 
     // draws view within m_rect
     void draw(QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect = nullptr) const;
@@ -89,12 +87,11 @@ public:
     }
 
 protected:
-    const Layout* m_layout;
     const View* m_view;
     QRect m_rect;
     mutable bool m_showTooltip;
 
-    QVector<CacheView> m_subViews;
+    QVector<CacheView2> m_subViews;
 };
 
 class QI_EXPORT CacheContext
@@ -102,16 +99,67 @@ class QI_EXPORT CacheContext
 public:
     const ID& id;
     const QRect& itemRect;
-    const CacheView& cacheView;
+    const CacheView2& cacheView;
     const QRect* visibleRect;
 
-    CacheContext(const ID& id, const QRect& itemRect, const CacheView& cacheView, const QRect* visibleRect)
+    CacheContext(const ID& id, const QRect& itemRect, const CacheView2& cacheView, const QRect* visibleRect)
         : id(id),
           itemRect(itemRect),
           cacheView(cacheView),
           visibleRect(visibleRect)
     {
     }
+};
+
+class QI_EXPORT CacheView: public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(CacheView)
+
+public:
+    virtual ~CacheView() = default;
+
+    const CacheView* parent() const { return m_parent; }
+    const QRect& rect() const { return m_rect; }
+    void setRect(QRect rect);
+
+    void visitChildren(const std::function<bool(const CacheView&)>& visitor) const
+    { visitChildrenImpl(visitor);}
+
+    void visitChildren(const std::function<bool(CacheView&)>& visitor)
+    { visitChildrenImpl(visitor);}
+
+    QSize contentSize(ViewSizeMode sizeMode) const
+    { return contentSizeImpl(sizeMode); }
+
+    void draw(QPainter* painter) const
+    { drawImpl(painter); }
+
+    bool contentAsText(QString& txt) const
+    { return contentAsTextImpl(txt); }
+
+    bool tooltipText(QString& tooltipText) const
+    { return tooltipTextImpl(tooltipText); }
+
+    void emitCacheViewChanged(ChangeReason reason);
+
+signals:
+    void cacheViewChanged(const CacheView*, ChangeReason);
+
+protected:
+    CacheView(const CacheView* parent, QRect rect);
+
+    virtual void visitChildrenImpl(const std::function<bool(const CacheView&)>& /*visitor*/) const {}
+    virtual void visitChildrenImpl(const std::function<bool(CacheView&)>& /*visitor*/) {}
+
+    virtual QSize contentSizeImpl(ViewSizeMode /*sizeMode*/) const { return QSize(0, 0); }
+    virtual void drawImpl(QPainter* /*painter*/) const {}
+    virtual bool contentAsTextImpl(QString& /*txt*/) const { return false; }
+    virtual bool tooltipTextImpl(QString& /*tooltipText*/) const { return false; }
+
+private:
+    const CacheView* m_parent = nullptr;
+    QRect m_rect;
 };
 
 } // end namespace Qi

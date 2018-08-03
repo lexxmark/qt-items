@@ -57,9 +57,9 @@ void ViewComposite::addViewImpl(ID id, QVector<const View*>& views) const
     }
 }
 
-CacheView* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView2* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    CacheView* selfCacheView = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
+    CacheView2* selfCacheView = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     if (!selfCacheView)
         return selfCacheView;
 

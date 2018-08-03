@@ -40,7 +40,7 @@ public:
 
 protected:
     void addViewImpl(ID id, QVector<const View*>& views) const override;
-    CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
+    CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
     //void cleanupDrawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache) const override;

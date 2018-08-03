@@ -48,11 +48,11 @@ public:
     CacheItem(const CacheItem& other);
     CacheItem& operator=(const CacheItem& other);
 
-    const CacheView* cacheView() const { return m_cacheView.data(); }
-    CacheView* cacheView() { return m_cacheView.data(); }
+    const CacheView2* cacheView() const { return m_cacheView.data(); }
+    CacheView2* cacheView() { return m_cacheView.data(); }
 
     bool isCacheViewValid() const { return m_isCacheViewValid; }
-    const CacheView* findCacheViewByController(const ControllerMouse* controller) const;
+    const CacheView2* findCacheViewByController(const ControllerMouse* controller) const;
 
     void invalidateCacheView();
     void validateCacheView(const GuiContext& ctx, const QRect* visibleRect = nullptr);
@@ -70,9 +70,8 @@ public:
 
 
 private:
-    SharedPtr<CacheView> m_cacheView;
+    SharedPtr<CacheView2> m_cacheView;
     bool m_isCacheViewValid;
-    bool m_isAnyFloatView;
 };
 
 } // end namespace Qi

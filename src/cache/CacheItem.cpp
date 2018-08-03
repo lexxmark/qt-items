@@ -41,23 +41,20 @@ CacheItemInfo& CacheItemInfo::operator=(const CacheItemInfo& other)
 
 CacheItem::CacheItem(ID id)
     : CacheItemInfo(id),
-      m_isCacheViewValid(false),
-      m_isAnyFloatView(false)
+      m_isCacheViewValid(false)
 {
 }
 
 CacheItem::CacheItem(const CacheItemInfo& info)
     : CacheItemInfo(info),
-      m_isCacheViewValid(false),
-      m_isAnyFloatView(false)
+      m_isCacheViewValid(false)
 {
 }
 
 CacheItem::CacheItem(const CacheItem& other)
     : CacheItemInfo(other),
       m_cacheView(other.m_cacheView),
-      m_isCacheViewValid(other.m_isCacheViewValid),
-      m_isAnyFloatView(other.m_isAnyFloatView)
+      m_isCacheViewValid(other.m_isCacheViewValid)
 {
 }
 
@@ -67,19 +64,18 @@ CacheItem& CacheItem::operator=(const CacheItem& other)
 
     m_cacheView = other.m_cacheView;
     m_isCacheViewValid = other.m_isCacheViewValid;
-    m_isAnyFloatView = other.m_isAnyFloatView;
 
     return *this;
 }
 
-const CacheView* CacheItem::findCacheViewByController(const ControllerMouse* controller) const
+const CacheView2* CacheItem::findCacheViewByController(const ControllerMouse* controller) const
 {
     if (!m_isCacheViewValid || !m_cacheView)
         return nullptr;
 
-    const CacheView* result = nullptr;
+    const CacheView2* result = nullptr;
 
-    m_cacheView->forEachCacheView([&result, controller](const CacheView* cacheView)->bool {
+    m_cacheView->forEachCacheView([&result, controller](const CacheView2* cacheView)->bool {
         if (cacheView->view()->controller().data() == controller)
         {
             result = cacheView;
@@ -108,16 +104,16 @@ void CacheItem::correctRectangles(const QPoint &offset)
         return;
 
     // regenerate view rects if any flying view presents
-    if (m_isAnyFloatView)
-    {
-        invalidateCacheView();
-        return;
-    }
+//    if (m_isAnyFloatView)
+//    {
+//        invalidateCacheView();
+//        return;
+//    }
 
     // just offset all rects
     if (m_cacheView)
     {
-        m_cacheView->forEachCacheView([&offset](CacheView* cacheView)->bool {
+        m_cacheView->forEachCacheView([&offset](CacheView2* cacheView)->bool {
             cacheView->rRect().translate(offset);
             return true;
         });
@@ -162,11 +158,11 @@ void CacheItem::tryActivateControllers(const ControllerContext& context, const C
     if (!m_isCacheViewValid || !m_cacheView)
         return;
 
-    typedef QPair<ControllerMouse*, const CacheView*> ControllerInfo_t;
+    typedef QPair<ControllerMouse*, const CacheView2*> ControllerInfo_t;
     QVector<ControllerInfo_t> itemControllersInfo;
 
     // collect affected controllers
-    m_cacheView->forEachCacheView([&itemControllersInfo, &context](const CacheView* cacheView)->bool {
+    m_cacheView->forEachCacheView([&itemControllersInfo, &context](const CacheView2* cacheView)->bool {
         if (!cacheView->view()->controller())
             return true;
 
@@ -210,7 +206,7 @@ bool CacheItem::tooltipByPoint(const QPoint& point, TooltipInfo &tooltipInfo) co
         return false;
 
     bool success = false;
-    m_cacheView->forEachCacheView([&success, &point, &tooltipInfo, this](const CacheView* cacheView)->bool {
+    m_cacheView->forEachCacheView([&success, &point, &tooltipInfo, this](const CacheView2* cacheView)->bool {
         // skip views not under the point
         if (!cacheView->rect().contains(point))
             return true;
@@ -263,23 +259,11 @@ void CacheItem::validateCacheView(const GuiContext& ctx, const QRect* visibleRec
     if (schema.isValid())
     {
         QRect itemRect = rect;
-        QVector<CacheView> cacheViews;
-        CacheView* cacheView = schema.view->addCacheView(*schema.layout, ctx, id, cacheViews, itemRect, visibleItemRectPtr);
+        QVector<CacheView2> cacheViews;
+        CacheView2* cacheView = schema.view->addCacheView(*schema.layout, ctx, id, cacheViews, itemRect, visibleItemRectPtr);
         if (cacheView)
         {
-            m_cacheView.reset(new CacheView(*cacheView));
-
-            m_isAnyFloatView = false;
-            // check views for floating
-            m_cacheView->forEachCacheView([this](const CacheView* cacheView)->bool {
-                if (cacheView->layout()->isFloat())
-                {
-                    m_isAnyFloatView = true;
-                    return false;
-                }
-
-                return true;
-            });
+            m_cacheView.reset(new CacheView2(*cacheView));
         }
     }
 

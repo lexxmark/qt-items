@@ -87,15 +87,20 @@ void View::addViewImpl(ID /*id*/, QVector<const View*>& views) const
     views.append(this);
 }
 
-CacheView* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView2* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
     QRect viewRect(0, 0, 0, 0);
     if (!layout.doLayout(*this, ctx, id, ViewSizeModeExact, viewRect, itemRect, visibleItemRect))
         return nullptr;
 
-    CacheView cacheView(&layout, this, viewRect);
+    CacheView2 cacheView(this, viewRect);
     cacheViews.append(cacheView);
     return &cacheViews.back();
+}
+
+SharedPtr<CacheView> View::createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
+{
+    return nullptr;
 }
 
 QSize View::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const

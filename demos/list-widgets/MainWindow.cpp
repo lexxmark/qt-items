@@ -347,7 +347,7 @@ QAbstractAnimation* MainWindow::createCircleViewAnimation(const Qi::CacheSpaceAn
             subAnimation->setStartValue(0);
             subAnimation->setEndValue(radius);
 
-            info.cacheView->drawProxy = [subAnimation](const CacheView* cacheView, QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect) {
+            info.cacheView->drawProxy = [subAnimation](const CacheView2* cacheView, QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect) {
 
                 painter->save();
 
@@ -375,7 +375,7 @@ QAbstractAnimation* MainWindow::createCircleViewAnimation(const Qi::CacheSpaceAn
             subAnimation->setStartValue(0.f);
             subAnimation->setEndValue(1.f);
 
-            info.cacheView->drawProxy = [subAnimation](const CacheView* cacheView, QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect) {
+            info.cacheView->drawProxy = [subAnimation](const CacheView2* cacheView, QPainter* painter, const GuiContext &ctx, ID id, const QRect& itemRect, const QRect* visibleRect) {
 
                 float progress = subAnimation->currentValue().toFloat();
 

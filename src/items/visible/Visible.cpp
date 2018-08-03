@@ -41,7 +41,7 @@ void ViewVisible::addViewImpl(ID id, QVector<const View*>& views) const
         View::addViewImpl(id, views);
 }
 
-CacheView* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+CacheView2* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
     if (safeIsItemVisible(id))
         return m_sourceView->addCacheView(layout, ctx, id, cacheViews, itemRect, visibleItemRect);

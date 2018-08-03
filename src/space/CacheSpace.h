@@ -75,7 +75,7 @@ public:
     {
         SharedPtr<CacheItem> cacheItem;
         int cacheItemIndex;
-        CacheView* cacheView;
+        CacheView2* cacheView;
         int cacheViewIndex;
 
         IterateInfo(): cacheItemIndex(0), cacheView(nullptr), cacheViewIndex(0) {}
@@ -83,7 +83,7 @@ public:
 
     bool forEachCacheItem(const std::function<bool(const SharedPtr<CacheItem> &)> &visitor) const;
     bool forEachCacheView(const std::function<bool(const IterateInfo&)>& visitor) const;
-    //bool forEachCacheView(const std::function<bool(const makeShared<CacheItem>&, CacheView*)>& visitor);
+    //bool forEachCacheView(const std::function<bool(const makeShared<CacheItem>&, CacheView2*)>& visitor);
 
 
 signals:

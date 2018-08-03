@@ -49,9 +49,12 @@ public:
     void addView(ID id, QVector<const View*>& views) const
     { addViewImpl(id, views); }
 
-    // adds self CacheView to cacheViews
-    CacheView* addCacheView(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
+    // adds self CacheView2 to cacheViews
+    CacheView2* addCacheView(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
     { return addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect); }
+
+    SharedPtr<CacheView> createCacheView(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
+    { return createCacheViewImpl(parent, rect, id, ctx); }
 
     // returns size of the view
     QSize size(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
@@ -83,8 +86,10 @@ signals:
 protected:
     // adds View to views
     virtual void addViewImpl(ID id, QVector<const View*>& views) const;
-    // adds CacheView
-    virtual CacheView* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
+    // adds CacheView2
+    virtual CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
+    // creates new cache view
+    virtual SharedPtr<CacheView> createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const;
     // returns size of the view
     virtual QSize sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const;
     // draws view content

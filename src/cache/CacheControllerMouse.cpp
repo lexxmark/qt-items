@@ -126,7 +126,7 @@ bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, ID visibl
 
             // cacheItem should be prepared
             Q_ASSERT(cacheItem->isCacheViewValid());
-            const CacheView* cacheView = cacheItem->findCacheViewByController(controller.data());
+            const CacheView2* cacheView = cacheItem->findCacheViewByController(controller.data());
             Q_ASSERT(cacheView);
             if (!cacheView)
                 return false;

@@ -218,7 +218,7 @@ QAbstractAnimation* CacheSpaceAnimationShiftViews::createAnimationImpl(CacheSpac
         moveToStart(cacheSpace, startRect);
         rectAnimation->setStartValue(startRect);
         rectAnimation->setEndValue(info.cacheView->rect());
-        CacheView* cv = info.cacheView;
+        CacheView2* cv = info.cacheView;
         connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
             cv->rRect() = value.toRect();
         });
@@ -292,7 +292,7 @@ QAbstractAnimation* CacheSpaceAnimationShiftViewsRandom::createAnimationImpl(Cac
 
         rectAnimation->setStartValue(startRect);
         rectAnimation->setEndValue(info.cacheView->rect());
-        CacheView* cv = info.cacheView;
+        CacheView2* cv = info.cacheView;
         connect(rectAnimation, &QVariantAnimation::valueChanged, [cv](const QVariant &value){
             cv->rRect() = value.toRect();
         });
