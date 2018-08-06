@@ -124,10 +124,10 @@ public:
     void setRect(QRect rect);
 
     void visitChildren(const std::function<bool(const CacheView&)>& visitor) const
-    { visitChildrenImpl(visitor);}
+    { visitChildrenImpl(visitor); }
 
     void visitChildren(const std::function<bool(CacheView&)>& visitor)
-    { visitChildrenImpl(visitor);}
+    { visitChildrenImpl(visitor); }
 
     QSize contentSize(ViewSizeMode sizeMode) const
     { return contentSizeImpl(sizeMode); }

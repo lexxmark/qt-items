@@ -100,7 +100,7 @@ CacheView2* View::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, 
 
 SharedPtr<CacheView> View::createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
 {
-    return nullptr;
+    return makeShared<CacheViewProxy>(parent, rect, this, id, ctx);
 }
 
 QSize View::sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const
@@ -116,4 +116,33 @@ void View::setTooltipText(const QString& text)
         return true;
     };
 }
+
+CacheViewProxy::CacheViewProxy(const CacheView* parent, QRect rect, const View* view, ID id, const GuiContext& ctx)
+    : CacheView(parent, rect),
+      m_view(view),
+      m_id(id),
+      m_ctx(ctx)
+{
+}
+
+QSize CacheViewProxy::contentSizeImpl(ViewSizeMode sizeMode) const
+{
+    return m_view->size(m_ctx, m_id, sizeMode);
+}
+
+void CacheViewProxy::drawImpl(QPainter* painter) const
+{
+    //m_view->draw(painter, m_ctx, *this);
+}
+
+bool CacheViewProxy::contentAsTextImpl(QString& txt) const
+{
+    return m_view->text(m_id, txt);
+}
+
+bool CacheViewProxy::tooltipTextImpl(QString& tooltipText) const
+{
+    return m_view->tooltipText(m_id, tooltipText);
+}
+
 } // end namespace Qi

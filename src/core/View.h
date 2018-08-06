@@ -53,9 +53,6 @@ public:
     CacheView2* addCacheView(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
     { return addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect); }
 
-    SharedPtr<CacheView> createCacheView(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
-    { return createCacheViewImpl(parent, rect, id, ctx); }
-
     // returns size of the view
     QSize size(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const
     { return sizeImpl(ctx, id, sizeMode); }
@@ -77,6 +74,9 @@ public:
     // returns represented model
     Model* model() { return modelImpl(); }
 
+    SharedPtr<CacheView> createCacheView(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
+    { return createCacheViewImpl(parent, rect, id, ctx); }
+
     // emits viewChanged signal
     void emitViewChanged(ChangeReason reason);
 
@@ -88,8 +88,6 @@ protected:
     virtual void addViewImpl(ID id, QVector<const View*>& views) const;
     // adds CacheView2
     virtual CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
-    // creates new cache view
-    virtual SharedPtr<CacheView> createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const;
     // returns size of the view
     virtual QSize sizeImpl(const GuiContext& /*ctx*/, ID /*id*/, ViewSizeMode /*sizeMode*/) const;
     // draws view content
@@ -106,6 +104,9 @@ protected:
 
     // returns represented model
     virtual Model* modelImpl() { return nullptr; }
+
+    // creates new cache view
+    virtual SharedPtr<CacheView> createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const;
 
     class PainterState
     {
@@ -131,6 +132,26 @@ protected:
 
 private:
     SharedPtr<ControllerMouse> m_controller;
+};
+
+class QI_EXPORT CacheViewProxy : public CacheView
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(CacheViewProxy)
+
+public:
+    CacheViewProxy(const CacheView* parent, QRect rect, const View* view, ID id, const GuiContext& ctx);
+
+protected:
+    QSize contentSizeImpl(ViewSizeMode sizeMode) const final;
+    void drawImpl(QPainter* painter) const final;
+    bool contentAsTextImpl(QString& txt) const final;
+    bool tooltipTextImpl(QString& tooltipText) const final;
+
+private:
+    const View* m_view;
+    ID m_id;
+    const GuiContext& m_ctx;
 };
 
 } // end namespace Qi
