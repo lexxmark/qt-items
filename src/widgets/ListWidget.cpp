@@ -58,7 +58,7 @@ void ListWidget::onCacheSpaceGridChanged(const CacheSpace* cache, ChangeReason /
     viewport()->update();;
 }
 
-void ListWidget::onSpaceGridChanged(const Space* space, ChangeReason reason)
+void ListWidget::onSpaceGridChanged(const Space2* space, ChangeReason reason)
 {
     Q_UNUSED(space);
     Q_ASSERT(space == m_grid.data());
@@ -68,7 +68,7 @@ void ListWidget::onSpaceGridChanged(const Space* space, ChangeReason reason)
         m_emptyView->notifyVisibilityChanged();
 }
 
-bool ListWidget::installEmptyView(SharedPtr<View> view, SharedPtr<Layout> layout)
+bool ListWidget::installEmptyView(SharedPtr<View2> view, SharedPtr<Layout> layout)
 {
     Q_ASSERT(view);
 
@@ -79,7 +79,7 @@ bool ListWidget::installEmptyView(SharedPtr<View> view, SharedPtr<Layout> layout
     m_emptyView->isItemVisible = [this](const ID&)->bool {
         return m_grid->isEmptyVisible();
     };
-    connect(m_grid.data(), &Space::spaceChanged, this, &ListWidget::onSpaceGridChanged);
+    connect(m_grid.data(), &Space2::spaceChanged, this, &ListWidget::onSpaceGridChanged);
 
     m_mainSpace->addSchema(makeRangeAll(), m_emptyView, std::move(layout));
 

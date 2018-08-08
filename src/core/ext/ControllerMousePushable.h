@@ -23,7 +23,7 @@
 namespace Qi
 {
 
-class View;
+class View2;
 
 enum MousePushState
 {
@@ -66,17 +66,17 @@ class QI_EXPORT PushableTracker
     Q_DISABLE_COPY(PushableTracker)
 
 public:
-    PushableTracker(View* owner);
+    PushableTracker(View2* owner);
     ~PushableTracker();
 
     MousePushState pushStateByItem(ID id) const;
     QStyle::State styleStateByItem(ID id) const;
 
 private:
-    void onViewChanged(const View* view, ChangeReason changeReason);
+    void onViewChanged(const View2* view, ChangeReason changeReason);
     void onPushStateChanged(const ControllerMousePushable*controllerPushable);
 
-    QPointer<View> m_owner;
+    QPointer<View2> m_owner;
     QMetaObject::Connection m_viewConnection;
 
     QPointer<ControllerMousePushable> m_controller;

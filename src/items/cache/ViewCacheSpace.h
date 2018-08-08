@@ -31,7 +31,7 @@ typedef ModelTyped<SharedPtr<CacheSpace>> ModelCacheSpace;
 typedef ModelStorageValue<SharedPtr<CacheSpace>> ModelCacheSpaceValue;
 typedef ModelCallback<SharedPtr<CacheSpace>> ModelCacheSpaceCallback;
 
-class QI_EXPORT ViewCacheSpace: public View
+class QI_EXPORT ViewCacheSpace: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewCacheSpace)

@@ -75,7 +75,7 @@ void CacheControllerMouse::clear()
     Q_ASSERT(!m_capturingController);
 }
 
-bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View* view)
+bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View2* view)
 {
     bool needEnsureVisible = false;
 
@@ -91,7 +91,7 @@ bool CacheControllerMouse::doInplaceEdit(const CacheSpace& cacheSpace, ID visibl
         cacheItem = newItem.data();
     }
 
-    QVector<const View*> itemViews;
+    QVector<const View2*> itemViews;
     if (cacheItem->schema.view)
         cacheItem->schema.view->addView(cacheItem->id, itemViews);
 

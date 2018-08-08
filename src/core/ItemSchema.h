@@ -26,10 +26,10 @@ namespace Qi
 struct QI_EXPORT ViewSchema
 {
     SharedPtr<Layout> layout;
-    SharedPtr<View> view;
+    SharedPtr<View2> view;
 
     ViewSchema() {}
-    ViewSchema(SharedPtr<Layout> layout, SharedPtr<View> view)
+    ViewSchema(SharedPtr<Layout> layout, SharedPtr<View2> view)
         : layout(std::move(layout)),
           view(std::move(view))
     {}
@@ -41,10 +41,10 @@ struct QI_EXPORT ItemSchema
 {
     SharedPtr<Range> range;
     SharedPtr<Layout> layout;
-    SharedPtr<View> view;
+    SharedPtr<View2> view;
 
     ItemSchema() {}
-    ItemSchema(SharedPtr<Range> range, SharedPtr<Layout> layout, SharedPtr<View> view)
+    ItemSchema(SharedPtr<Range> range, SharedPtr<Layout> layout, SharedPtr<View2> view)
         : range(std::move(range)),
           layout(std::move(layout)),
           view(std::move(view))

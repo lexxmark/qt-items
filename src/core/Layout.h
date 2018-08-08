@@ -23,7 +23,7 @@
 namespace Qi
 {
 
-class View;
+class View2;
 class GuiContext;
 
 enum LayoutBehavior
@@ -44,9 +44,9 @@ public:
     virtual ~Layout() {}
 
     // perform layout
-    bool doLayout(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const;
+    bool doLayout(const View2& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const;
     // expand size
-    void expandSize(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const;
+    void expandSize(const View2& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const;
     // is final (eats all available item space)
     bool isFinal() const;
 
@@ -65,13 +65,13 @@ protected:
     class QI_EXPORT ViewInfo
     {
     public:
-        ViewInfo(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode)
+        ViewInfo(const View2& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode)
             : view(view), ctx(ctx), id(id), sizeMode(sizeMode)
         {}
 
         QSize size() const;
 
-        const View& view;
+        const View2& view;
         const GuiContext& ctx;
         ID id;
         ViewSizeMode sizeMode;

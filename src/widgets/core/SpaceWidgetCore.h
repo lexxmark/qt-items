@@ -29,7 +29,7 @@ namespace Qi
 
 class ID;
 class CacheSpace;
-class Space;
+class Space2;
 class CacheControllerMouse;
 class ControllerKeyboard;
 
@@ -39,10 +39,10 @@ class QI_EXPORT SpaceWidgetCore
 
 public:
     const CacheSpace& mainCacheSpace() const { return *m_mainCacheSpace; }
-    const Space& mainSpace() const;
+    const Space2& mainSpace() const;
 
     CacheSpace& rMainCacheSpace() { return *m_mainCacheSpace; }
-    Space& rMainSpace();
+    Space2& rMainSpace();
 
     const SharedPtr<ControllerKeyboard>& controllerKeyboard() const { return m_controllerKeyboard; }
     void setControllerKeyboard(SharedPtr<ControllerKeyboard> controllerKeyboard);

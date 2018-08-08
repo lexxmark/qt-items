@@ -22,7 +22,7 @@
 namespace Qi
 {
 
-CacheItemFactory::CacheItemFactory(const Space& space)
+CacheItemFactory::CacheItemFactory(const Space2& space)
     : m_space(space)
 {
 }
@@ -75,7 +75,7 @@ ViewSchema CacheItemFactory::createViewSchema(ID absId) const
     }
 }
 
-SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space)
+SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space2& space)
 {
     return makeShared<CacheItemFactory>(space);
 }
@@ -83,7 +83,7 @@ SharedPtr<CacheItemFactory> createCacheItemFactoryDefault(const Space& space)
 class CacheItemFactoryItem: public CacheItemFactory
 {
 public:
-    CacheItemFactoryItem(const Space& space)
+    CacheItemFactoryItem(const Space2& space)
         : CacheItemFactory(space)
     {}
 
@@ -106,7 +106,7 @@ private:
     mutable ViewSchema m_schema;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space)
+SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space2& space)
 {
     return makeShared<CacheItemFactoryItem>(space);
 }
@@ -114,7 +114,7 @@ SharedPtr<CacheItemFactory> createCacheItemFactoryItem(const Space& space)
 class CacheItemFactorySameSchemaByColumn: public CacheItemFactory
 {
 public:
-    CacheItemFactorySameSchemaByColumn(const Space& space)
+    CacheItemFactorySameSchemaByColumn(const Space2& space)
         : CacheItemFactory(space)
     {}
 
@@ -138,7 +138,7 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByColumn;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space& space)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space2& space)
 {
     return makeShared<CacheItemFactorySameSchemaByColumn>(space);
 }
@@ -146,7 +146,7 @@ SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByColumn(const Space
 class CacheItemFactorySameSchemaByRow: public CacheItemFactory
 {
 public:
-    CacheItemFactorySameSchemaByRow(const Space& space)
+    CacheItemFactorySameSchemaByRow(const Space2& space)
         : CacheItemFactory(space)
     {}
 
@@ -170,7 +170,7 @@ private:
     mutable QMap<int, ViewSchema> m_schemaByRow;
 };
 
-SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space& space)
+SharedPtr<CacheItemFactory> createCacheItemFactorySameSchemaByRow(const Space2& space)
 {
     return makeShared<CacheItemFactorySameSchemaByRow>(space);
 }

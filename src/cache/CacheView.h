@@ -21,24 +21,26 @@
 #include <QVector>
 #include <QPainter>
 #include <functional>
+#include <core/misc/ControllerMouseAuxiliary.h>
+#include <core/misc/ViewAuxiliary.h>
 
 namespace Qi
 {
 
-class View;
+class View2;
 class GuiContext;
 
 class QI_EXPORT CacheView2
 {
 public:
     CacheView2();
-    CacheView2(const View* view, const QRect& rect);
+    CacheView2(const View2* view, const QRect& rect);
     CacheView2(const CacheView2& other);
     ~CacheView2();
 
     CacheView2& operator=(const CacheView2& other);
 
-    const View* view() const { return m_view; }
+    const View2* view() const { return m_view; }
     const QRect& rect() const { return m_rect; }
     const QVector<CacheView2>& subViews() const { return m_subViews; }
 
@@ -87,7 +89,7 @@ public:
     }
 
 protected:
-    const View* m_view;
+    const View2* m_view;
     QRect m_rect;
     mutable bool m_showTooltip;
 
@@ -111,22 +113,23 @@ public:
     }
 };
 
-class QI_EXPORT CacheView: public QObject
+class QI_EXPORT View: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheView)
+    Q_DISABLE_COPY(View)
 
 public:
-    virtual ~CacheView() = default;
+    virtual ~View() = default;
 
-    const CacheView* parent() const { return m_parent; }
+    const View* parent() const { return m_parent; }
+    ID id() const { return m_id; }
     const QRect& rect() const { return m_rect; }
+
     void setRect(QRect rect);
 
-    void visitChildren(const std::function<bool(const CacheView&)>& visitor) const
-    { visitChildrenImpl(visitor); }
+    void visitChildren(const std::function<bool(const View&)>& visitor) const;
 
-    void visitChildren(const std::function<bool(CacheView&)>& visitor)
+    void visitChildren(const std::function<bool(View&)>& visitor)
     { visitChildrenImpl(visitor); }
 
     QSize contentSize(ViewSizeMode sizeMode) const
@@ -138,27 +141,32 @@ public:
     bool contentAsText(QString& txt) const
     { return contentAsTextImpl(txt); }
 
-    bool tooltipText(QString& tooltipText) const
-    { return tooltipTextImpl(tooltipText); }
+    bool tooltip(QPoint point, TooltipInfo& tooltip) const
+    { return tooltipImpl(point, tooltip); }
+
+    void tryActivateControllers(const ControllerContext& context, const QRect* visibleRect, QVector<ControllerMouse*>& controllers) const
+    { tryActivateControllersImpl(context, visibleRect, controllers) ; }
 
     void emitCacheViewChanged(ChangeReason reason);
 
 signals:
-    void cacheViewChanged(const CacheView*, ChangeReason);
+    void cacheViewChanged(const View*, ChangeReason);
 
 protected:
-    CacheView(const CacheView* parent, QRect rect);
+    View(const View* parent, ID id);
 
-    virtual void visitChildrenImpl(const std::function<bool(const CacheView&)>& /*visitor*/) const {}
-    virtual void visitChildrenImpl(const std::function<bool(CacheView&)>& /*visitor*/) {}
+    virtual void visitChildrenImpl(const std::function<bool(View&)>& /*visitor*/) {}
 
     virtual QSize contentSizeImpl(ViewSizeMode /*sizeMode*/) const { return QSize(0, 0); }
     virtual void drawImpl(QPainter* /*painter*/) const {}
     virtual bool contentAsTextImpl(QString& /*txt*/) const { return false; }
-    virtual bool tooltipTextImpl(QString& /*tooltipText*/) const { return false; }
+    virtual bool tooltipImpl(QPoint /*point*/, TooltipInfo& /*tooltip*/) const { return false; }
+    virtual void tryActivateControllersImpl(const ControllerContext& /*context*/, const QRect* /*visibleRect*/, QVector<ControllerMouse*>& /*controllers*/) const {}
+    virtual void onRectChangedImpl() {}
 
 private:
-    const CacheView* m_parent = nullptr;
+    const View* m_parent = nullptr;
+    ID m_id;
     QRect m_rect;
 };
 

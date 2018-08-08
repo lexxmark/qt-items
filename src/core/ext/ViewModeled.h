@@ -23,7 +23,7 @@
 namespace Qi
 {
 
-template <typename Model_t> class ViewModeled: public View
+template <typename Model_t> class ViewModeled: public View2
 {
 public:
     ViewModeled(SharedPtr<Model_t> model)

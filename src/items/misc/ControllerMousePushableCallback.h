@@ -23,7 +23,7 @@
 namespace Qi
 {
 
-// emits onApply when user clicks or presses Space key
+// emits onApply when user clicks or presses Space2 key
 class QI_EXPORT ControllerMousePushableCallback: public ControllerMousePushable
 {
     Q_OBJECT

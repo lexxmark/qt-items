@@ -45,14 +45,14 @@ public:
 
     const SharedPtr<CacheSpaceGrid>& cacheGrid() const { return m_cacheGrid;}
 
-    bool installEmptyView(SharedPtr<View> view, SharedPtr<Layout> layout);
+    bool installEmptyView(SharedPtr<View2> view, SharedPtr<Layout> layout);
 
 protected:
     QPixmap createPixmapImpl() const;
 
 private:
     void onCacheSpaceGridChanged(const CacheSpace* cache, ChangeReason reason);
-    void onSpaceGridChanged(const Space* space, ChangeReason reason);
+    void onSpaceGridChanged(const Space2* space, ChangeReason reason);
 
     SharedPtr<SpaceGrid> m_grid;
     SharedPtr<CacheSpaceGrid> m_cacheGrid;

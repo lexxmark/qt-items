@@ -23,28 +23,28 @@
 namespace Qi
 {
 
-class QI_EXPORT ViewVisible: public View
+class QI_EXPORT ViewVisible: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewVisible)
 
 public:
-    explicit ViewVisible(SharedPtr<View> sourceView, bool reserveSize = false);
+    explicit ViewVisible(SharedPtr<View2> sourceView, bool reserveSize = false);
 
     std::function<bool(ID)> isItemVisible;
 
     void notifyVisibilityChanged();
 
 protected:
-    void addViewImpl(ID id, QVector<const View*>& views) const override;
+    void addViewImpl(ID id, QVector<const View2*>& views) const override;
     CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
 
 private:
     bool safeIsItemVisible(ID id) const;
-    void onSourceViewChanged(const View* view, ChangeReason reason);
+    void onSourceViewChanged(const View2* view, ChangeReason reason);
 
-    SharedPtr<View> m_sourceView;
+    SharedPtr<View2> m_sourceView;
     bool m_reserveSize;
 };
 

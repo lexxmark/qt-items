@@ -20,12 +20,12 @@
 namespace Qi
 {
 
-ViewVisible::ViewVisible(SharedPtr<View> sourceView, bool reserveSize)
+ViewVisible::ViewVisible(SharedPtr<View2> sourceView, bool reserveSize)
     : m_sourceView(std::move(sourceView)),
       m_reserveSize(reserveSize)
 {
     Q_ASSERT(m_sourceView);
-    connect(m_sourceView.data(), &View::viewChanged, this, &ViewVisible::onSourceViewChanged);
+    connect(m_sourceView.data(), &View2::viewChanged, this, &ViewVisible::onSourceViewChanged);
 }
 
 void ViewVisible::notifyVisibilityChanged()
@@ -33,12 +33,12 @@ void ViewVisible::notifyVisibilityChanged()
     emit viewChanged(this, ChangeReasonViewSize);
 }
 
-void ViewVisible::addViewImpl(ID id, QVector<const View*>& views) const
+void ViewVisible::addViewImpl(ID id, QVector<const View2*>& views) const
 {
      if (safeIsItemVisible(id))
         m_sourceView->addView(id, views);
     else if (m_reserveSize)
-        View::addViewImpl(id, views);
+        View2::addViewImpl(id, views);
 }
 
 CacheView2* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
@@ -46,7 +46,7 @@ CacheView2* ViewVisible::addCacheViewImpl(const Layout& layout, const GuiContext
     if (safeIsItemVisible(id))
         return m_sourceView->addCacheView(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     else if (m_reserveSize)
-        return View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
+        return View2::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     else
         return nullptr;
 }
@@ -68,7 +68,7 @@ bool ViewVisible::safeIsItemVisible(ID id) const
     return isItemVisible ? isItemVisible(id) : false;
 }
 
-void ViewVisible::onSourceViewChanged(const View* view, ChangeReason reason)
+void ViewVisible::onSourceViewChanged(const View2* view, ChangeReason reason)
 {
     Q_UNUSED(view);
     Q_ASSERT(view == m_sourceView.data());

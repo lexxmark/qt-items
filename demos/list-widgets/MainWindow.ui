@@ -72,7 +72,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>View Animations:</string>
+         <string>View2 Animations:</string>
         </property>
        </widget>
       </item>
@@ -152,7 +152,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Space Animations:</string>
+         <string>Space2 Animations:</string>
         </property>
        </widget>
       </item>

@@ -336,7 +336,7 @@ QAbstractAnimation* MainWindow::createCircleViewAnimation(const Qi::CacheSpaceAn
     cacheSpace->validate(ctx);
     cacheSpace->forEachCacheView([this, animation](const CacheSpace::IterateInfo& info)->bool {
 
-        auto v = (View*)info.cacheView->view();
+        auto v = (View2*)info.cacheView->view();
 
         // animate images
         if (v->model() == m_images.data())

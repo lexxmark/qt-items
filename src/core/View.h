@@ -29,14 +29,14 @@ class Model;
 class ControllerMouse;
 class Layout;
 
-class QI_EXPORT View: public QObject
+class QI_EXPORT View2: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(View)
+    Q_DISABLE_COPY(View2)
 
 public:
-    View();
-    virtual ~View();
+    View2();
+    virtual ~View2();
 
     SharedPtr<ControllerMouse> controller() const { return m_controller; }
     void setController(SharedPtr<ControllerMouse> controller);
@@ -46,7 +46,7 @@ public:
     void setTooltipText(const QString& text);
 
     // adds self to views
-    void addView(ID id, QVector<const View*>& views) const
+    void addView(ID id, QVector<const View2*>& views) const
     { addViewImpl(id, views); }
 
     // adds self CacheView2 to cacheViews
@@ -74,18 +74,18 @@ public:
     // returns represented model
     Model* model() { return modelImpl(); }
 
-    SharedPtr<CacheView> createCacheView(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const
-    { return createCacheViewImpl(parent, rect, id, ctx); }
+    SharedPtr<View> createCacheView(const View* parent, ID id, const GuiContext& ctx) const
+    { return createCacheViewImpl(parent, id, ctx); }
 
     // emits viewChanged signal
     void emitViewChanged(ChangeReason reason);
 
 signals:
-    void viewChanged(const View*, ChangeReason);
+    void viewChanged(const View2*, ChangeReason);
 
 protected:
-    // adds View to views
-    virtual void addViewImpl(ID id, QVector<const View*>& views) const;
+    // adds View2 to views
+    virtual void addViewImpl(ID id, QVector<const View2*>& views) const;
     // adds CacheView2
     virtual CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const;
     // returns size of the view
@@ -106,7 +106,7 @@ protected:
     virtual Model* modelImpl() { return nullptr; }
 
     // creates new cache view
-    virtual SharedPtr<CacheView> createCacheViewImpl(const CacheView* parent, QRect rect, ID id, const GuiContext& ctx) const;
+    virtual SharedPtr<View> createCacheViewImpl(const View* parent, ID id, const GuiContext& ctx) const;
 
     class PainterState
     {
@@ -134,23 +134,22 @@ private:
     SharedPtr<ControllerMouse> m_controller;
 };
 
-class QI_EXPORT CacheViewProxy : public CacheView
+class QI_EXPORT ViewProxy : public View
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CacheViewProxy)
+    Q_DISABLE_COPY(ViewProxy)
 
 public:
-    CacheViewProxy(const CacheView* parent, QRect rect, const View* view, ID id, const GuiContext& ctx);
+    ViewProxy(const View* parent, ID id, const View2* view2, const GuiContext& ctx);
 
 protected:
     QSize contentSizeImpl(ViewSizeMode sizeMode) const final;
     void drawImpl(QPainter* painter) const final;
     bool contentAsTextImpl(QString& txt) const final;
-    bool tooltipTextImpl(QString& tooltipText) const final;
+    bool tooltipImpl(QPoint point, TooltipInfo& tooltip) const final;
 
 private:
-    const View* m_view;
-    ID m_id;
+    const View2* m_view2;
     const GuiContext& m_ctx;
 };
 

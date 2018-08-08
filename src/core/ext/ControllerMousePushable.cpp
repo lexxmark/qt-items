@@ -90,11 +90,11 @@ void ControllerMousePushable::updatePushState()
     setPushState(newState);
 }
 
-PushableTracker::PushableTracker(View* owner)
+PushableTracker::PushableTracker(View2* owner)
     : m_owner(owner)
 {
     Q_ASSERT(m_owner);
-    m_viewConnection = QObject::connect(m_owner.data(), &View::viewChanged, [this](const View* view, ChangeReason changeReason){
+    m_viewConnection = QObject::connect(m_owner.data(), &View2::viewChanged, [this](const View2* view, ChangeReason changeReason){
         onViewChanged(view, changeReason);
     });
 }
@@ -126,7 +126,7 @@ QStyle::State PushableTracker::styleStateByItem(ID id) const
     }
 }
 
-void PushableTracker::onViewChanged(const View* view, ChangeReason changeReason)
+void PushableTracker::onViewChanged(const View2* view, ChangeReason changeReason)
 {
     Q_ASSERT(view == m_owner.data());
     if (changeReason & ChangeReasonViewController)

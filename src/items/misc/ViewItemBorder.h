@@ -22,7 +22,7 @@
 namespace Qi
 {
 
-class QI_EXPORT ViewRowBorder: public View
+class QI_EXPORT ViewRowBorder: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewRowBorder)
@@ -38,7 +38,7 @@ private:
     mutable QColor m_gridColor;
 };
 
-class QI_EXPORT ViewColumnBorder: public View
+class QI_EXPORT ViewColumnBorder: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewColumnBorder)
@@ -54,7 +54,7 @@ private:
     mutable QColor m_gridColor;
 };
 
-class QI_EXPORT ViewRectBorder: public View
+class QI_EXPORT ViewRectBorder: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewRectBorder)

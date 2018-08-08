@@ -24,14 +24,14 @@
 namespace Qi
 {
 
-class QI_EXPORT ViewComposite: public View
+class QI_EXPORT ViewComposite: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewComposite)
 
 public:
     ViewComposite(const QVector<ViewSchema>& subViews, const QMargins& margins = QMargins());
-    ViewComposite(SharedPtr<View> subView, const QMargins& margins);
+    ViewComposite(SharedPtr<View2> subView, const QMargins& margins);
 
     virtual ~ViewComposite();
 
@@ -39,7 +39,7 @@ public:
     void setMargins(const QMargins& margins);
 
 protected:
-    void addViewImpl(ID id, QVector<const View*>& views) const override;
+    void addViewImpl(ID id, QVector<const View2*>& views) const override;
     CacheView2* addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const override;
     QSize sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode) const override;
     void drawImpl(QPainter* painter, const GuiContext& ctx, const CacheContext& cache, bool* showTooltip) const override;
@@ -47,7 +47,7 @@ protected:
     bool textImpl(ID id, QString& txt) const override;
 
 private slots:
-    void onSubViewChanged(const View* view, ChangeReason reason);
+    void onSubViewChanged(const View2* view, ChangeReason reason);
 
 private:
     void connectSubViews();

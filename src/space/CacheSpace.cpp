@@ -24,7 +24,7 @@
 namespace Qi
 {
 
-CacheSpace::CacheSpace(SharedPtr<Space> space)
+CacheSpace::CacheSpace(SharedPtr<Space2> space)
     : m_space(std::move(space)),
       m_window(0, 0, 0, 0),
       m_scrollOffset(0, 0),
@@ -33,7 +33,7 @@ CacheSpace::CacheSpace(SharedPtr<Space> space)
       m_itemsCacheInvalid(true),
       m_cacheIsInUse(false)
 {
-    connect(m_space.data(), &Space::spaceChanged, this, &CacheSpace::onSpaceChanged);
+    connect(m_space.data(), &Space2::spaceChanged, this, &CacheSpace::onSpaceChanged);
 
     m_cacheItemsFactory = m_space->createCacheItemFactory();
     Q_ASSERT(m_cacheItemsFactory);
@@ -41,10 +41,10 @@ CacheSpace::CacheSpace(SharedPtr<Space> space)
 
 CacheSpace::~CacheSpace()
 {
-    disconnect(m_space.data(), &Space::spaceChanged, this, &CacheSpace::onSpaceChanged);
+    disconnect(m_space.data(), &Space2::spaceChanged, this, &CacheSpace::onSpaceChanged);
 }
 
-void CacheSpace::onSpaceChanged(const Space* space, ChangeReason reason)
+void CacheSpace::onSpaceChanged(const Space2* space, ChangeReason reason)
 {
     Q_UNUSED(space);
     Q_ASSERT(space == m_space.data());
@@ -278,6 +278,48 @@ void CacheSpace::updateCacheItemsFactory()
                          m_cacheItemsFactory->updateSchema(*cacheItem);
                          return true;
                      });
+}
+
+SharedPtr<View> View2Space::createCacheViewImpl(const View* parent, ID id, const GuiContext& /*ctx*/) const
+{
+    return makeShared<ViewSpace>(parent, id, theModel()->value(id));
+}
+
+ViewSpace::ViewSpace(const View* parent, ID id, SharedPtr<Space> space)
+    : View (parent, id),
+      m_space(std::move(space))
+{
+    UpdateItems();
+}
+
+QSize ViewSpace::contentSizeImpl(ViewSizeMode /*sizeMode*/) const
+{
+    return m_space->topology->boundBox().size();
+}
+
+void ViewSpace::drawImpl(QPainter* /*painter*/) const
+{
+
+}
+
+bool ViewSpace::contentAsTextImpl(QString& /*txt*/) const
+{
+    return false;
+}
+
+bool ViewSpace::tooltipImpl(QPoint /*point*/, TooltipInfo& /*tooltip*/) const
+{
+    return false;
+}
+
+void ViewSpace::UpdateItems()
+{
+    auto cacheRect = rect();
+    auto items = m_space->topology->items(&cacheRect);
+    for (ID id: *items)
+    {
+        //auto&
+    }
 }
 
 

@@ -18,6 +18,7 @@
 #define QI_CACHE_SPACE_H
 
 #include "Space.h"
+#include <core/ext/ViewModeled.h>
 
 namespace Qi
 {
@@ -37,8 +38,8 @@ class QI_EXPORT CacheSpace: public QObject
 public:
     ~CacheSpace();
 
-    const Space& space() const { return *m_space; }
-    Space& rSpace() const { return *m_space; }
+    const Space2& space() const { return *m_space; }
+    Space2& rSpace() const { return *m_space; }
 
     const CacheItemFactory& cacheItemFactory() const { return *m_cacheItemsFactory; }
 
@@ -90,7 +91,7 @@ signals:
     void cacheChanged(const CacheSpace* cache, ChangeReason reason);
 
 protected:
-    explicit CacheSpace(SharedPtr<Space> space);
+    explicit CacheSpace(SharedPtr<Space2> space);
 
     void validateItemsCache() const;
     void clearItemsCache() const;
@@ -103,7 +104,7 @@ protected:
     virtual const CacheItem* cacheItemByPositionImpl(QPoint point) const = 0;
 
     // space
-    SharedPtr<Space> m_space;
+    SharedPtr<Space2> m_space;
 
     // cache items factory
     SharedPtr<CacheItemFactory> m_cacheItemsFactory;
@@ -127,8 +128,36 @@ protected:
 private:
     void invalidateItemsCache(ChangeReason reason);
 
-    void onSpaceChanged(const Space* space, ChangeReason reason);
+    void onSpaceChanged(const Space2* space, ChangeReason reason);
     void updateCacheItemsFactory();
+};
+
+class View2Space : public ViewModeled<ModelSpace>
+{
+public:
+    using ViewModeled<ModelSpace>::ViewModeled;
+
+protected:
+    // creates new cache view
+    SharedPtr<View> createCacheViewImpl(const View* parent, ID id, const GuiContext& ctx) const final;
+};
+
+class ViewSpace : public View
+{
+public:
+    ViewSpace(const View* parent, ID id, SharedPtr<Space> space);
+
+protected:
+    QSize contentSizeImpl(ViewSizeMode sizeMode) const final;
+    void drawImpl(QPainter* painter) const final;
+    bool contentAsTextImpl(QString& txt) const final;
+    bool tooltipImpl(QPoint point, TooltipInfo& tooltip) const final;
+
+private:
+    void UpdateItems();
+
+    SharedPtr<Space> m_space;
+    QHash<ID, SharedPtr<View>> m_items;
 };
 
 } // end namespace Qi 

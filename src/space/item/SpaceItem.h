@@ -22,7 +22,7 @@
 namespace Qi
 {
 
-class QI_EXPORT SpaceItem: public Space
+class QI_EXPORT SpaceItem: public Space2
 {
     Q_OBJECT
     Q_DISABLE_COPY(SpaceItem)

@@ -15,20 +15,21 @@
 */
 
 #include "Space.h"
+#include <core/View.h>
 
 namespace Qi
 {
 
-Space::Space()
+Space2::Space2()
 {
 }
 
-Space::~Space()
+Space2::~Space2()
 {
     clearSchemas();
 }
 
-const QVector<ItemSchema>& Space::schemasOrdered() const
+const QVector<ItemSchema>& Space2::schemasOrdered() const
 {
     if (m_schemasOrdered.isEmpty() && !m_schemas.isEmpty())
     {
@@ -60,7 +61,7 @@ const QVector<ItemSchema>& Space::schemasOrdered() const
     return m_schemasOrdered;
 }
 
-int Space::addSchema(const ItemSchema& schema)
+int Space2::addSchema(const ItemSchema& schema)
 {
     m_schemas.append(schema);
     m_schemasOrdered.clear();
@@ -72,7 +73,7 @@ int Space::addSchema(const ItemSchema& schema)
     return m_schemas.size() - 1;
 }
 
-int Space::insertSchema(int index, SharedPtr<Range> range, SharedPtr<View> view, SharedPtr<Layout> layout)
+int Space2::insertSchema(int index, SharedPtr<Range> range, SharedPtr<View2> view, SharedPtr<Layout> layout)
 {
     ItemSchema schema(range, layout, view);
 
@@ -86,7 +87,7 @@ int Space::insertSchema(int index, SharedPtr<Range> range, SharedPtr<View> view,
     return index;
 }
 
-void Space::removeSchema(SharedPtr<View> view)
+void Space2::removeSchema(SharedPtr<View2> view)
 {
     for (int i = 0; i < m_schemas.size(); ++i)
     {
@@ -102,7 +103,7 @@ void Space::removeSchema(SharedPtr<View> view)
     }
 }
 
-void Space::clearSchemas()
+void Space2::clearSchemas()
 {
     for (const auto& schema: m_schemas)
     {
@@ -115,31 +116,31 @@ void Space::clearSchemas()
     emit spaceChanged(this, ChangeReasonSpaceItemsStructure);
 }
 
-void Space::connectSchema(const ItemSchema& schema)
+void Space2::connectSchema(const ItemSchema& schema)
 {
-    connect(schema.range.data(), &Range::rangeChanged, this, &Space::onRangeChanged);
-    connect(schema.layout.data(), &Layout::layoutChanged, this, &Space::onLayoutChanged);
-    connect(schema.view.data(), &View::viewChanged, this, &Space::onViewChanged);
+    connect(schema.range.data(), &Range::rangeChanged, this, &Space2::onRangeChanged);
+    connect(schema.layout.data(), &Layout::layoutChanged, this, &Space2::onLayoutChanged);
+    connect(schema.view.data(), &View2::viewChanged, this, &Space2::onViewChanged);
 }
 
-void Space::disconnectSchema(const ItemSchema& schema)
+void Space2::disconnectSchema(const ItemSchema& schema)
 {
-    disconnect(schema.range.data(), &Range::rangeChanged, this, &Space::onRangeChanged);
-    disconnect(schema.layout.data(), &Layout::layoutChanged, this, &Space::onLayoutChanged);
-    disconnect(schema.view.data(), &View::viewChanged, this, &Space::onViewChanged);
+    disconnect(schema.range.data(), &Range::rangeChanged, this, &Space2::onRangeChanged);
+    disconnect(schema.layout.data(), &Layout::layoutChanged, this, &Space2::onLayoutChanged);
+    disconnect(schema.view.data(), &View2::viewChanged, this, &Space2::onViewChanged);
 }
 
-void Space::onRangeChanged(const Range* /*range*/, ChangeReason reason)
-{
-    emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
-}
-
-void Space::onLayoutChanged(const Layout* /*layout*/, ChangeReason reason)
+void Space2::onRangeChanged(const Range* /*range*/, ChangeReason reason)
 {
     emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
 }
 
-void Space::onViewChanged(const View* /*view*/, ChangeReason reason)
+void Space2::onLayoutChanged(const Layout* /*layout*/, ChangeReason reason)
+{
+    emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);
+}
+
+void Space2::onViewChanged(const View2* /*view*/, ChangeReason reason)
 {
     if (reason & ChangeReasonViewSize)
         emit spaceChanged(this, reason | ChangeReasonSpaceItemsStructure);

@@ -21,7 +21,7 @@
 namespace Qi
 {
 
-ViewButton::ViewButton(SharedPtr<View> bttnContent, ViewDefaultController createDefaultController)
+ViewButton::ViewButton(SharedPtr<View2> bttnContent, ViewDefaultController createDefaultController)
     : ViewComposite(std::move(bttnContent), QMargins(1, 1, 1, 1)),
       m_pushableTracker(this)
 {

@@ -47,12 +47,12 @@ SpaceWidgetCore::~SpaceWidgetCore()
     QObject::disconnect(m_connection);
 }
 
-const Space& SpaceWidgetCore::mainSpace() const
+const Space2& SpaceWidgetCore::mainSpace() const
 {
     return m_mainCacheSpace->space();
 }
 
-Space& SpaceWidgetCore::rMainSpace()
+Space2& SpaceWidgetCore::rMainSpace()
 {
     return m_mainCacheSpace->rSpace();
 }

@@ -74,7 +74,7 @@ protected:
     void updateCacheScrollOffsetImpl() override;
 
 private:
-    void onSubGridChanged(const Space* space, ChangeReason reason);
+    void onSubGridChanged(const Space2* space, ChangeReason reason);
     void onCacheSpaceChanged(const CacheSpace* cache, ChangeReason reason);
 
     SharedPtr<SpaceGrid> m_mainGrid;

@@ -29,12 +29,12 @@ ItemWidget::ItemWidget(QWidget* parent, ID id)
     m_space = makeShared<SpaceItem>(id);
     initSpaceWidgetCore(makeShared<CacheSpaceItem>(m_space));
 
-    connect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
+    connect(m_space.data(), &Space2::spaceChanged, this, &ItemWidget::onSpaceChanged);
 }
 
 ItemWidget::~ItemWidget()
 {
-    disconnect(m_space.data(), &Space::spaceChanged, this, &ItemWidget::onSpaceChanged);
+    disconnect(m_space.data(), &Space2::spaceChanged, this, &ItemWidget::onSpaceChanged);
 }
 
 void ItemWidget::syncSpaceSizeWithContent(bool enable)
@@ -86,7 +86,7 @@ bool ItemWidget::event(QEvent* e)
     return SpaceWidgetAbstract::event(e);
 }
 
-void ItemWidget::onSpaceChanged(const Space* space, ChangeReason reason)
+void ItemWidget::onSpaceChanged(const Space2* space, ChangeReason reason)
 {
     Q_UNUSED(space);
     Q_ASSERT(m_space.data() == space);

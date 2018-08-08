@@ -36,7 +36,7 @@ ViewCacheSpace::~ViewCacheSpace()
 
 CacheView2* ViewCacheSpace::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    CacheView2* result = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
+    CacheView2* result = View2::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
 
     if (!result)
         return result;

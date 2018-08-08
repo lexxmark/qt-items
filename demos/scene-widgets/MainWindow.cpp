@@ -30,7 +30,7 @@
 
 using namespace Qi;
 
-class ViewLine: public Qi::View
+class ViewLine: public Qi::View2
 {
 public:
     ViewLine()
@@ -43,7 +43,7 @@ protected:
     }
 };
 
-class ViewRect: public Qi::View
+class ViewRect: public Qi::View2
 {
 public:
     ViewRect()

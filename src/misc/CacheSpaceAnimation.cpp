@@ -189,7 +189,7 @@ QAbstractAnimation* CacheSpaceAnimationCallback::createAnimationImpl(CacheSpace*
     return animationFactory(this, cacheSpace, painter, ctx);
 }
 
-CacheSpaceAnimationShiftViews::CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View* viewToApply)
+CacheSpaceAnimationShiftViews::CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View2* viewToApply)
     : CacheSpaceAnimationAbstract(widget, cacheSpace),
       m_direction(direction),
       m_viewToApply(viewToApply)

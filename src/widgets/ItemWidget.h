@@ -46,7 +46,7 @@ protected:
     bool event(QEvent* e) override;
 
 private:
-    void onSpaceChanged(const Space* space, ChangeReason reason);
+    void onSpaceChanged(const Space2* space, ChangeReason reason);
 
     SharedPtr<SpaceItem> m_space;
     bool m_syncSpaceSizeWithContent;

@@ -24,7 +24,7 @@ namespace Qi
 
 class SpaceWidgetCore;
 class CacheSpace;
-class View;
+class View2;
 struct TooltipInfo;
 
 class QI_EXPORT CacheControllerMouse: public ControllerContext
@@ -56,7 +56,7 @@ public:
     bool processMouseMove(QMouseEvent* event);
     bool processContextMenu(QContextMenuEvent* event);
 
-    bool doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View* view);
+    bool doInplaceEdit(const CacheSpace& cacheSpace, ID visibleId, const QKeyEvent* keyEvent, const View2* view);
 
     bool tooltipByPoint(const QPoint& point, TooltipInfo& tooltipInfo) const;
 

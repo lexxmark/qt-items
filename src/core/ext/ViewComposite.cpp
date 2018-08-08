@@ -27,7 +27,7 @@ ViewComposite::ViewComposite(const QVector<ViewSchema>& subViews, const QMargins
     connectSubViews();
 }
 
-ViewComposite::ViewComposite(SharedPtr<View> subView, const QMargins& margins)
+ViewComposite::ViewComposite(SharedPtr<View2> subView, const QMargins& margins)
     : m_margins(margins)
 {
     m_subViews.push_back(ViewSchema(makeLayoutClient(), std::move(subView)));
@@ -48,9 +48,9 @@ void ViewComposite::setMargins(const QMargins& margins)
     }
 }
 
-void ViewComposite::addViewImpl(ID id, QVector<const View*>& views) const
+void ViewComposite::addViewImpl(ID id, QVector<const View2*>& views) const
 {
-    View::addViewImpl(id, views);
+    View2::addViewImpl(id, views);
     for (const auto& subView: m_subViews)
     {
         subView.view->addView(id, views);
@@ -59,7 +59,7 @@ void ViewComposite::addViewImpl(ID id, QVector<const View*>& views) const
 
 CacheView2* ViewComposite::addCacheViewImpl(const Layout& layout, const GuiContext& ctx, ID id, QVector<CacheView2>& cacheViews, QRect& itemRect, QRect* visibleItemRect) const
 {
-    CacheView2* selfCacheView = View::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
+    CacheView2* selfCacheView = View2::addCacheViewImpl(layout, ctx, id, cacheViews, itemRect, visibleItemRect);
     if (!selfCacheView)
         return selfCacheView;
 
@@ -136,7 +136,7 @@ void ViewComposite::connectSubViews()
 {
     for (const auto& view: m_subViews)
     {
-        connect(view.view.data(), &View::viewChanged, this, &ViewComposite::onSubViewChanged);
+        connect(view.view.data(), &View2::viewChanged, this, &ViewComposite::onSubViewChanged);
     }
 }
 
@@ -144,11 +144,11 @@ void ViewComposite::disconnectSubViews()
 {
     for (const auto& view: m_subViews)
     {
-        disconnect(view.view.data(), &View::viewChanged, this, &ViewComposite::onSubViewChanged);
+        disconnect(view.view.data(), &View2::viewChanged, this, &ViewComposite::onSubViewChanged);
     }
 }
 
-void ViewComposite::onSubViewChanged(const View* /*view*/, ChangeReason reason)
+void ViewComposite::onSubViewChanged(const View2* /*view*/, ChangeReason reason)
 {
     // forward signal
     emitViewChanged(reason);

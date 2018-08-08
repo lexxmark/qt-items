@@ -65,7 +65,7 @@ private:
     Qi::SharedPtr<Qi::ModelText> m_names;
     Qi::SharedPtr<Qi::ModelText> m_descriptions;
     Qi::SharedPtr<Qi::ModelRating> m_rates;
-    Qi::SharedPtr<Qi::View> m_wikiView;
+    Qi::SharedPtr<Qi::View2> m_wikiView;
     Qi::SharedPtr<Qi::ListColumnsResizer> m_resizer;
 
     QPointer<Qi::CacheSpaceAnimationAbstract> m_animation;

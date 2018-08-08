@@ -24,7 +24,7 @@
 namespace Qi
 {
 
-class View;
+class View2;
 
 class QI_EXPORT ItemsFilterByText: public ItemsFilter
 {
@@ -70,7 +70,7 @@ private:
     bool m_isActive;
 };
 
-QI_EXPORT SharedPtr<View> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter);
+QI_EXPORT SharedPtr<View2> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter);
 
 class QI_EXPORT ItemsFilterTextByText: public ItemsFilterByText
 {

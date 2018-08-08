@@ -29,7 +29,7 @@ class QI_EXPORT ViewButton: public ViewComposite
     Q_DISABLE_COPY(ViewButton)
 
 public:
-    ViewButton(SharedPtr<View> bttnContent, ViewDefaultController createDefaultController = ViewDefaultControllerCreate);
+    ViewButton(SharedPtr<View2> bttnContent, ViewDefaultController createDefaultController = ViewDefaultControllerCreate);
 
     std::function<void (ID id, QStyle::State& bttnState)> tuneBttnState;
     std::function<void (ID id, const ControllerContext& context, const ViewButton* viewBttn)> action;

@@ -35,7 +35,7 @@ enum SpaceGridHint
     SpaceGridHintSameSchemasByRow = 0x0002,
 };
 
-class QI_EXPORT SpaceGrid: public Space
+class QI_EXPORT SpaceGrid: public Space2
 {
     Q_OBJECT
     Q_DISABLE_COPY(SpaceGrid)
@@ -43,7 +43,7 @@ class QI_EXPORT SpaceGrid: public Space
 public:
     SpaceGrid(SpaceGridHint hint = SpaceGridHintNone);
     SpaceGrid(SharedPtr<Lines> rows, SharedPtr<Lines> columns, SpaceGridHint hint = SpaceGridHintNone);
-    ~SpaceGrid();
+    ~SpaceGrid() override;
 
     SpaceGridHint hint() const { return m_hint; }
     void setHint(SpaceGridHint hint);

@@ -30,14 +30,14 @@ QSize ViewCallback::sizeImpl(const GuiContext& ctx, ID id, ViewSizeMode sizeMode
 {
     if (sizeFunction)
         return sizeFunction(ctx, id, sizeMode);
-    return View::sizeImpl(ctx, id, sizeMode);
+    return View2::sizeImpl(ctx, id, sizeMode);
 }
 
 bool ViewCallback::textImpl(ID id, QString& txt) const
 {
     if (textFunction)
         return textFunction(id, txt);
-    return View::textImpl(id, txt);
+    return View2::textImpl(id, txt);
 }
 
 } // end namespace Qi

@@ -114,7 +114,7 @@ class QI_EXPORT CacheSpaceAnimationShiftViews : public CacheSpaceAnimationAbstra
     Q_DISABLE_COPY(CacheSpaceAnimationShiftViews)
 
 public:
-    CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View* viewToApply = nullptr);
+    CacheSpaceAnimationShiftViews(QWidget* widget, CacheSpace* cacheSpace, CacheSpaceAnimationShiftDirection direction, const View2* viewToApply = nullptr);
 
 protected:
     QAbstractAnimation* createAnimationImpl(CacheSpace* cacheSpace, QPainter* painter, const GuiContext& ctx) override;
@@ -123,7 +123,7 @@ private:
     void moveToStart(const CacheSpace* cacheSpace, QRect& rect) const;
 
     CacheSpaceAnimationShiftDirection m_direction;
-    const View* m_viewToApply;
+    const View2* m_viewToApply;
 };
 
 class QI_EXPORT CacheSpaceAnimationShiftViewsRandom : public CacheSpaceAnimationAbstract

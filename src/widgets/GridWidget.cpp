@@ -53,7 +53,7 @@ GridWidget::GridWidget(QWidget* parent)
             m_cacheSubGrids[subID.row][subID.column] = cacheSpace;
             modelCache->setValueId(subID, cacheSpace);
 
-            connect(subGrid.data(), &Space::spaceChanged, this, &GridWidget::onSubGridChanged);
+            connect(subGrid.data(), &Space2::spaceChanged, this, &GridWidget::onSubGridChanged);
             connect(cacheSpace.data(), &CacheSpace::cacheChanged, this, &GridWidget::onCacheSpaceChanged);
         }
     }
@@ -139,7 +139,7 @@ QSize GridWidget::viewportSizeHint() const
     return subGrid(topLeftID)->size() + subGrid(clientID)->size() + subGrid(bottomRightID)->size();
 }
 
-void GridWidget::onSubGridChanged(const Space* /*space*/, ChangeReason reason)
+void GridWidget::onSubGridChanged(const Space2* /*space*/, ChangeReason reason)
 {
     if (reason & ChangeReasonSpaceStructure)
     {

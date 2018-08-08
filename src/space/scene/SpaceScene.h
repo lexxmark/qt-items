@@ -28,7 +28,7 @@ enum SpaceSceneHint
     SpaceSceneHintSameSchemasByType = 0x0001,
 };
 
-class QI_EXPORT SpaceScene: public Space
+class QI_EXPORT SpaceScene: public Space2
 {
     Q_OBJECT
     Q_DISABLE_COPY(SpaceScene)

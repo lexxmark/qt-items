@@ -25,7 +25,7 @@ QSize Layout::ViewInfo::size() const
     return view.size(ctx, id, sizeMode);
 }
 
-bool Layout::doLayout(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const
+bool Layout::doLayout(const View2& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QRect& viewRect, QRect& itemRect, QRect* visibleItemRect) const
 {
     ViewInfo vi(view, ctx, id, sizeMode);
     LayoutInfo li(viewRect, itemRect);
@@ -42,7 +42,7 @@ bool Layout::doLayout(const View& view, const GuiContext& ctx, ID id, ViewSizeMo
     return true;
 }
 
-void Layout::expandSize(const View& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const
+void Layout::expandSize(const View2& view, const GuiContext& ctx, ID id, ViewSizeMode sizeMode, QSize& size) const
 {
     if (isTransparent())
         return;

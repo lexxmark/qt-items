@@ -34,8 +34,8 @@ public:
           m_rowsCount(0)
     {
         Q_ASSERT(m_grid);
-        m_connection = QObject::connect(m_grid.data(), &Space::spaceChanged, this, &ModelStorageGrid::onSpaceChanged);
-        /*[this] (const Space* space, ChangeReason reason) {
+        m_connection = QObject::connect(m_grid.data(), &Space2::spaceChanged, this, &ModelStorageGrid::onSpaceChanged);
+        /*[this] (const Space2* space, ChangeReason reason) {
             onSpaceChanged(space, reason);
         });*/
         resize();
@@ -71,7 +71,7 @@ protected:
     }
 
 private slots:
-    void onSpaceChanged(const Space* space, ChangeReason reason)
+    void onSpaceChanged(const Space2* space, ChangeReason reason)
     {
         Q_UNUSED(space);
         if ((reason & ChangeReasonSpaceStructure) &&

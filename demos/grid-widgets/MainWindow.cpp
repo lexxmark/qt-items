@@ -124,24 +124,24 @@ MainWindow::MainWindow(QWidget *parent) :
         auto layoutRows = makeLayoutFixedBottom(3, LayoutBehaviorTransparent);
         auto layoutColumns = makeLayoutFixedRight(3);
 
-        auto view = makeShared<View>();
+        auto view = makeShared<View2>();
         SharedPtr<ControllerMouse> controller = makeShared<ControllerMouseColumnsResizer>(topGrid->columns());
         view->addController(controller);
         controller = makeShared<ControllerMouseColumnsAutoFit>(ui->gridWidget, topID.column);
         view->addController(controller);
         topGrid->addSchema(rangeAll, view, layoutColumns);
 
-        view = makeShared<View>();
+        view = makeShared<View2>();
         controller = makeShared<ControllerMouseRowsResizer>(leftGrid->rows());
         view->addController(controller);
         leftGrid->addSchema(rangeAll, view, layoutRows);
 
-        view = makeShared<View>();
+        view = makeShared<View2>();
         controller = makeShared<ControllerMouseColumnsResizer>(fixedGrid->columns());
         view->addController(controller);
         fixedGrid->addSchema(rangeAll, view, layoutColumns);
 
-        view = makeShared<View>();
+        view = makeShared<View2>();
         controller = makeShared<ControllerMouseRowsResizer>(fixedGrid->rows());
         view->addController(controller);
         fixedGrid->addSchema(rangeAll, view, layoutRows);
@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent) :
             return modelSorting->activeSortingId() == id.as<GridID>();
         };
 
-        auto view = makeShared<View>();
+        auto view = makeShared<View2>();
         view->setController(makeShared<ControllerMouseVisible>(viewVisible));
 
         topGrid->addSchema(makeRangeGridSorter(modelSorting), view, makeLayoutBackground());

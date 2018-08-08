@@ -23,7 +23,7 @@
 namespace Qi
 {
 
-class QI_EXPORT ViewStyleStandardPixmap: public View
+class QI_EXPORT ViewStyleStandardPixmap: public View2
 {
     Q_OBJECT
     Q_DISABLE_COPY(ViewStyleStandardPixmap)

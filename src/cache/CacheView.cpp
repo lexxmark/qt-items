@@ -31,7 +31,7 @@ CacheView2::CacheView2()
     Q_ASSERT(false);
 }
 
-CacheView2::CacheView2(const View *view, const QRect &rect)
+CacheView2::CacheView2(const View2 *view, const QRect &rect)
     : m_view(view),
       m_rect(rect),
       m_showTooltip(false)
@@ -101,23 +101,33 @@ bool CacheView2::tooltipText(ID id, QString& tooltipText) const
     return m_view->tooltipText(id, tooltipText);
 }
 
-CacheView::CacheView(const CacheView* parent, QRect rect)
+View::View(const View* parent, ID id)
     : m_parent(parent),
-      m_rect(rect)
+      m_id(id)
 {}
 
-void CacheView::emitCacheViewChanged(ChangeReason reason)
+void View::emitCacheViewChanged(ChangeReason reason)
 {
     emit cacheViewChanged(this, reason);
 }
 
-void CacheView::setRect(QRect rect)
+void View::setRect(QRect rect)
 {
     if (m_rect == rect)
         return;
 
     m_rect = rect;
+    onRectChangedImpl();
     emitCacheViewChanged(ChangeReasonViewSize);
 }
+
+void View::visitChildren(const std::function<bool(const View&)>& visitor) const
+{
+    auto non_const_this = const_cast<View*>(this);
+    non_const_this->visitChildren([&visitor](View& child) {
+        return visitor(child);
+    });
+}
+
 
 } // end namespace Qi

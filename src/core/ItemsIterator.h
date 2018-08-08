@@ -52,6 +52,70 @@ protected:
     virtual bool isValidImpl() const = 0;
 };
 
+namespace Private
+{
+    struct IdIteratorIt
+    {
+        IdIteratorIt(IdIterator* iterator = nullptr)
+            : m_iterator(iterator)
+        {}
+
+        bool operator==(const IdIteratorIt& iterator) const
+        {
+            return !isValid() && !iterator.isValid();
+        }
+
+        bool operator!=(const IdIteratorIt& iterator) const
+        {
+            return !(*this == iterator);
+        }
+
+        IdIteratorIt& operator++()
+        {
+            if (m_iterator)
+                m_iterator->toNext();
+            return *this;
+        }
+
+        ID operator*() const
+        {
+            if (isValid())
+                return m_iterator->id();
+            return ID();
+        }
+
+    private:
+        bool isValid() const { return m_iterator && m_iterator->isValid(); }
+        IdIterator* m_iterator = nullptr;
+    };
+}
+
+inline auto begin(IdIterator& iterator)
+{
+    return  Private::IdIteratorIt(&iterator);
+}
+
+inline auto end(IdIterator& /*iterator*/)
+{
+    return Private::IdIteratorIt();
+}
+
+class QI_EXPORT IdIteratorNone : public IdIterator
+{
+public:
+    IdIteratorNone() = default;
+
+protected:
+    ID idImpl() const final { return ID(); }
+    bool atFirstImpl() final { return false; }
+    bool toNextImpl() final { return false; }
+    bool isValidImpl() const final { return false; }
+};
+inline SharedPtr<IdIteratorNone> makeIdIteratorNone()
+{
+    return makeShared<IdIteratorNone>();
+}
+
 /*
 template <typename Iterator>
 class ItemsIteratorRange: public IdIterator

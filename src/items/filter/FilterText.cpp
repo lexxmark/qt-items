@@ -106,7 +106,7 @@ void RowsFilterByText::onFilterChanged(const ItemsFilter*)
     emit visibilityChanged(this);
 }
 
-SharedPtr<View> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter)
+SharedPtr<View2> makeViewRowsFilterByText(SharedPtr<RowsFilterByText> filter)
 {
     auto modelFilterText = makeShared<ModelTextCallback>();
     modelFilterText->getValueFunction = [filter](ID id)->QString {
